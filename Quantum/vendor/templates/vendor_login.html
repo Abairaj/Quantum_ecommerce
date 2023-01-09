@@ -110,7 +110,7 @@ a[target='_blank']{
     </style>
 
 <!-- bootstrap4 -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <!-- fontawesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 </head>
@@ -124,16 +124,18 @@ a[target='_blank']{
                     </div>
                     {%if messages%}
                     {%for message in messages%}
-                    <div class="alert alert-{%message.tags%} alert-dismissible fade show" role="alert">
-                        <strong></strong>{{%message%}}
+                    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                        <strong></strong> {{message}}
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
                       </div>
                     {%endfor%}
                     {%endif%}
+                    
                     <div class="panel-body p-3">
-                        <form action="/signin" method="POST">
+
+                        <form action="/vendor/vendor-signin/" method="POST">
                             {% csrf_token %}
                             <div class="form-group py-2">
                                 <div class="input-field">
@@ -155,7 +157,7 @@ a[target='_blank']{
                                 <a href="/forgetpassword" id="forgot" class="font-weight-bold">Forgot password?</a>
                             </div>
                             <button class="btn btn-primary btn-block mt-3"type='submit'>Login</button>
-                            <div class="text-center pt-4 text-muted">Don't have an account? <a href="/vendor_signup">Sign up</a>
+                            <div class="text-center pt-4 text-muted">Don't have an account? <a href="/signup">Sign up</a>
                             </div>
                         </form>
                     </div>
@@ -169,7 +171,9 @@ a[target='_blank']{
         </div>
     </div>
 <!-- bootstrap js -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
    <!-- ajax jquery -->
    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!-- 
@@ -188,3 +192,6 @@ a[target='_blank']{
    </script>
 </body>
 </html>
+
+
+

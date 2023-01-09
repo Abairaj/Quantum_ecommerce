@@ -46,7 +46,7 @@ def signin(request):
         return render(request,'login.html')
 
 
-@cache_control(no_cache = True,must_revalidate =True,no_storage = True)
+@never_cache
 def signup(request):
     if request.method == 'POST':
         first_name = request.POST['firstname']
@@ -110,6 +110,7 @@ def otp_login(request):
 def forget_password(request):
     return render(request,'forgotpass.html')
 
+@login_required(login_url='/signin')
 def logout(request):
     auth.logout(request)
     return redirect('signin')

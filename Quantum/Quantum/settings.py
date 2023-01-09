@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user',
-    'vendor'
+    'vendor',
+    'admin_app'
+    
+    
 ]
 
 MIDDLEWARE = [
@@ -59,7 +62,7 @@ ROOT_URLCONF = 'Quantum.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['user/template','vendor/template'],
+        'DIRS': ['user/template','vendor/template','admin_app/template'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
