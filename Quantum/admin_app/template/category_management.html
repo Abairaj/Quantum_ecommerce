@@ -13,7 +13,54 @@
         <div class="col-lg-6 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
-              <h4 class="card-title">Categories</h4>
+              <div class="row ">
+                <div class="col-sm-6">
+                  <h4 class="card-title">Categories</h4>
+             </div>
+             <div class="col-sm-6">
+<!-- -----------------------------------------------------------------------------------------------Add Category--------------------------------------------------------------------------------- -->
+   
+                                 <div>
+                  <div class="modal fade" id="exampleModalToggle2{{user.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <form action='/admin/add_category/' method="POST"  enctype="multipart/form-data">
+                                  {%csrf_token%}
+                                  <div class="form-outline mb-5">
+                                    <input type="file" name="logo" >
+                                      <label for="floatingInput">Logo</label>
+                                    </div>
+                                  <div class="form-outline mb-4">
+                                    <input type="text"  class="form-control" name="category_name" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                                    <label for="floatingPassword">Name</label>
+                                  </div>
+
+                          
+                                  </div>
+                                  <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                                </form>
+                          </div>
+                        </div>
+                      </div>
+
+                    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle2{{user.id}}" role="button">ADD</i></a> 
+                  </div>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+<!-- ========================================================================================================Brands============================================================================================= -->
+
+
+                </div>
+                 </div> 
               <div class="table-responsive">
                 <table class="table table-striped">
                   <thead>
@@ -33,16 +80,18 @@
                       </th>
                     </tr>
                   </thead>
+                  {%if category%}
+                  {%for i in category%}
                   <tbody>
                     <tr>
                       <td class="py-1">
-                        1
+                        {{i.category_id}}
                       </td>
                       <td>
-                        <img src="logo" alt="image">
+                        <img src="{{i.category_image.url}}" alt="image" class="image-fluid">
                       </td>
                       <td>
-                        Rolex legend
+                        {{i.category_name}}
                       </td>
                     
                       <td >
@@ -58,18 +107,71 @@
                     </tr>
 
                   </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+             
+        {%endfor%}
+        {%endif%}
+
+      </table>
+    </div>
+  </div>
+      </div>
+    </div>
 
 
 
         <div class="col-lg-6 grid-margin stretch-card">
             <div class="card">
               <div class="card-body">
-                <h4 class="card-title">Brands</h4>
+
+
+<!-- ------------------------------------------------------------------------------------------------Add Brands---------------------------------------------------------------------------------------- -->
+
+                <div class="row ">
+                  <div class="col-sm-6">
+                    <h4 class="card-title">Brands</h4>
+               </div>
+               <div class="col-sm-6">
+
+                <div>
+                  <div class="modal fade" id="exampleModalToggle2{{user.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <form action='/admin/add_brand/{{i.id}}/' method="POST">
+                                  {%csrf_token%}
+                                  <div class="form-outline mb-4">
+                                    <input type="number"  class="form-control" name="category_id" id="floatingInput"  fdprocessedid="eg8k3o">
+                                    <label for="floatingInput">No</label>
+                                  </div>
+                                  <div class="form-outline mb-5">
+                                      <input type="image" value="Add image" class="form-control" name="logo" id="floatingInput"  fdprocessedid="eg8k3o">
+                                      <label for="floatingInput">Logo</label>
+                                    </div>
+                                  <div class="form-outline mb-4">
+                                    <input type="text"  class="form-control" name="category_name" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                                    <label for="floatingPassword">Name</label>
+                                  </div>
+
+                          
+                                  </div>
+                                  <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                                </form>
+                          </div>
+                        </div>
+                      </div>
+
+                    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle2{{user.id}}" role="button">ADD</i></a> 
+                  </div>
+
+<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                  </div>
+                   
+                   
                 <div class="table-responsive">
                   <table class="table table-striped">
                     <thead>
@@ -89,16 +191,18 @@
                         </th>
                       </tr>
                     </thead>
+                    {%if brands%}
+                    {%for i in brands%}
                     <tbody>
                       <tr>
                         <td class="py-1">
-                          1
+                          {{i.brand_id}}
                         </td>
                         <td>
-                          <img src="logo" alt="image">
+                          {{i.brand_logo}}
                         </td>
                         <td>
-                          Rolex legend
+                          {{i.brand_name}}
                         </td>
                       
                         <td >
@@ -114,15 +218,21 @@
                       </tr>
   
                     </tbody>
+                    {%endfor%}
+                    {%endif%}
                   </table>
                 </div>
+
+
               </div>
+
             </div>
           </div>
   
 
 
     </div>
+   
          
 
 

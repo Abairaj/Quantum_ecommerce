@@ -36,7 +36,7 @@ def signin(request):
 
         user = auth.authenticate(email = email,password = password)
         
-        if user is not None:
+        if user is not None and user.is_active == True:
             auth.login(request,user)
             return redirect('home')
         else:

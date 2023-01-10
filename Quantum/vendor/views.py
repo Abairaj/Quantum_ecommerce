@@ -45,7 +45,7 @@ def vendor_signin(request):
 
 
         
-        if vendor is not None and vendor.is_staff:
+        if vendor is not None and vendor.is_staff and vendor.is_active == True:
             auth.login(request,vendor)
             return redirect('vendor_dashboard',)
         else:
