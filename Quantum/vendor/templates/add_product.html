@@ -1,0 +1,141 @@
+{%extends 'dash_base.html'%}
+
+{%block title%}Products{%endblock%}
+         
+              
+
+
+{%block table%}
+
+
+<div class="container">
+  
+    <section class="panel panel-default">
+  <div class="panel-heading"> 
+  <h3 class="panel-title">Add Product</h3> 
+  </div> 
+  <div class="panel-body">
+    
+  <form action="/vendor/add_product" class="form-horizontal" role="form" method="post" enctype="multipart/form-data">
+
+    {% csrf_token %}
+  
+    <div class="row">
+     <div class="form-group col-sm-6">
+      <label for="name"  class="col-sm-3 control-label">Product Name</label>
+      <div class="">
+        <input type="text" class="form-control" name="product_name" id="name" placeholder="Product name">
+      </div>
+    </div> <!-- form-group // -->
+
+
+    <div class="form-group col-sm-6">
+        <label for="name"  class="col-sm-6 control-label">Product Description</label>
+        <div class="">
+            <textarea class="form-control" name="product_description"></textarea>
+        </div>
+      </div> <!-- form-group // -->
+</div>
+
+
+<div class="row">
+    <div class="form-group col-sm-6">
+        <label for="qty" class="col-sm-6 control-label">Product Price</label>
+        <div class="">
+       <input type="text" class="form-control" name="product_price" id="price" placeholder="Price">
+        </div>
+      </div> <!-- form-group // -->
+    <div class="form-group col-sm-6">
+      <label for="qty" class="col-sm-6 control-label">Discounted Price</label>
+      <div class="">
+     <input type="text" class="form-control" name="discount_price" id="price" placeholder="Discounted price">
+      </div>
+    </div> <!-- form-group // -->
+</div>
+
+<div class="row">
+    <div class="form-group col-sm-6">
+
+      <div class=""> 
+        <label class="control-label small" for="date_start">Stock</label>
+        <input type="text" class="form-control" name="stock" id="stock" placeholder="Stock">
+    </div> <!-- form-group // -->
+    </div>
+
+
+    <div class="form-group col-sm-6">
+      <div class="col-sm-3">
+        <label class="control-label small" for="file_img">Image_1</label> <input type="file" name="img-1">
+      </div>
+      <div class="col-sm-3">
+        <label class="control-label small" for="file_img">Image-2</label>  <input type="file" name="img-2">
+      </div>
+      <div class="col-sm-3">
+        <label class="control-label small" for="file_img">Image-3</label>  <input type="file" name="img-3">
+      </div>
+    </div> <!-- form-group // -->
+
+</div>
+
+    <div class="row">
+
+    <div class="form-group col-sm-5">
+      <label for="category" class="col-sm-6 control-label">Select Category</label>
+      <div class="">
+     <select class="form-control" name="category">
+      <option value="">Category</option>
+      {%if categorys%}
+      {%for i in categorys%}
+      <option>{{i.category_name}}</option>
+      {%endfor%}
+      {%endif%}
+      
+     </select>
+      </div>
+    </div> <!-- form-group // -->
+
+
+    <div class="form-group col-sm-5">
+        <label for="brand" class="col-sm-6 control-label">Select Brand</label>
+        <div class="">
+       <select class="form-control" name="brand">
+        <option value="">Brand</option>
+        {%if brand%}
+        {%for i in brand%}
+        <option>{{i.brand_name}}</option>
+        {%endfor%}
+        {%endif%}
+        
+       </select>
+        </div>
+      </div> <!-- form-group // -->
+      </div>
+
+
+
+
+
+
+
+
+
+</div>
+    <hr>
+    <div class="form-group text-center">
+      <div class=" col-sm-7">
+        <button type="submit" class="btn btn-primary pl-5 pr-5">ADD</button>
+      </div>
+    </div> <!-- form-group // -->
+  </form>
+    
+  </div><!-- panel-body // -->
+  </section><!-- panel// -->
+  
+    
+  </div> <!-- container// -->
+
+
+  
+
+  
+{%endblock%}

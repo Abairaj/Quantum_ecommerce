@@ -7,6 +7,16 @@
 
   <!-- partial -->
   <div class="main-panel">
+    {%if messages%}
+    {%for message in messages%}
+    <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+        <strong></strong> {{message}}
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    {%endfor%}
+    {%endif%}
     <div class="content-wrapper">
       <div class="row">
 <!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
@@ -21,15 +31,15 @@
 <!-- -----------------------------------------------------------------------------------------------Add Category--------------------------------------------------------------------------------- -->
    
                                  <div>
-                  <div class="modal fade" id="exampleModalToggle2{{user.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                  <div class="modal fade" id="exampleModalTogglecategory" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
                       <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+                            <h5 class="modal-title" id="exampleModalToggleLabel">ADD</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                              <form action='/admin/add_category/' method="POST"  enctype="multipart/form-data">
+                              <form action='/admin/add_category/' name="category" method="POST"  enctype="multipart/form-data" >
                                   {%csrf_token%}
                                   <div class="form-outline mb-5">
                                     <input type="file" name="logo" >
@@ -48,7 +58,7 @@
                         </div>
                       </div>
 
-                    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle2{{user.id}}" role="button">ADD</i></a> 
+                    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalTogglecategory" role="button">ADD</i></a> 
                   </div>
 
 
@@ -56,7 +66,7 @@
 
 
 
-<!-- ========================================================================================================Brands============================================================================================= -->
+<!-- ========================================================================================================Category============================================================================================= -->
 
 
                 </div>
@@ -80,12 +90,15 @@
                       </th>
                     </tr>
                   </thead>
-                  {%if category%}
-                  {%for i in category%}
+
+                
+                 {%if category%}
+                {%for i in category%}
+                  
                   <tbody>
                     <tr>
                       <td class="py-1">
-                        {{i.category_id}}
+                        {{i.id}}
                       </td>
                       <td>
                         <img src="{{i.category_image.url}}" alt="image" class="image-fluid">
@@ -98,8 +111,69 @@
                         <div style="justify-content: space-around;">
 
                         <div class="d-flex justify-content-between">
-                      <h4><a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h4>
-                      <h4><a href="#"><i class="fa-solid fa-trash"></i></a></h4>
+ <!-- -----------------------------------------------------------------------------------------------Edit Category--------------------------------------------------------------------------------- -->
+   
+ <div>
+  <div class="modal fade" id="exampleModalToggle{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form action='/admin/edit_category/{{i.id}}' name="category" method="POST"  enctype="multipart/form-data" >
+                  {%csrf_token%}
+                  <div class="form-outline mb-5">
+                    <input value="{{i.category_image.url}}" type="file" name="logo" >
+                      <label for="floatingInput"><img src="{{i.category_image.url}}" alt="image" class="image-fluid"></label>
+                    </div>
+                  <div class="form-outline mb-4">
+                    <input value="{{i.category_name}}" type="text"  class="form-control" name="category_name" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                    <label for="floatingPassword">Name</label>
+                  </div>
+
+          
+                  </div>
+                  <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                </form>
+          </div>
+        </div>
+      </div>
+
+    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle{{i.id}}" role="button"><i class="fa-solid fa-pen-to-square"></i></a></i></a> 
+  </div>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+<!-- ------------------------------------------------------------------------------Delete category-------------------------------------------------------------- -->
+
+<div class="modal fade" id="{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+        <p> Are you sure about deleting the Category. <br> You can't retrieve the category details once deleted.</p>
+        <a href="/admin/delete_category/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+
+      </div>
+    </div>
+  </div>
+</div>
+<button class="btn btn-danger" data-bs-target="#{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
+</div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
                     </div>
 
                       </div>
@@ -107,9 +181,9 @@
                     </tr>
 
                   </tbody>
-             
-        {%endfor%}
-        {%endif%}
+                  {%endfor%}
+                  {%endif%}
+        
 
       </table>
     </div>
@@ -133,7 +207,7 @@
                <div class="col-sm-6">
 
                 <div>
-                  <div class="modal fade" id="exampleModalToggle2{{user.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                  <div class="modal fade" id="exampleModalTogglebrand" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
                       <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -141,36 +215,32 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                           </div>
                           <div class="modal-body">
-                              <form action='/admin/add_brand/{{i.id}}/' method="POST">
-                                  {%csrf_token%}
-                                  <div class="form-outline mb-4">
-                                    <input type="number"  class="form-control" name="category_id" id="floatingInput"  fdprocessedid="eg8k3o">
-                                    <label for="floatingInput">No</label>
-                                  </div>
-                                  <div class="form-outline mb-5">
-                                      <input type="image" value="Add image" class="form-control" name="logo" id="floatingInput"  fdprocessedid="eg8k3o">
-                                      <label for="floatingInput">Logo</label>
-                                    </div>
-                                  <div class="form-outline mb-4">
-                                    <input type="text"  class="form-control" name="category_name" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
-                                    <label for="floatingPassword">Name</label>
-                                  </div>
+                            <form action='/admin/add_brand/' method="POST"  enctype="multipart/form-data">
+                              {%csrf_token%}
+                              <div class="form-outline mb-5">
+                                <input type="file" name="logo" >
+                                  <label for="floatingInput">Logo</label>
+                                </div>
+                              <div class="form-outline mb-4">
+                                <input type="text"  class="form-control" name="brand_name" id="brand_name" placeholder="Name" fdprocessedid="dl50sd">
+                                <label for="floatingPassword">Name</label>
+                              </div>
 
-                          
-                                  </div>
-                                  <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
-                                </form>
+                      
+                              </div>
+                              <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                            </form>
                           </div>
                         </div>
                       </div>
 
-                    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle2{{user.id}}" role="button">ADD</i></a> 
+                    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalTogglebrand" role="button">ADD</i></a> 
                   </div>
 
 <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
                   </div>
-                   
+                  </div>
                    
                 <div class="table-responsive">
                   <table class="table table-striped">
@@ -191,15 +261,16 @@
                         </th>
                       </tr>
                     </thead>
-                    {%if brands%}
-                    {%for i in brands%}
+                    {%if brand%}
+                
+                    {%for i in brand%}
                     <tbody>
                       <tr>
                         <td class="py-1">
-                          {{i.brand_id}}
+                          {{i.id}}
                         </td>
                         <td>
-                          {{i.brand_logo}}
+                          <img src="{{i.brand_logo.url}}" alt="logo" class="image-fluid">
                         </td>
                         <td>
                           {{i.brand_name}}
@@ -209,22 +280,79 @@
                           <div style="justify-content: space-around;">
   
                           <div class="d-flex justify-content-between">
-                        <h4><a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h4>
-                        <h4><a href="#"><i class="fa-solid fa-trash"></i></a></h4>
+<!-- -----------------------------------------------------------------------------------------------Edit Brand--------------------------------------------------------------------------------- -->
+   
+<div>
+  <div class="modal fade" id="exampleModalToggle{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <form action='/admin/edit_brand/{{i.id}}' name="brand" method="POST"  enctype="multipart/form-data" >
+                  {%csrf_token%}
+                  <div class="form-outline mb-5">
+                    <input  type="file" value="{{i.brand_logo}}" name="logo" >
+                      <label for="floatingInput"><img src="{{i.brand_logo.url}}" alt="image" class="image-fluid"></label>
+                    </div>
+                  <div class="form-outline mb-4">
+                    <input  type="text"   class="form-control" name="brand_name" id="category_name" value="{{i.brand_name}}" placeholder="Name" fdprocessedid="dl50sd">
+                    <label for="floatingPassword">Name</label>
+                  </div>
+
+          
+                  </div>
+                  <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                </form>
+          </div>
+        </div>
+      </div>
+
+    <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle{{i.id}}" role="button"><i class="fa-solid fa-pen-to-square"></i></a></i></a> 
+  </div>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- ------------------------------------------------------------------------------Delete brand-------------------------------------------------------------- -->
+
+                        <div class="modal fade" id="{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+  
+                                <p> Are you sure about deleting the Brand. <br> You can't retrieve the brand details once deleted.</p>
+                                <a href="/admin/delete_brand/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+  
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <button class="btn btn-danger" data-bs-target="#{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
                       </div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
   
                         </div>
                         </td> 
                       </tr>
   
                     </tbody>
+        
                     {%endfor%}
                     {%endif%}
                   </table>
                 </div>
 
 
-              </div>
+              
 
             </div>
           </div>

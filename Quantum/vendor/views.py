@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from user.models import users
+from admin_app.models import *
+from .models import Product
 from django.core.validators import validate_email
 from django.contrib import auth
 from django.views.decorators.cache import never_cache
@@ -12,9 +14,59 @@ def vendor_dashboard(request):
     return render(request,'vendor_dashboard.html')
 
 
-
+@login_required(login_url='/vendor-signin')
 def vendor_products(request):
-    return render(request,'vendor_product.html')
+    
+    product ={
+        'product':Product.objects.all()
+    }
+    return render(request,'vendor_product.html',product)
+
+@login_required(login_url='/vendor-signin')
+def add_product(request):
+
+    context ={'brand':Brand.objects.all(),'categorys':Category.objects.all()}
+
+
+    if request.method == 'POST':
+        product_name = request.POST['product_name']
+        product_description = request.POST['product_description']
+        product_price = request.POST['product_price']
+        discount_price = request.POST['discount_price']
+        quantity = request.POST['stock']
+        image_1 = request.FILES['img-1']
+        image_2 = request.FILES['img-2']
+        image_3 = request.FILES['img-3']
+        category_id= request.POST['category']
+        brand_id= request.POST['brand']
+
+        category = Category.objects.filter(category_name = category_id).get(category_name = category_id)
+        brand = Brand.objects.filter(brand_name = brand_id).get(brand_name = brand_id)
+      
+
+
+
+
+
+        product = Product(
+         product_name = product_name,
+        product_description = product_description,
+        price = product_price,
+        discount_price = discount_price,
+        quantity = quantity,
+        image_1 = image_1,
+        image_2 = image_2,
+        image_3 = image_3,
+        category= category,
+        brand = brand,
+      
+          )
+
+        product.save()
+        messages.success(request,'Product added sccessfully')
+        return redirect('vendor_products')
+  
+    return render(request,'add_product.html',context)
 
 
 def vendor_orders(request):
@@ -93,6 +145,11 @@ def vendor_signup(request):
         
         elif len(GSTIN) != 15:
             messages.warning(request,'Enter valid GSTIN Number')
+            return redirect('vendor-signup')
+        
+        elif password1 == '':
+            messages.warning(request,'Password cant be empty')
+            return redirect('vendor-signup')
 
         elif password1 != password2:
             messages.warning(request,'Password not match with each other')

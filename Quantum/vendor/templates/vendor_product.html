@@ -9,13 +9,41 @@
 
       <!-- partial -->
       <div class="main-panel">
+        {%if messages%}
+        {%for message in messages%}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <strong></strong> {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {%endfor%}
+        {%endif%}
         <div class="content-wrapper">
           <div class="row">
 <!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Products</h4>
+
+                  <div class="row">
+
+                    <div class="col-sm-6">
+                      <h4 class="card-title">Products</h4>
+                 </div>
+<!-- ------------------------------------------------------------------------------------------------------------Add Product---------------------------------------------------------------------------------------- -->
+                 <div class="col-sm-6">
+
+  
+                      <a class="btn btn-primary" data-bs-toggle="modal" href="/vendor/add_product" role="button">ADD</i></a> 
+                    
+                  </div>
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                </div>
+
+
+
                   <div class="table-responsive">
                     <table class="table table-striped">
                       <thead>
@@ -49,31 +77,32 @@
                           </th>
                         </tr>
                       </thead>
+                      {%for i in product%}
                       <tbody>
                         <tr>
                           <td class="py-1">
-                            1
+                            {{i.id}}
                           </td>
                           <td>
-                            <img src="logo" alt="image">
+                            <img src="{{i.image_1.url}}" alt="image">
                           </td>
                           <td>
-                            Rolex legend
+                            {{i.product_name}}
                           </td>
                           <td>
-                            Rolex
+                            {{i.brand}}
                           </td>
                           <td>
-                            Luxury Watch
+                           {{i.category}}
                           </td>
                           <td>
-                            May 15, 2015
+                            {{i.time_added}}
                           </td>
                           <td>
-                            11,000
+                            {{i.discount_price}}
                           </td>
                           <td>
-                            Delivered
+                            {{i.price}}
                           </td>
                           <td >
                             <div style="justify-content: space-around;">
@@ -88,6 +117,7 @@
                         </tr>
 
                       </tbody>
+                      {%endfor%}
                     </table>
                   </div>
                 </div>

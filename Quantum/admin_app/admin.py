@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import*
 
 # Register your models here.
-class categoryAdmin(admin.ModelAdmin):
+class AdminCategory(admin.ModelAdmin):
     model = Category
     list_display = ('category_name','date_added','last_update') 
     
@@ -13,10 +13,10 @@ class categoryAdmin(admin.ModelAdmin):
     fieldsets =()
 
 
-admin.site.register(Category,categoryAdmin)
+admin.site.register(Category,AdminCategory)
 
 
-class BrandAdmin(admin.ModelAdmin):
+class AdminBrand(admin.ModelAdmin):
     model = Brand
     list_display = ('brand_name','date_added','last_update') 
     
@@ -26,4 +26,14 @@ class BrandAdmin(admin.ModelAdmin):
     list_filter = ()
     fieldsets =()
 
-admin.site.register(Brand)
+admin.site.register(Brand,AdminBrand)
+
+
+class AdminBanner(admin.ModelAdmin):
+    model = Banner
+    list_display = ('banner_title','banner_description') 
+
+admin.site.register(Banner,AdminBanner)
+
+
+

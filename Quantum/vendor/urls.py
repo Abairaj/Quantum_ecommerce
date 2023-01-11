@@ -11,4 +11,6 @@ urlpatterns = [
     path('vendor_offers', views.vendor_offers,name = 'vendor_offers'),
     path('vendor_salesreport', views.vendor_salesreport,name = 'vendor_salesreport'),
 
+    path('add_product',views.add_product,name='add_product')
+
 ]

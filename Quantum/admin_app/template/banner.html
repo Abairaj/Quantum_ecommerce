@@ -1,55 +1,214 @@
 {%extends 'admin_base.html'%}
 
-{%block title%}Banner Management{%endblock%}
+{%block title%}Banner Mnagement{%endblock%}
 
 {%block content%}
 
 
- <!-- partial -->
- <div class="main-panel">
-    <div class="content-wrapper">
-      <div class="row">
-<!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
-        <div class="col-lg-12 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">Banners</h4>
-              <div class="table-responsive">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>
-                        No
-                      </th>
-                      <th>
-                        Banner Name
-                      </th>
-                      <th>
-                        Image
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="py-1">
-                        1
-                      </td>
-                      <td>
-                        Rolex
-                      </td>
-                      <td>
-                        <img src="" alt="image" class="image-fluid">
-                      </td>
-                    </tr>
 
-                  </tbody>
-                </table>
+
+
+<div class="main-panel">
+  {%if messages%}
+  {%for message in messages%}
+  <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong></strong> {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {%endfor%}
+  {%endif%}
+  <div class="content-wrapper">
+    <div class="row">
+<!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
+      <div class="col-lg-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="row ">
+              <div class="col-sm-6">
+                <h4 class="card-title">Banners</h4>
+           </div>
+           <div class="col-sm-6">
+<!-- -----------------------------------------------------------------------------------------------Add Banner--------------------------------------------------------------------------------- -->
+ 
+                               <div>
+                <div class="modal fade" id="exampleModalToggleBanner" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalToggleLabel">ADD</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action='/admin/add_banner/' name="category" method="POST"  enctype="multipart/form-data" >
+                                {%csrf_token%}
+                                <div class="form-outline mb-5">
+                                  <input type="file" name="bannerimage" >
+                                    <label for="floatingInput">Image</label>
+                                  </div>
+                                <div class="form-outline mb-4">
+                                  <input type="text"  class="form-control" name="bannertitle" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                                  <label for="floatingPassword">Title</label>
+                                </div>
+
+                                <div class="form-outline mb-4">
+                                  <input type="text"  class="form-control" name="bannerdescription" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                                  <label for="floatingPassword">Description</label>
+                                </div>
+
+                        
+                                </div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                              </form>
+                        </div>
+                      </div>
+                    </div>
+
+                  <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggleBanner" role="button">ADD</i></a> 
+                </div>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+<!-- ========================================================================================================Banner============================================================================================= -->
+
+
               </div>
-            </div>
-          </div>
+               </div> 
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>
+                      No
+                    </th>
+                    <th>
+                      Image
+                    </th>
+                    <th>
+                      Name
+                    </th>
+                    <th>
+                      Description
+                    </th>
+
+                    <th style="text-align:center">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+
+              
+               {%if banner%}
+              {%for i in banner%}
+                
+                <tbody>
+                  <tr>
+                    <td class="py-1">
+                      {{i.id}}
+                    </td>
+                    <td>
+                      <img src="{{i.banner_image.url}}" alt="image" class="image-fluid">
+                    </td>
+                    <td>
+                      {{i.banner_title}}
+                    </td>
+                    <td>
+                      {{i.banner_description}}
+                    </td>
+                  
+                    <td >
+                      <div style="justify-content: space-around;">
+
+                      <div class="d-flex justify-content-between">
+<!-- -----------------------------------------------------------------------------------------------Edit Banner--------------------------------------------------------------------------------- -->
+ 
+<div>
+<div class="modal fade" id="exampleModalToggle{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalToggleLabel">Edit Banner</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action='/admin/edit_banner/{{i.id}}' name="banner" method="POST"  enctype="multipart/form-data" >
+                {%csrf_token%}
+                <div class="form-outline mb-5">
+                  <input value="{{i.banner_image.url}}" type="file" name="bannerimage" >
+                    <label for="floatingInput"><img src="{{i.banner_image.url}}" alt="image" class="image-fluid"></label>
+                  </div>
+                <div class="form-outline mb-4">
+                  <input value="{{i.banner_title}}" type="text"  class="form-control" name="bannertitle" id="category_name" placeholder="Title" fdprocessedid="dl50sd">
+                  <label for="floatingPassword">Name</label>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input value="{{i.banner_description}}" type="text"  class="form-control" name="bannerdescription" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                  <label for="floatingPassword">Name</label>
+                </div>
+
+        
+                </div>
+                <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+              </form>
         </div>
       </div>
     </div>
+
+  <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggle{{i.id}}" role="button"><i class="fa-solid fa-pen-to-square"></i></a></i></a> 
+</div>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+<!-- ------------------------------------------------------------------------------Delete Banner-------------------------------------------------------------- -->
+
+<div class="modal fade" id="{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+
+      <p> Are you sure about deleting the Banner. <br> You can't retrieve the Banner details once deleted.</p>
+      <a href="/admin/delete_banner/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+
+    </div>
+  </div>
+</div>
+</div>
+<button class="btn btn-danger" data-bs-target="#{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
+</div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+</div>
+
+</div>
+</td> 
+</tr>
+
+</tbody>
+{%endfor%}
+{%endif%}
+
+
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+
 
 
 {%endblock%}

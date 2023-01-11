@@ -85,7 +85,8 @@ class users(AbstractBaseUser):
     mobile     = models.CharField(max_length=13,unique=True,null=True)
     gender     = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True,blank=False)
     profile    = models.ImageField(upload_to='uploads/users_profile/',blank=True)
-    GSTIN      = models.CharField(max_length=15,unique=True,null = True)
+    GSTIN      = models.CharField(max_length=15,unique=True,null=True)
+
 
 
     date_joined     =models.DateTimeField(auto_now_add=True)
