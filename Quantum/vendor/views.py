@@ -63,10 +63,68 @@ def add_product(request):
           )
 
         product.save()
-        messages.success(request,'Product added sccessfully')
+        messages.success(request,'Product added successfully')
         return redirect('vendor_products')
   
     return render(request,'add_product.html',context)
+
+
+
+@login_required(login_url='/vendor-signin')
+def edit_product(request,id):
+
+    context ={'brand':Brand.objects.all(),'categorys':Category.objects.all(),'product':Product.objects.filter(id = id)}
+
+
+    if request.method == 'POST':
+        product_name = request.POST['product_name']
+        product_description = request.POST['product_description']
+        product_price = request.POST['product_price']
+        discount_price = request.POST['discount_price']
+        quantity = request.POST['stock']
+        image_1 = request.FILES['img-1']
+        image_2 = request.FILES['img-2']
+        image_3 = request.FILES['img-3']
+        category_id= request.POST['category']
+        brand_id= request.POST['brand']
+
+        category = Category.objects.filter(category_name = category_id).get(category_name = category_id)
+        brand = Brand.objects.filter(brand_name = brand_id).get(brand_name = brand_id)
+      
+
+
+
+
+
+        product = Product(
+            id = id,
+         product_name = product_name,
+        product_description = product_description,
+        price = product_price,
+        discount_price = discount_price,
+        quantity = quantity,
+        image_1 = image_1,
+        image_2 = image_2,
+        image_3 = image_3,
+        category= category,
+        brand = brand,
+        time_added = datetime.now()
+      
+          )
+
+        product.save()
+        messages.success(request,'Product updated successfully')
+        return redirect('vendor_products')
+  
+    return render(request,'edit_product.html',context)
+
+
+@login_required(login_url='/vendor-signin')
+def delete_product(request,id):
+    Product.objects.filter(id = id).delete()
+    messages.success(request,'Product deleted succcessfully')
+    return redirect('vendor_products')
+
 
 
 def vendor_orders(request):

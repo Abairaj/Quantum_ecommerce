@@ -35,7 +35,7 @@
                  <div class="col-sm-6">
 
   
-                      <a class="btn btn-primary" data-bs-toggle="modal" href="/vendor/add_product" role="button">ADD</i></a> 
+                      <a class="btn btn-primary"  href="/vendor/add_product" role="button">ADD</i></a> 
                     
                   </div>
 <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
@@ -108,8 +108,35 @@
                             <div style="justify-content: space-around;">
 
                             <div class="d-flex justify-content-between">
-                          <h4><a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h4>
-                          <h4><a href="#"><i class="fa-solid fa-trash"></i></a></h4>
+
+<!-- =====================================================================================Edit product============================================================================================= -->
+                          <a href="/vendor/edit_product/{{i.id}}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+<!--=============================================================================================Delete product===================================================================================  -->
+                          
+                          <div class="modal fade" id="{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                            <div class="modal-dialog modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Delete</h1>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                            
+                                  <p> Are you sure about deleting the Banner. <br> You can't retrieve the Banner details once deleted.</p>
+                                  <a href="/vendor/delete_product/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+                            
+                                </div>
+                              </div>
+                            </div>
+                            </div>
+                            <button class="btn btn-danger" data-bs-target="#{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
+
+
+    <!--================================================================================================================================================================================  -->
+                           
+                            
+
+
                         </div>
 
                           </div>

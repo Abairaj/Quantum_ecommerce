@@ -329,8 +329,7 @@ def edit_banner(request,id):
 @login_required(login_url='/admin')
 def delete_banner(request,id):
 
-    Brand.objects.filter(id = id).delete()
-
+    Banner.objects.filter(id = id).delete()
     messages.success(request,'Banner Deleted')
     return redirect('admin_banners')
 
