@@ -1,0 +1,198 @@
+{%extends 'store_base.html'%}
+
+{%block title%}Home{%endblock%}
+{%block 1%}active{%endblock%}
+
+{%block content%}
+<!-- ----------------------------------------------------------------------------------------------------------------Navbar ends_----------------------------------------------------------------------- -->
+
+<!-- ----------------------------------------------------------------------------------------------------------------slide----------------------------------------------------------------------------------------- -->
+		<aside id="colorlib-hero">
+			<div class="flexslider">
+				<ul class="slides">
+
+					{%if banner%}
+					{%for i in banner%}
+			   	<li style="background-image: url(https://content.rolex.com/dam/watches/watch-on-time-v3/m226659-0002/landscape_big.jpg);">
+			   		<div class="overlay"></div>
+			   		<div class="container-fluid">
+			   			<div class="row">
+				   			<div class="col-md-6 col-md-offset-3 col-md-pull-2 col-sm-12 col-xs-12 slider-text">
+				   				<div class="slider-text-inner">
+				   					<div class="desc">
+					   					<h1 class="head-1">{{i.banner_title}}</h1>
+					   					<h2 class="head-3">{{i.banner_description}}</h2>
+					   					<p class="category"><span>New stylish {{i.banner_title}}  Watches</span></p>
+					   					<p><a href="#" class="btn btn-primary">Shop Collection</a></p>
+				   					</div>
+				   				</div>
+				   			</div>
+				   		</div>
+			   		</div>
+			   	</li>
+				{%endfor%}
+				{%endif%}
+
+
+			  	</ul>
+		  	</div>
+		</aside>
+<!------------------------------------------------------------------------------------------------------------slide ends-----------------------------------------------------------------------------------------------------------------------  -->
+		<div id="colorlib-featured-product">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<a href="shop.html" class="f-product-1"  style="background-image: url(https://images.unsplash.com/photo-1533139502658-0198f920d8e8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8d2F0Y2hlc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60);">
+							<div class="desc">
+								<h2>Fashion <br>for <br>men</h2>
+							</div>
+						</a>
+					</div>
+					<div class="col-md-6">
+						<div class="row">
+							<div class="col-md-6">
+								<a href="" class="f-product-2" style="background-image: url(https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fHdhdGNoZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60);">
+									
+									
+									
+									
+									
+									
+									<div class="desc">
+										<h2>New <br>Arrivals <br></h2>
+									</div>
+								</a>
+							</div>
+							<div class="col-md-6">
+								<a href="" class="f-product-2" style="background-image: url(https://images.unsplash.com/photo-1629581688635-5d88654e5bdd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzF8fHdhdGNoZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60);">
+									<div class="desc">
+										<h2>Sale <br>20% <br>off</h2>
+									</div>
+								</a>
+							</div>
+							<div class="col-md-12">
+								<a href="" class="f-product-2" style="background-image: url(https://images.unsplash.com/photo-1526045431048-f857369baa09?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mzh8fHdhdGNoZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60);">
+									<div class="desc">
+										<h2>Luxury Watches <br>for <br>men</h2>
+									</div>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+									
+<!-----------------------------------------------------------------------------------------------------------------------------New Arrivals--------------------------------------------------------------------------------------------------------------------------------------  -->
+		<div class="colorlib-shop">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3 text-center colorlib-heading">
+						<h2><span>New Arrival</span></h2>
+						<p>We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3 text-center">
+						<div class="product-entry">
+							<div class="product-img" style="background-image: url(https://content.rolex.com/dam/2022-11/upright-bba-with-shadow/m226659-0002.png?imwidth=420);">
+								<p class="tag"><span class="new">New</span></p>
+								<div class="cart">
+									<p>
+										<span class="addtocart"><a href="cart.html"><i class="icon-shopping-cart"></i></a></span> 
+										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
+										<span><a href="#"><i class="icon-heart3"></i></a></span>
+										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
+									</p>
+								</div>
+							</div>
+							<div class="desc">
+								<h3><a href="shop.html">Rolex</a></h3>
+								<p class="price"><span>MRP 30000.00</span></p>
+							</div>
+						</div>
+					</div>
+
+
+
+				</div>
+			</div>
+		</div>
+		<div id="colorlib-intro" class="colorlib-intro" style="background-image: url(https://content.rolex.com/dam/new-watches-2021/family-pages/explorer/family-page-explorer-beauty-explorer-ii_m226570-0001_2103jva_002.jpg?imwidth=1920);" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<div class="intro-desc">
+							<div class="text-salebox">
+								<div class="text-lefts">
+									<div class="sale-box">
+										<div class="sale-box-top">
+											<h2 class="number">45</h2>
+											<span class="sup-1">%</span>
+											<span class="sup-2">Off</span>
+										</div>
+										<h2 class="text-sale">Sale</h2>
+									</div>
+								</div>
+								<div class="text-rights">
+									<h3 class="title">Just hurry up limited offer!</h3>
+									<p>Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
+									<p><a href="shop.html" class="btn btn-primary">Shop Now</a> <a href="#" class="btn btn-primary btn-outline">Read more</a></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+<!--------------------------------------------------------------------------------------------------------Our Products--------------------------------------------------------------------------------------------  -->
+
+		<div class="colorlib-shop">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3 text-center colorlib-heading">
+						<h2><span>Our Products</span></h2>
+						<p>We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3 text-center">
+						<div class="product-entry">
+							<div class="product-img" style="background-image: url(https://cdn1.ethoswatches.com/media/catalog/product/cache/06b0325fe0d1ea074c67035fe5935845/u/r/urwerk-ur-satellite-ur-105-ct_1.jpg);">
+								<p class="tag"><span class="sale">Sale</span></p>
+								<div class="cart">
+									<p>
+										<span class="addtocart"><a href="cart.html"><i class="icon-shopping-cart"></i></a></span> 
+										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
+										<span><a href="#"><i class="icon-heart3"></i></a></span>
+										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
+									</p>
+								</div>
+							</div>
+							<div class="desc">
+								<h3><a href="shop.html">URWERK</a></h3>
+								<p class="price"><span>₹ 55,50,000</span> <span class="sale">$300.00</span> </p>
+							</div>
+						</div>
+					</div>
+
+
+
+
+
+
+
+				</div>
+			</div>
+		</div>
+
+
+
+		
+		
+<!-- ---------------------------------------------------------------------------------------------Footer-------------------------------------------------------------------------------------------- -->
+{%endblock%}

@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 from django.contrib import auth
 from .models import *
+from admin_app.models import *
+from vendor. models import *
 from django.contrib import messages
 from django.core.validators import validate_email
 from django.views.decorators.cache import cache_control,never_cache
@@ -14,10 +16,25 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 @never_cache
-@login_required(login_url='signin')
 def home(request):
+    context = {'banner':Banner.objects.all,'product':Product.objects.all()}
 
-    return render(request,'home.html')
+    return render(request,'index.html',context)
+
+
+def shop(request):
+    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10]}
+    return render(request,'shop.html',context)
+
+
+
+def product_detail(request,id):
+      
+    context ={'product':Product.objects.filter(id=id)}
+
+    print(context)
+
+    return render(request,'product-detail.html',context)
 
 
 
@@ -25,6 +42,7 @@ def home(request):
 def signin(request):
 
     if request.user.is_authenticated:
+        messages.success(request,'You have already signed in. ')
         return redirect('home')
 
 
