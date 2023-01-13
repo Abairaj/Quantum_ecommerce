@@ -8,6 +8,10 @@ from django.contrib import auth
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 
+
+
+
+
 # Create your views here.
 @login_required(login_url='/vendor-signin')
 def vendor_dashboard(request):
@@ -29,6 +33,7 @@ def add_product(request):
 
 
     if request.method == 'POST':
+        
         product_name = request.POST['product_name']
         product_description = request.POST['product_description']
         product_price = request.POST['product_price']
@@ -193,7 +198,7 @@ def vendor_signup(request):
                     messages.warning(request,'Enter valid email address.')
                     return redirect('vendor-signup')
 
-        elif users.objects.filter(mobile = phone_number):
+        elif users.objects.filter(mobile = phone_number).exists():
             messages.warning(request,'The phone number is already registered')
             return redirect('vendor-signup')
 
@@ -215,7 +220,7 @@ def vendor_signup(request):
 
 
         
-
+    
         vendor = users.objects.create_vendor(
                 first_name = first_name,
                 last_name = last_name,

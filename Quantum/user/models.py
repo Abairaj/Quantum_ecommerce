@@ -17,8 +17,8 @@ class UserManager(BaseUserManager):
         if not mobile:
             raise ValueError('User must have mobile')
         user=self.model(
-            email       =self.normalize_email(email),
             mobile      =mobile,
+            email       =self.normalize_email(email),
             first_name  =first_name,
             last_name   =last_name,
             
@@ -86,6 +86,7 @@ class users(AbstractBaseUser):
     gender     = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True,blank=False)
     profile    = models.ImageField(upload_to='uploads/users_profile/',blank=True)
     GSTIN      = models.CharField(max_length=15,unique=True,null=True)
+    otps       = models.CharField(max_length=10,blank=True,default=0)
 
 
 
@@ -114,6 +115,9 @@ class users(AbstractBaseUser):
                 if self.date_joined.year == time.year:
                     return str(time.month - self.date_joined.month) + " months ago"
         return self.date_joined
+
+    def __str__(self):
+        return self.mobile    
 
     def __str__(self):
         return self.email

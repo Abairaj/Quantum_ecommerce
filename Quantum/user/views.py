@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import auth
+from django.contrib.auth import login
 from .models import *
 from admin_app.models import *
 from vendor. models import *
@@ -7,10 +8,13 @@ from django.contrib import messages
 from django.core.validators import validate_email
 from django.views.decorators.cache import cache_control,never_cache
 from django.contrib.auth.decorators import login_required
+import random
+from sendotp import *
+# from verifyotp import verify_otp
 
 
 
-
+            
 
 
 
@@ -88,9 +92,18 @@ def signup(request):
                 except:
                     messages.warning(request,'Enter valid email address.')
                     return redirect('signup')
+        
+        elif users.objects.filter(mobile = phone_number).exists():
+            messages.warning(request,'Number is already registered')
+            return redirect('signup')
+        
+        elif len(phone_number)==0:
+            messages.warning(request,'Mobile number can\'t be empty')
+            return redirect('signup')
 
         elif users.objects.filter(mobile = phone_number):
              messages.warning(request,'The phone number is already registered')
+             return redirect('signup')
              
         elif len(phone_number) < 10:
             messages.warning(request,'Enter valid mobile number')
@@ -100,9 +113,9 @@ def signup(request):
             messages(request,'Password doesnt match with each other')
             return redirect('signup')
         
-            
+        else:
         
-        user = users.objects.create_user(
+          user = users.objects.create_user(
             first_name = first_name,
             last_name = last_name,
             email = email,
@@ -111,24 +124,72 @@ def signup(request):
 
         )
 
-        user.save()
-        return redirect('signin')
-
+          user.save()
+          messages.success(request,'Registered successfully. Login with your credentials')
+          return redirect('signin')
+        
     return render(request,'signup.html')
 
 
 
-def otp_signup(request):
-    return render(request,'otp_signup.html')
+
+
+
+
 
 def otp_login(request):
-    return render(request,'otp.html')
+    if request.method == "POST":
+        mobile = request.POST['mobile']
+        user = users.objects.filter(mobile = mobile)
+        if not user.exists():
+            return redirect('signup')
+        
+        print(user[0],'-----------------------------')
+        print(user[0].otps,'##########################')
+        otp_r = str(random.randint(1000,9999))
+        print(otp_r,'..................................')
+        # user[0].otps = otp_r
+        user.update(otps = otp_r)
+
+        print(user[0].otps,'******************')
+        user[0].save() 
+        id = user[0].id
+        # send_otp(mobile,user[0].otps)
+        return redirect('verify_login',id)
+        
+            
+    return render(request,'otp_login.html')
+
+
+
+
+
+
+
+def verify_login(request,id):
+    type(id)
+    print(id,'8888888888888888888888888888888888')
+
+    
+    if request.method == 'POST':
+        otp = request.POST['otp']
+        user = users.objects.get(id = id)
+        if otp == user.otps:
+            login(request,user)
+            return redirect('home')
+        else:
+          return redirect('signup')
+    return render(request,'otp.html',{'id':id})
+
+
+
+
 
 
 def forget_password(request):
     return render(request,'forgotpass.html')
 
-@login_required(login_url='/signin')
+@login_required(login_url='/')
 def logout(request):
     auth.logout(request)
-    return redirect('signin')
+    return redirect('home')
