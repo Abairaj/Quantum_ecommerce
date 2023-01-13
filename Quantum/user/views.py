@@ -92,21 +92,17 @@ def signup(request):
                 except:
                     messages.warning(request,'Enter valid email address.')
                     return redirect('signup')
-        
-        elif users.objects.filter(mobile = phone_number).exists():
-            messages.warning(request,'Number is already registered')
-            return redirect('signup')
-        
-        elif len(phone_number)==0:
-            messages.warning(request,'Mobile number can\'t be empty')
-            return redirect('signup')
 
-        elif users.objects.filter(mobile = phone_number):
+
+        if users.objects.filter(mobile = phone_number):
              messages.warning(request,'The phone number is already registered')
              return redirect('signup')
              
         elif len(phone_number) < 10:
             messages.warning(request,'Enter valid mobile number')
+            return redirect('signup')
+        elif len(password1) < 4:
+            messages,Warning(request,'password should be of 4 or more characters')
             return redirect('signup')
         
         elif password1 != password2:

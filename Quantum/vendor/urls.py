@@ -14,5 +14,7 @@ urlpatterns = [
     path('add_product',views.add_product,name='add_product'),
     path('delete_product/<str:id>/',views.delete_product,name='delete_product'),
     path('edit_product/<str:id>/',views.edit_product,name='edit_product'),
+    path('vendor_otp_login',views.vendor_otp_login,name='vendor_otp_login'),
+    path('vendor_verify_login/<str:id>',views.vendor_verify_login,name='vendor_verify_login')
 
 ]

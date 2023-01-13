@@ -7,7 +7,8 @@ from django.core.validators import validate_email
 from django.contrib import auth
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
-
+import random
+from sendotp import *
 
 
 
@@ -177,7 +178,7 @@ def vendor_signup(request):
         first_name = request.POST['firstname']
         last_name = request.POST['lastname']
         email = request.POST['email']
-        phone_number = request.POST['phone']
+        mobile = request.POST['phone']
         GSTIN = request.POST['gstin']
         password1 = request.POST['pass-1']
         password2 = request.POST['pass-2']
@@ -198,11 +199,11 @@ def vendor_signup(request):
                     messages.warning(request,'Enter valid email address.')
                     return redirect('vendor-signup')
 
-        elif users.objects.filter(mobile = phone_number).exists():
+        if users.objects.filter(mobile = mobile).exists():
             messages.warning(request,'The phone number is already registered')
             return redirect('vendor-signup')
 
-        elif len(phone_number) != 10:
+        elif len(mobile) != 10:
             messages.warning(request,'Enter valid mobile number')
             return redirect('vendor-signup')
         
@@ -210,8 +211,8 @@ def vendor_signup(request):
             messages.warning(request,'Enter valid GSTIN Number')
             return redirect('vendor-signup')
         
-        elif password1 == '':
-            messages.warning(request,'Password cant be empty')
+        elif len(password1) < 4 :
+            messages.warning(request,'Password should be of 4 or more characters')
             return redirect('vendor-signup')
 
         elif password1 != password2:
@@ -225,7 +226,7 @@ def vendor_signup(request):
                 first_name = first_name,
                 last_name = last_name,
                 email = email,
-                mobile = phone_number,
+                mobile = mobile,
                 password = password1,
                 GSTIN = GSTIN
 
@@ -238,6 +239,57 @@ def vendor_signup(request):
             
     
     return render(request,'vendor_signup.html')
+
+
+
+
+
+def vendor_otp_login(request):
+    if request.method == "POST":
+        mobile = request.POST['mobile']
+        user = users.objects.filter(mobile = mobile)
+        if not user.exists():
+            return redirect('vendor-signup')
+        
+        print(user[0],'-----------------------------')
+        print(user[0].otps,'##########################')
+        otp_r = str(random.randint(1000,9999))
+        print(otp_r,'..................................')
+        # user[0].otps = otp_r
+        user.update(otps = otp_r)
+
+        print(user[0].otps,'******************')
+        user[0].save() 
+        id = user[0].id
+        # send_otp(mobile,user[0].otps)
+        return redirect('vendor_verify_login',id)
+        
+            
+    return render(request,'vendor_otp_login.html')
+
+
+
+
+
+def vendor_verify_login(request,id):
+    type(id)
+    print(id,'8888888888888888888888888888888888')
+
+    
+    if request.method == 'POST':
+        otp = request.POST['otp']
+        user = users.objects.get(id = id)
+        if otp == user.otps and user.is_staff == True:
+            auth.login(request,user)
+            return redirect('home')
+        else:
+          messages.info(request,'Registeryour account first and then try login')
+          return redirect('vendor-signup')
+    return render(request,'vendor_otp.html',{'id':id})
+
+
+
+
 
 @login_required(login_url='/vendor-signin')
 def logout(request):
