@@ -1,0 +1,179 @@
+{%extends 'admin_base.html'%}
+
+{%block title%}Brand Management{%endblock%}
+
+{%block content%}
+
+
+
+<div class="col grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+
+
+<!-- ------------------------------------------------------------------------------------------------Add Brands---------------------------------------------------------------------------------------- -->
+
+        <div class="row ">
+          <div class="col-sm-6">
+            <h4 class="card-title">Brands</h4>
+       </div>
+       <div class="col-sm-6">
+
+        <div>
+          <div class="modal fade" id="exampleModalTogglebrand" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form action='/admin/add_brand/' method="POST"  enctype="multipart/form-data">
+                      {%csrf_token%}
+                      <div class="form-outline mb-5">
+                        <input type="file" name="logo" >
+                          <label for="floatingInput">Logo</label>
+                        </div>
+                      <div class="form-outline mb-4">
+                        <input type="text"  class="form-control" name="brand_name" id="brand_name" placeholder="Name" fdprocessedid="dl50sd">
+                        <label for="floatingPassword">Name</label>
+                      </div>
+
+              
+                      </div>
+                      <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+            <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalTogglebrand" role="button">ADD</i></a> 
+          </div>
+
+<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+          </div>
+          </div>
+           
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>
+                  No
+                </th>
+                <th>
+                  Image
+                </th>
+                <th>
+                  Name
+                </th>
+
+                <th>
+                    <div class="ml-5">
+                  Action
+                </div>
+                </th>
+              </tr>
+            </thead>
+            {%if brand%}
+        
+            {%for i in brand%}
+            <tbody>
+              <tr>
+                <td class="py-1">
+                  {{i.id}}
+                </td>
+                <td>
+                  <img src="{{i.brand_logo.url}}" alt="logo" class="image-fluid">
+                </td>
+                <td>
+                  {{i.brand_name}}
+                </td>
+              
+                <td >
+
+                  <div class="d-flex">
+<!-- -----------------------------------------------------------------------------------------------Edit Brand--------------------------------------------------------------------------------- -->
+
+<div>
+<div class="modal fade" id="exampleModalTogglebrandedit{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content">
+  <div class="modal-header">
+    <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+      <form action='/admin/edit_brand/{{i.id}}' name="brand" method="POST"  enctype="multipart/form-data" >
+          {%csrf_token%}
+          <div class="form-outline mb-5">
+            <input  type="file" value="{{i.brand_logo}}" name="logo" >
+              <label for="floatingInput"><img src="{{i.brand_logo.url}}" alt="image" class="image-fluid"></label>
+            </div>
+          <div class="form-outline mb-4">
+            <input  type="text"   class="form-control" name="brand_name" id="category_name" value="{{i.brand_name}}" placeholder="Name" fdprocessedid="dl50sd">
+            <label for="floatingPassword">Name</label>
+          </div>
+
+  
+          </div>
+          <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+        </form>
+  </div>
+</div>
+</div>
+
+<a class="btn btn-primary mr-2" data-bs-toggle="modal" href="#exampleModalTogglebrandedit{{i.id}}" role="button"><i class="fa-solid fa-pen-to-square"></i></a></i></a> 
+</div>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- ------------------------------------------------------------------------------Delete brand-------------------------------------------------------------- -->
+
+                <div class="modal fade" id="branddelete{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                  <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+
+                        <p> Are you sure about deleting the Brand. <br> You can't retrieve the brand details once deleted.</p>
+                        <a href="/admin/delete_brand/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <button class="btn btn-danger ml-2" data-bs-target="#branddelete{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
+              </div>
+
+<!-- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                
+                </td> 
+              </tr>
+
+            </tbody>
+
+            {%endfor%}
+            {%endif%}
+          </table>
+        </div>
+
+
+      
+
+    </div>
+  </div>
+
+
+
+</div>
+</div>
+
+{%endblock%}

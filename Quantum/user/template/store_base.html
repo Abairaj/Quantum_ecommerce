@@ -24,7 +24,8 @@
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
 	
-	
+	<!-- lightbox -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css"></script>
 	<!-- Animate.css -->
 	<link rel="stylesheet" href="{% static '/store/css/animate.css'%}">
 	<!-- Icomoon Icon Fonts-->
@@ -197,6 +198,17 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<script src="{%static '/store/js/bootstrap-datepicker.js'%}"></script>
 	<!-- Stellar Parallax -->
 	<script src="{%static '/store/js/jquery.stellar.min.js'%}"></script>
+	<!-- lightbox -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			$('.thumb-nail a').mouseover(function(e){
+				e.preventDefault();
+				$('.img-box').attr("src",$(this).attr("href"));
+			})
+			
+		})
+	</script>
 	<!-- Main -->
 	<script src="{%static '/store/js/main.js'%}"></script>
 

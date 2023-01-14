@@ -18,10 +18,13 @@ urlpatterns = [
     path('unblock/<str:id>',views.unblock,name = 'vendor_unblock'),
     
     
-     # both brand and category are in same 
+     #  category management
     path('category/',views.category_management,name = 'admin_category'),
     path('add_category/',views.add_category,name='add_category'),
     path('edit_category/<str:id>',views.edit_category,name = 'edit_category'),
+     
+     #brand management
+    path('brand/',views.brand_management,name = 'admin_brand'),
     path('add_brand/',views.add_brand,name='add_brand'),
     path('delete_category/<str:id>',views.delete_category,name = 'delete_category'),
     path('edit_brand/<str:id>',views.edit_brand,name = 'edit_brand'),

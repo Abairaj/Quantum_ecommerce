@@ -75,7 +75,6 @@ def category_management(request):
 
    context =  { 'category':Category.objects.all(),
 
-      'brand':Brand.objects.all()
      }
   
    return render(request,'category_management.html',context)
@@ -88,28 +87,34 @@ def add_category(request):
         try:
           category_logo = request.FILES['logo']
           category_name = request.POST['category_name']
+          commission = request.POST['commission']
         except:
             messages.warning(request,'Image  can\'t be empty')
             return redirect('admin_category')
-
+            
         if   category_name == '':
             messages.warning(request,'Category name cant be empty')
             return redirect('admin_category')
 
         if Category.objects.filter(category_name__icontains = category_name).exists():
                messages.warning(request,'Category already exists')
-               return redirect('admin_category')
-        else:
-
-         category = Category(
+               return redirect('add_category')
+    try:
+        category = Category(
               category_image = category_logo,
-              category_name = category_name
+              category_name = category_name,
+              commission = commission
               )
 
-         category.save()
+        category.save()
 
-         messages.success(request,'Category added successfully.')
-         return redirect('admin_category')
+        messages.success(request,'Category added successfully.')
+        return redirect('admin_category')
+    except:
+        messages.warning(request,'Check the details given by you and try agin with proper values.')
+        print('check 6')
+        return redirect('admin_category')
+
 
 
 
@@ -120,6 +125,7 @@ def edit_category(request,id):
         try:
           category_logo = request.FILES['logo']
           category_name = request.POST['category_name']
+          commission = request.POST['commission']
 
         except:
             messages.warning(request,'Image or name can\'t be empty')
@@ -130,22 +136,25 @@ def edit_category(request,id):
             messages.warning(request,'Category name cant be empty')
             return redirect('admin_category')   
 
-        else:
-
-            category = Category(
+        
+        try:
+         category = Category(
                 id=id,
                 category_image = category_logo,
                 category_name = category_name,
+                commission = commission,
                 date_added = datetime.datetime.now(),
                 last_update = datetime.datetime.now()
             )
 
-            category.save()
+         category.save()
 
 
-            messages.success(request,'Category Updated successfully')
+         messages.success(request,'Category Updated successfully')
+         return redirect('admin_category')
+        except:
+            messages.warning(request,'check your credentials and try again')
             return redirect('admin_category')
-
 
 
 
@@ -161,6 +170,14 @@ def delete_category(request,id):
 
 # =====================================Brands==================================================
 @login_required(login_url='/admin')
+def brand_management(request):
+    context = {
+        'brand':Brand.objects.all()
+    }
+    return render(request,'Brands.html',context)
+
+
+@login_required(login_url='/admin')
 def add_brand(request):
     if request.method == 'POST':
 
@@ -170,16 +187,16 @@ def add_brand(request):
 
         except:
             messages.warning(request,'Image can\'t be empty')
-            return redirect('admin_category')
+            return redirect('admin_brand')
 
 
         if   brand_name == '':
             messages.warning(request,'Brand name cant be empty')
-            return redirect('admin_category')   
+            return redirect('admin_brand')   
 
         if Brand.objects.filter(brand_name__icontains = brand_name).exists():
             messages.warning(request,'Brand already exists')
-            return redirect('admin_category')
+            return redirect('admin_brand')
         else:
 
             brand = Brand(
@@ -191,7 +208,7 @@ def add_brand(request):
 
 
             messages.success(request,'Brand added successfully')
-            return redirect('admin_category')
+            return redirect('admin_brand')
 
 
 
@@ -206,12 +223,12 @@ def edit_brand(request,id):
 
         except:
             messages.warning(request,'Image or name can\'t be empty')
-            return redirect('admin_category')
+            return redirect('admin_brand')
 
 
         if   brand_name == '':
             messages.warning(request,'Brand name cant be empty')
-            return redirect('admin_category')   
+            return redirect('admin_brand')   
 
         else:
 
@@ -227,7 +244,7 @@ def edit_brand(request,id):
 
 
             messages.success(request,'Brand Updated successfully')
-            return redirect('admin_category')
+            return redirect('admin_brand')
 
 
 
@@ -237,7 +254,7 @@ def edit_brand(request,id):
 def delete_brand(request,id):
         Brand.objects.filter(id=id).delete()
         messages.success(request,'Brand deleted successfully')
-        return redirect('admin_category')
+        return redirect('admin_brand')
 
 
 

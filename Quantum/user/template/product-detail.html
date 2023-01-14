@@ -31,10 +31,11 @@
 							{%if product%}
 							{%for i in product%}
 							<div class="row">
-								<div class="col-md-5">
+
+
+								<div class="col-md-5" data-mdb-zoom-effect="true" data-mdb-auto-height="true">
 									<div class="product-entry">
 										<div class="product-img" style="background-image: url({{i.image_1.url}});">
-											<p class="tag"><span class="sale">Sale</span></p>
 										</div>
 										<div class="thumb-nail">
 											<a href="#" class="thumb-img" style="background-image: url({{i.image_1.url}});"></a>
@@ -43,6 +44,8 @@
 										</div>
 									</div>
 								</div>
+
+								
 								<div class="col-md-7">
 									<div class="desc">
 										<h3>{{i.product_name}}</h3>
