@@ -21,9 +21,10 @@ def vendor_dashboard(request):
 
 @login_required(login_url='/vendor-signin')
 def vendor_products(request):
-    
+    vendor = request.user
+    id = vendor.id
     product ={
-        'product':Product.objects.all()
+        'product':Product.objects.all().filter(vendor_name = id)
     }
     return render(request,'vendor_product.html',product)
 
@@ -48,6 +49,7 @@ def add_product(request):
 
         category = Category.objects.filter(category_name = category_id).get(category_name = category_id)
         brand = Brand.objects.filter(brand_name = brand_id).get(brand_name = brand_id)
+        vendor_id = users.objects.filter(id = request.user.id).get(id = request.user.id)
       
 
 
@@ -65,6 +67,7 @@ def add_product(request):
         image_3 = image_3,
         category= category,
         brand = brand,
+        vendor_name = vendor_id
       
           )
 
@@ -94,8 +97,10 @@ def edit_product(request,id):
         category_id= request.POST['category']
         brand_id= request.POST['brand']
 
+
         category = Category.objects.filter(category_name = category_id).get(category_name = category_id)
         brand = Brand.objects.filter(brand_name = brand_id).get(brand_name = brand_id)
+        vendor_id = users.objects.filter(id = request.user.id).get(id = request.user.id)
       
 
 
@@ -114,6 +119,7 @@ def edit_product(request,id):
         image_3 = image_3,
         category= category,
         brand = brand,
+        vendor_name = vendor_id,
         time_added = datetime.now()
       
           )
@@ -163,7 +169,7 @@ def vendor_signin(request):
         
         if vendor is not None and vendor.is_staff and vendor.is_active == True:
             auth.login(request,vendor)
-            return redirect('vendor_dashboard',)
+            return redirect('vendor_dashboard')
         else:
             messages.warning(request, 'Invalid password or Username')
             return redirect('vendor-signin')
@@ -283,7 +289,7 @@ def vendor_verify_login(request,id):
             auth.login(request,user)
             return redirect('home')
         else:
-          messages.info(request,'Registeryour account first and then try login')
+          messages.info(request,'Register your account first and then try login')
           return redirect('vendor-signup')
     return render(request,'vendor_otp.html',{'id':id})
 
@@ -294,4 +300,5 @@ def vendor_verify_login(request,id):
 @login_required(login_url='/vendor-signin')
 def logout(request):
     auth.logout(request)
+    request.session['username'].flush()
     return redirect('vendor-signin')
