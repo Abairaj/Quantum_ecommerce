@@ -10,9 +10,7 @@ from django.views.decorators.cache import cache_control,never_cache
 from django.contrib.auth.decorators import login_required
 import random
 from sendotp import *
-from rest_framework import status
-from rest_framework import generics
-from rest_framework.response import Response
+
 # from serializers import ChangepasswordSerializers
 # from rest_framework.permissions import IsAuthenticated
 # from verifyotp import verify_otp

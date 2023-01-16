@@ -18,4 +18,8 @@ class Product(models.Model):
     image_2 = models.ImageField(upload_to='products/',blank=True,null=True)
     image_3 = models.ImageField(upload_to='products/',blank=True,null=True)
     time_added = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return self.product_name
     

@@ -24,7 +24,7 @@
 	
 	
 	<!-- Animate.css -->
-	<link rel="stylesheet" href="{% static '/store/css/animate.css%}">
+	<link rel="stylesheet" href="{% static '/store/css/animate.css'%}">
 	<!-- Icomoon Icon Fonts-->
 	<link rel="stylesheet" href="{% static '/store/css/icomoon.css'%}">
 	<!-- Bootstrap  -->
@@ -285,7 +285,8 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-3 text-center">
+
+					<div class="col-md-3 text-center" >
 						<div class="product-entry">
 							<div class="product-img" style="background-image: url(images/item-5.jpg);">
 								<p class="tag"><span class="new">New</span></p>
@@ -304,92 +305,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-3 text-center">
-						<div class="product-entry">
-							<div class="product-img" style="background-image: url(images/item-6.jpg);">
-								<p class="tag"><span class="new">New</span></p>
-								<div class="cart">
-									<p>
-										<span class="addtocart"><a href="#"><i class="icon-shopping-cart"></i></a></span> 
-										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
-										<span><a href="#"><i class="icon-heart3"></i></a></span>
-										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
-									</p>
-								</div>
-							</div>
-							<div class="desc">
-								<h3><a href="shop.html">Floral Dress</a></h3>
-								<p class="price"><span>$300.00</span></p>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-3 text-center">
-						<div class="product-entry">
-							<div class="product-img" style="background-image: url(images/item-7.jpg);">
-								<p class="tag"><span class="new">New</span></p>
-								<div class="cart">
-									<p>
-										<span class="addtocart"><a href="#"><i class="icon-shopping-cart"></i></a></span> 
-										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
-										<span><a href="#"><i class="icon-heart3"></i></a></span>
-										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
-									</p>
-								</div>
-							</div>
-							<div class="desc">
-								<h3><a href="shop.html">Floral Dress</a></h3>
-								<p class="price"><span>$300.00</span></p>
-							</div>
-						</div>
-					</div>
-					<div class="col-md-3 text-center">
-						<div class="product-entry">
-							<div class="product-img" style="background-image: url(images/item-8.jpg);">
-								<p class="tag"><span class="new">New</span></p>
-								<div class="cart">
-									<p>
-										<span class="addtocart"><a href="#"><i class="icon-shopping-cart"></i></a></span> 
-										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
-										<span><a href="#"><i class="icon-heart3"></i></a></span>
-										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
-									</p>
-								</div>
-							</div>
-							<div class="desc">
-								<h3><a href="shop.html">Floral Dress</a></h3>
-								<p class="price"><span>$300.00</span></p>
-							</div>
-						</div>
-					</div>
+
+	
+
 				</div>
 			</div>
 		</div>
 
 
-		<div id="colorlib-subscribe">
-			<div class="overlay"></div>
-			<div class="container">
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2">
-						<div class="col-md-6 text-center">
-							<h2><i class="icon-paperplane"></i>Sign Up for a Newsletter</h2>
-						</div>
-						<div class="col-md-6">
-							<form class="form-inline qbstp-header-subscribe">
-								<div class="row">
-									<div class="col-md-12 col-md-offset-0">
-										<div class="form-group">
-											<input type="text" class="form-control" id="email" placeholder="Enter your email">
-											<button type="submit" class="btn btn-primary">Subscribe</button>
-										</div>
-									</div>
-								</div>
-							</form>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
 
 		<footer id="colorlib-footer" role="contentinfo">
 			<div class="container">
@@ -494,6 +417,24 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<script src="{%static '/store/js/jquery.stellar.min.js'%}"></script>
 	<!-- Main -->
 	<script src="{%static '/store/js/main.js'%}"></script>
+	</script>
+	<script>
+		  $(document).ready(function() {
+    $.ajax({
+      type: 'GET',
+      url: 'carts/<int:id>',
+      success: function(data) {
+        $.each(data, function(index, value) {
+          $('#yourmodel-table tbody').append(
+            '<tr>' +
+              '<td>' + value.field1 + '</td>' +
+              '<td>' + value.field2 + '</td>' +
+            '</tr>'
+          );
+        });
+      }
+    });
+  });
 	</script>
 
 	</body>
