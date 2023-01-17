@@ -10,6 +10,7 @@ from django.views.decorators.cache import cache_control,never_cache
 from django.contrib.auth.decorators import login_required
 import random
 from sendotp import *
+from cart.models import *
 
 # from serializers import ChangepasswordSerializers
 # from rest_framework.permissions import IsAuthenticated
@@ -126,6 +127,17 @@ def signup(request):
                 )
 
                 user.save()
+                id = users.objects.get(id = user.id)
+                try:
+                   cart = Cart(
+                        user_id = id,
+                        total = 0
+                    )
+
+                   cart.save()
+
+                except Exception as e:
+                    print(e)
                 messages.success(request,'Registered successfully. Login with your credentials')
                 return redirect('signin')
             
@@ -184,39 +196,6 @@ def verify_login(request,id):
 
 
 
-
-# class Changepasswordview(generics.UpdateAPIView):
-#     serializer_class = ChangepasswordSerializers
-#     model = users
-#     permission_classes = (IsAuthenticated,)
-
-#     def get_object(self,queryset = None):
-#         obj = self.request.user
-#         return obj
-
-
-#     def update(self,request,*args,**kwargs):
-#         self.object = self.get_object()
-#         serializer = self.get_serializer(data = request.data)
-
-#         if serializer.is_valid():
-#             #check old password
-#             if not self.object.check_password(serializer.data.get('old_password')):
-#                 return Response({"old_password": ["wrong password"]}, status=status.HTTP_400_BAD_REQUEST)
-
-#             self.object.set_password(serializer.data.get("old password"))
-#             self.object.save()
-#             Response = {
-#                 'status': 'success',
-#                  'code': status.HTTP_200_OK,
-#                  'message': 'password updated successfully',
-#                  'data': []
-
-#             }
-
-#             return Response(Response)
-
-#         return Response(serializer.errors,status.HTTP_400_BAD_REQUEST)
 
 
 

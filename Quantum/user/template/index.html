@@ -3,6 +3,12 @@
 {%block title%}Home{%endblock%}
 {%block 1%}active{%endblock%}
 
+{%if users.is_authenticated%}
+{%block cart%}
+<li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
+{%endblock%}
+{%endif%}
+
 {%block content%}
 <!-- ----------------------------------------------------------------------------------------------------------------Navbar ends_----------------------------------------------------------------------- -->
 

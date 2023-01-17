@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'user',
     'vendor',
     'admin_app',
-    'cart'
+    'cart',
+    'orders',
     
     
 ]
@@ -64,7 +65,7 @@ ROOT_URLCONF = 'Quantum.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['user/template','vendor/template','admin_app/template','cart/template',],
+        'DIRS': ['user/template','vendor/template','admin_app/template','cart/template','orders/template'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -47,9 +47,9 @@ def add_product(request):
         category_id= request.POST['category']
         brand_id= request.POST['brand']
 
-        category = Category.objects.filter(category_name = category_id).get(category_name = category_id)
-        brand = Brand.objects.filter(brand_name = brand_id).get(brand_name = brand_id)
-        vendor_id = users.objects.filter(id = request.user.id).get(id = request.user.id)
+        category = Category.objects.get(category_name = category_id)
+        brand = Brand.objects.get(brand_name = brand_id)
+        vendor_id = users.objects.get(id = request.user.id)
       
 
 
@@ -98,9 +98,9 @@ def edit_product(request,id):
         brand_id= request.POST['brand']
 
 
-        category = Category.objects.filter(category_name = category_id).get(category_name = category_id)
-        brand = Brand.objects.filter(brand_name = brand_id).get(brand_name = brand_id)
-        vendor_id = users.objects.filter(id = request.user.id).get(id = request.user.id)
+        category = Category.objects.get(category_name = category_id)
+        brand = Brand.objects.get(brand_name = brand_id)
+        vendor_id = users.objects.get(id = request.user.id)
       
 
 
@@ -257,17 +257,13 @@ def vendor_otp_login(request):
         if not user.exists():
             return redirect('vendor-signup')
         
-        print(user[0],'-----------------------------')
-        print(user[0].otps,'##########################')
         otp_r = str(random.randint(1000,9999))
-        print(otp_r,'..................................')
-        # user[0].otps = otp_r
         user.update(otps = otp_r)
 
-        print(user[0].otps,'******************')
+        print(user[0].otps)
         user[0].save() 
         id = user[0].id
-        # send_otp(mobile,user[0].otps)
+        send_otp(mobile,user[0].otps)
         return redirect('vendor_verify_login',id)
         
             
@@ -279,8 +275,6 @@ def vendor_otp_login(request):
 
 def vendor_verify_login(request,id):
     type(id)
-    print(id,'8888888888888888888888888888888888')
-
     
     if request.method == 'POST':
         otp = request.POST['otp']
