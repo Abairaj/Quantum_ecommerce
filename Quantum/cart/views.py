@@ -1,15 +1,19 @@
 from django.shortcuts import render,redirect
+from rest_framework.renderers import TemplateHTMLRenderer
+from .forms import AddressForm
 from.serializers import *
 from.models import *
 from vendor.models import*
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.views.generic import CreateView
 from django.http import HttpResponse
 from rest_framework import status
 from django.db.models import Q
 import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse_lazy
 
 
 
@@ -76,11 +80,36 @@ class CartItemAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Address form
+def add_addressform(request):
+    if request.POST:
+        form = AddressForm(request.POST)
+        print(form.errors)       
+        if form.is_valid():
+
+            form.instance.user = users.objects.get(id = request.user.id)
+            form.save()
+            return redirect('home')
+    return render(request,'add_new_address.html',{'form':AddressForm})
+
+    
+# Address form
+def addressform(request):
+    if request.POST:
+        form = AddressForm(request.POST)
+        print(form.errors)       
+        if form.is_valid():
+
+            form.instance.user = users.objects.get(id = request.user.id)
+            form.save()
+            return redirect('home')
+    return render(request,'checkout.html',{'form':AddressForm})
+
+
 
 
 
 # html part
-
 @login_required(login_url='/signin')
 def cart(request):
     user_id = request.user.id
@@ -103,10 +132,13 @@ def delete_cart(request,product_id):
     print(user_id)
     cart_id = Cart.objects.filter(user_id = user_id)[0].id
     print(cart_id)
-    response = requests.delete(f'http://127.0.0.1:8000/cart/edit_cart-items/{product_id}/{cart_id}')
     product = Product.objects.get(id = product_id)
     cart = Cart.objects.get(user_id = request.user.id)
-    cart.total -= product.discount_price
+# if cart item get deleted total and subtotal will be deducted by price of the deleted item
+    cart_item = Cart_items.objects.get(product = product_id)
+    cart.total -=  cart_item.sub_total
+    cart.save() 
+    response = requests.delete(f'http://127.0.0.1:8000/cart/edit_cart-items/{product_id}/{cart_id}')
     messages.success(request,'cart item removed successfully')
     return redirect('cart')
 # --------------------------------------------------------------------------------------------------------------
@@ -118,7 +150,7 @@ def add_to_cart(request,id,price):
     cart = Cart.objects.get(user_id = request.user.id)
     cartitem = Cart_items.objects.filter(product = id)
     
-
+# if existing items added to cart again quantity will increase 
     if cartitem.exists():
         cart_product = cartitem.last()
         cart_product.quantity += 1
@@ -126,18 +158,50 @@ def add_to_cart(request,id,price):
         cart_product.save()
         cart.total += product.discount_price
         cart.save()
-        # messages.success(request,'Already added to cart')
- #----------------------------------------------------------------------------------------------------------------------- 
     else:
-        user_id = request.user.id
-        print(user_id)
-        cart_id = Cart.objects.filter(user_id = user_id)[0].id
+        cart_id = cart.id
         cart_id = str(cart_id)
+        cart.total += product.discount_price
+        cart.save()
         data = {'cart':cart_id,'product':id,'quantity': 1 ,'price':price,'sub_total':price} 
         response = requests.post('http://127.0.0.1:8000/cart/add_cart-items/',json = data)
+
+        
+
         messages.success(request,'Item added to cart')
     return redirect('shop')
 
+
+@login_required(login_url='/signin')
+def manage_cart(request,id,action):
+
+    product = Product.objects.get(id = id)
+    cart = Cart.objects.get(user_id = request.user.id)
+    cartitem = Cart_items.objects.get(product = id)
+
+# Increasing qiantity using + button
+    if action == "increase":
+        cartitem.quantity += 1
+        cartitem.sub_total += product.discount_price
+        cartitem.save()
+        cart.total += product.discount_price
+        cart.save()
+        return redirect('cart')
+
+# Decreasing qiantity using - button
+    if action == "decrease":
+        if cartitem.quantity == 1:
+            cartitem.delete()
+            return redirect('cart')
+        else:
+            cartitem.quantity -= 1
+            cartitem.sub_total -= product.discount_price
+            cartitem.save()
+            cart.total -= product.discount_price
+            cart.save()
+            return redirect('cart')
+    
+    return redirect('cart')
 
 
     

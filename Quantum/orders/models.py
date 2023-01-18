@@ -11,7 +11,7 @@ Status_choices = (
 
 Payment_type = (
     ('Cash on Delivery','Cash on Delivery'),
-    ('Credit Card Payment','Credit Card Payment'),
+    ('Credit Card','Credit Card'),
     ('Netbanking','Netbanking'),
     ('UPI','UPI'),
 )

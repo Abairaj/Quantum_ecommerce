@@ -10,6 +10,7 @@ GENDER_CHOICES = (
         ('Female', 'Female'),
     )
 
+
 class UserManager(BaseUserManager):
     def create_user(self,first_name,last_name,email,mobile,password=None):
         if not email:
@@ -129,7 +130,8 @@ class users(AbstractBaseUser):
 class Address(models.Model):
     id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     user=models.ForeignKey(users,on_delete=models.CASCADE)
-    full_name=models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     address_line_1=models.CharField(max_length=100)
     address_line_2=models.CharField(max_length=100)
     city=models.CharField(max_length=100)
@@ -138,7 +140,6 @@ class Address(models.Model):
     country=models.CharField(max_length=50)
     mobile=models.BigIntegerField()
     landmark=models.CharField(max_length=50)
-    
     default=models.BooleanField(default=False)
 
     class Meta:

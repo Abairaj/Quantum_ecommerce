@@ -2,7 +2,7 @@
 
 {%extends 'store_base.html'%}
 
-{%block title%}Product details{%endblock%}
+{%block title%}Cart{%endblock%}
 {%block content%}
 
 		<aside id="colorlib-hero" class="breadcrumbs">
@@ -15,7 +15,7 @@
 				   			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
 				   				<div class="slider-text-inner text-center">
 				   					<h1>Shopping Cart</h1>
-				   					<h2 class="bread"><span><a href="index.html">Home</a></span> <span><a href="shop.html">Product</a></span> <span>Shopping Cart</span></h2>
+				   					<h2 class="bread"><span><a href="{%url 'home'%}">Home</a></span> <span><a href="{%url 'shop'%}">Shop</a></span> <span><a href="{%url 'cart'%}">Cart</a></span></h2>
 				   				</div>
 				   			</div>
 				   		</div>
@@ -84,9 +84,9 @@
 							<div class="one-eight text-center">
 								<div class="d-flex pt-5">
 									
-									<a href=""  class="btn btn-primary">-</a>
+									<a href="/cart/manage_cart/{{i.product}}/decrease"  class="btn btn-primary">-</a>
 									<input type="text" id="quantity" name="quantity" class="form-control input-number text-center ml-1 mr-1" value="{{i.quantity}}" min="1" max="100">
-									<a href="" class="btn btn-primary">+</a>
+									<a href="/cart/manage_cart/{{i.product}}/increase" class="btn btn-primary">+</a>
 								</div>
 							</div>
 							<div class="one-eight text-center">
@@ -119,21 +119,23 @@
 											<div class="col-md-3">
 												<input type="submit" value="Apply Coupon" class="btn btn-primary">
 											</div>
+									
 										</div>
 									</form>
 								</div>
 								<div class="col-md-3 col-md-push-1 text-center">
 									<div class="total">
 										
-										<div class="sub">
+										<!-- <div class="sub">
 											<p><span>Subtotal:</span> <span>{{i.sub_total}}</span></p>
 											<p><span>Delivery:</span> <span>$0.00</span></p>
 											<p><span>Discount:</span> <span>$45.00</span></p>
-										</div>
+										</div> -->
 										
 										{%if grand_total%}
 										<div class="grand-total">
 											<p><span><strong>Total:</strong></span> <span>{{grand_total}}</span></p>
+											<a href="/cart/checkout/"  class="btn btn-primary">Checkout</a>
 										</div>
 										{%endif%}
 									</div>
