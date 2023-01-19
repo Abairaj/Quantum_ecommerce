@@ -80,30 +80,6 @@ class CartItemAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# Address form
-def add_addressform(request):
-    if request.POST:
-        form = AddressForm(request.POST)
-        print(form.errors)       
-        if form.is_valid():
-
-            form.instance.user = users.objects.get(id = request.user.id)
-            form.save()
-            return redirect('home')
-    return render(request,'add_new_address.html',{'form':AddressForm})
-
-    
-# Address form
-def addressform(request):
-    if request.POST:
-        form = AddressForm(request.POST)
-        print(form.errors)       
-        if form.is_valid():
-
-            form.instance.user = users.objects.get(id = request.user.id)
-            form.save()
-            return redirect('home')
-    return render(request,'checkout.html',{'form':AddressForm})
 
 
 
@@ -205,3 +181,29 @@ def manage_cart(request,id,action):
 
 
     
+# Address form
+def add_addressform(request):
+    
+
+    if request.POST:
+        form = AddressForm(request.POST)
+        print(form.errors)       
+        if form.is_valid():
+
+            form.instance.user = users.objects.get(id = request.user.id)
+            form.save()
+            return redirect('home')
+    return render(request,'contact.html',{'form':AddressForm})
+
+    
+# Address form
+def addressform(request):
+    if request.POST:
+        form = AddressForm(request.POST)
+        print(form.errors)       
+        if form.is_valid():
+
+            form.instance.user = users.objects.get(id = request.user.id)
+            form.save()
+            return redirect('home')
+    return render(request,'checkout.html',{'form':AddressForm})
