@@ -5,25 +5,7 @@
 {%block title%}Order Tracking{%endblock%}
 {%block content%}
 
-		<!-- <aside id="colorlib-hero" class="breadcrumbs">
-			<div class="flexslider">
-				<ul class="slides">
-			   	<li style="background-image: url(images/cover-img-1.jpg);">
-			   		<div class="overlay"></div>
-			   		<div class="container-fluid">
-			   			<div class="row">
-				   			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
-				   				<div class="slider-text-inner text-center">
-				   					<h1>Shopping Cart</h1>
-				   					<h2 class="bread"><span><a href="{%url 'home'%}">Home</a></span> <span><a href="{%url 'shop'%}">Shop</a></span> <span><a href="">Cart</a></span></h2>
-				   				</div>
-				   			</div>
-				   		</div>
-			   		</div>
-			   	</li>
-			  	</ul>
-		  	</div>
-		</aside> -->
+
 		
 
 		<div class="text-center mt-5 pt-5 pb-5 mb-5">
@@ -109,49 +91,9 @@
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-md-10 col-md-offset-1">
-						<div class="total-wrap">
-							<div class="row">
-								<div class="col-md-8">
-									<form action="#">
-										<div class="row form-group">
-											<div class="col-md-7">
-												<input type="text" name="quantity" class="form-control input-number" placeholder="Your Coupon Number...">
-											</div>
-											<div class="col-md-2">
-												<input type="submit" value="Apply Coupon" class="btn btn-primary">
-											</div>
-									
-										</div>
-									</form>
-								</div>
-								<div class="col-md-3 col-md-push-1 text-center">
-									<div class="total">
-										
-										<!-- <div class="sub">
-											<p><span>Subtotal:</span> <span>{{i.sub_total}}</span></p>
-											<p><span>Delivery:</span> <span>$0.00</span></p>
-											<p><span>Discount:</span> <span>$45.00</span></p>
-										</div> -->
-										
-										
-						{%if cart%}
-						
-										<div class="grand-total">
-											<p><span><strong>Total:</strong></span> <span>{{cart.total}}</span></p>
-											<a href="/order/checkout/"  class="btn btn-primary">Checkout</a>
-										</div>
-									
-										{%endif%}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			
 			</div>
-		</div>
+		
 
 
 

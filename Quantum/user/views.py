@@ -48,7 +48,7 @@ def product_detail(request,id):
 @never_cache
 def signin(request):
 
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and request.user.is_staff == False:
         messages.success(request,'You have already signed in. ')
         return redirect('home')
 
@@ -60,8 +60,9 @@ def signin(request):
 
 
         user = auth.authenticate(email = email,password = password)
+        print(users.objects.get(is_staff = 'False' ),'*********************************************************')
         
-        if user is not None and user.is_active == True:
+        if user is not None and user.is_active == True and user.is_staff == False:
             auth.login(request,user)
             return redirect('home')
         else:

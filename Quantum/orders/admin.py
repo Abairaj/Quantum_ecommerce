@@ -5,7 +5,7 @@ from.models import *
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
-    list_display = ('id', 'product_id', 'order_date','user_address','status') 
+    list_display = ('product_id','id','order_date','user_address','status') 
     
   
     ordering = ('order_date', )

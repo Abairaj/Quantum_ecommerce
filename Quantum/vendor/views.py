@@ -159,7 +159,7 @@ def vendor_salesreport(request):
 
 
 def vendor_signin(request):
-    if request.user.is_authenticated and request.user.is_staff == True:
+    if request.user.is_authenticated:
         return redirect('vendor_dashboard')
     if request.method == 'POST':
         email = request.POST['email']
@@ -300,8 +300,7 @@ class Order_management(TemplateView):
         context =  super().get_context_data(**kwargs)
         vendor_id = users.objects.get(id = self.request.user.id)
         product = Product.objects.filter(vendor_name = vendor_id)
-        print(product,'**********************************************************')
-        order = Order.objects.filter(status = 'Orderpending')
+        order = Order.objects.filter(is_active = 'True')
         for i in order:
            if i.product_id.vendor_name == vendor_id:
                 if order:
@@ -313,8 +312,9 @@ class Order_management(TemplateView):
 
 
 class Update_order_status(View):
-        
+    
     def post(self,request,**kwargs):
+
         id = self.kwargs.get('id')
         status = request.POST['status']
 
@@ -322,7 +322,7 @@ class Update_order_status(View):
 
         order.status = status
         order.save()
-        return 
+        return redirect('vendor_orders')
         
         
 

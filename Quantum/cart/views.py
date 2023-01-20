@@ -22,6 +22,8 @@ class  AddtocartAPIView (TemplateView):
     template_name = 'cart.html'
     
     def get(self,request, **kwargs):
+        
+        user = self.request.user
         #get product id
         product_id = self.kwargs['id']
        
@@ -81,6 +83,7 @@ class CartView(TemplateView):
 class ManageCartView(View):
 
     def get(self,request,*args,**kwargs):
+        user = self.request.user
         product_id =self.kwargs['id']
         action = self.kwargs.get('action')
         cart_item = Cart_items.objects.get(id = product_id)
@@ -123,6 +126,7 @@ class ManageCartView(View):
 class Manage_address_View(TemplateView):
     template_name = "addresses.html"
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data(**kwargs)
         address = Address.objects.all()
 
@@ -131,26 +135,10 @@ class Manage_address_View(TemplateView):
 
 
 
-
-
-
-
-
-
-
-    
-  
-
-
-
-
-
-
     
 @login_required(login_url='signin')
 def add_addressform(request):
     
-
     if request.POST:
         form = AddressForm(request.POST)
         print(form.errors)       
@@ -164,6 +152,7 @@ def add_addressform(request):
     
 @login_required(login_url='signin')
 def addressform(request):
+
     if request.POST:
         form = AddressForm(request.POST)
         print(form.errors) 
@@ -177,6 +166,7 @@ def addressform(request):
 
 
 def address_default(request,id,action):
+
     address = Address.objects.get(id = id)
 
     if action == 'default':

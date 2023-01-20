@@ -14,6 +14,7 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+import random
 # Create your views here.
 
 
@@ -22,12 +23,14 @@ from django.contrib.auth.decorators import login_required
 
 
 
-@method_decorator(login_required(login_url='signin'), name='dispatch')
+
 class CheckoutAPIView(TemplateView):
     template_name = 'checkout.html'
     form_class = AddressForm
-
+    
+    
     def get_context_data(self, **kwargs):
+        
         context = super().get_context_data(**kwargs) and {'form':self.form_class}
         cart_id = self.request.session.get("cart_id",None)
         if cart_id:
@@ -43,7 +46,11 @@ class PaymentAPI(View):
         amt = self.kwargs.get('amount')
         data = request.POST['payment_method']
         user_id = users.objects.get(id = request.user.id)
-        address =Address.objects.filter(default = True).get(user_id = user_id)
+        if Address.objects.exists():
+            address =Address.objects.filter(default = True).get(user_id = user_id)
+        else:
+             messages.warning(request,'Set a default address and continue order')
+             return redirect('checkout')
 
         if address:
                 Payment.objects.create(
@@ -65,6 +72,7 @@ class PaymentAPI(View):
 
         for i in cart_items:
             Order.objects.create(
+            id = random.randint(100000,999999),
             cart = cart,
             product_id = i.product,
             user_id = user_id,
@@ -72,7 +80,9 @@ class PaymentAPI(View):
             amount = i.price * i.quantity,
             quantity = i.quantity
                     )
+
             i.delete()
+            cart_items.delete()
             cart.total = 0
             cart.save()
 
@@ -80,11 +90,12 @@ class PaymentAPI(View):
     
         
 
-
-class User_dahboardView(TemplateView):
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+class OrderTracking(TemplateView):
      template_name = 'Dashboard.html'
 
      def get_context_data(self, **kwargs):
+          
           context =  super().get_context_data(**kwargs)
 
           order_id = Order.objects.filter(user_id = self.request.user.id)
@@ -96,6 +107,7 @@ class User_dahboardView(TemplateView):
     
    
 def thanku(request):
+    user = request.user
     return render(request,'thanku.html')
 
 

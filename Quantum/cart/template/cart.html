@@ -137,7 +137,7 @@
 											<p><span>Discount:</span> <span>$45.00</span></p>
 										</div> -->
 										
-										
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}			
 						{%if cart%}
 						
 										<div class="grand-total">
@@ -145,6 +145,7 @@
 											<a href="/order/checkout/"  class="btn btn-primary">Checkout</a>
 										</div>
 									
+										{%endif%}
 										{%endif%}
 									</div>
 								</div>

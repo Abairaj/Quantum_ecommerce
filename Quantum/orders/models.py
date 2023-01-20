@@ -39,7 +39,7 @@ class Payment(models.Model):
 
 
 class Order(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    id = models.CharField(max_length=10,primary_key=True)
     cart = models.ForeignKey(Cart,on_delete=models.CASCADE)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
@@ -48,3 +48,4 @@ class Order(models.Model):
     status = models.CharField(max_length=15, choices=Status_choices,default='Orderpending', null=True,blank=False)
     amount = models.PositiveIntegerField(default=0)
     quantity = models.IntegerField()
+    is_active = models.BooleanField(default=True,null=True)

@@ -140,7 +140,7 @@ class Address(models.Model):
     country=models.CharField(max_length=50)
     mobile=models.BigIntegerField()
     landmark=models.CharField(max_length=50)
-    default=models.BooleanField(default=False)
+    default=models.BooleanField(default=True)
 
     class Meta:
         verbose_name    =    "Address"

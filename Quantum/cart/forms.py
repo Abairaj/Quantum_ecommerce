@@ -15,7 +15,7 @@ class AddressForm(ModelForm):
     zip_code=forms.CharField(max_length=10)
     country=forms.CharField(max_length=50)
     mobile=forms.CharField(max_length=10)
-    default = forms.BooleanField()
+   
  
     
     class Meta:

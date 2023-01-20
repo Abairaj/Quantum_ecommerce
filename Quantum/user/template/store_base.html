@@ -93,15 +93,21 @@
 								<li class="has-dropdown">
 									<a href="{%url 'shop'%}">Shop</a>
 								</li>
+								{%if request.user.is_staff == False or request.user.is_superuser == False%}
 								<li class="has-dropdown">
-									<a href="/order/user_dashboard/">Orders</a>
+									<a href="{%url 'order_tracking'%}">Orders</a>
 								</li>
+								{%endif%}
 								<li><a href="{%url 'signin'%}">Login/Register</a></li>
                                 <li><a href="{%url 'vendor-signup'%}">Become a Seller</a></li>
+								{%if request.user.is_staff == False or request.user.is_superuser == False%}
 								<li><a href="{%url 'logout'%}">Logout</a></li>
-								{%block cart%}
+								{%endif%}
+							
+								{%if request.user.is_staff == False or request.user.is_superuser == False%}
 							<li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
-								{%endblock%}
+							{%endif%}
+								
 							</ul>
 						</div>
 					</div>

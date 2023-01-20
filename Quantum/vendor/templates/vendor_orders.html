@@ -65,7 +65,7 @@
                             {{i.quantity}}
                           </td>
                           <td>
-                            <form action="{%url 'update_orders' i.id%}" method="POST">
+                            <form action="" method="POST">
                               {% csrf_token %}
                               <div class="">
                                 <select name="status" >

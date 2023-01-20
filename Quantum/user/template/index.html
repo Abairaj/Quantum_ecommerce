@@ -3,10 +3,8 @@
 {%block title%}Home{%endblock%}
 {%block 1%}active{%endblock%}
 
-{%if users.is_authenticated%}
-{%block cart%}
+{%if request.user.is_authenticated and request.user.is_staff == False and request.user.is_superuser == False%}
 <li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
-{%endblock%}
 {%endif%}
 
 {%block content%}
@@ -19,7 +17,7 @@
 
 					{%if banner%}
 					{%for i in banner%}
-			   	<li style="background-image: url(https://content.rolex.com/dam/watches/watch-on-time-v3/m226659-0002/landscape_big.jpg);">
+			   	<li style="background-image: url({{i.banner_img.url}});">
 			   		<div class="overlay"></div>
 			   		<div class="container-fluid">
 			   			<div class="row">
