@@ -120,8 +120,9 @@
 
 					<div class="col-md-7 col-md-offset-1">
 						<div class="contact-wrap">
+							<a href="{% url 'add_address'%}" class="mr-3"><button class="btn btn-primary">Manage Address</button></a>
 							<h3>Billing Address</h3>
-							<form method="post" action="{%url 'add_address'%}" >
+							<form method="post" action="{%url 'address'%}" >
 
 								{%csrf_token%}
 

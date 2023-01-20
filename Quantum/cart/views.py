@@ -31,7 +31,7 @@ class  AddtocartAPIView (TemplateView):
         #check if cart exists()
         cart_id = self.request.session.get("cart_id",None)
         if cart_id:
-            cart = Cart.objects.get(id = cart_id)
+            cart = Cart.objects.get(user_id = self.request.user.id)
             in_cart =Cart_items.objects.filter(product = product)
 
 #  if items already exist in cart increase quantity and subtotal
@@ -50,7 +50,7 @@ class  AddtocartAPIView (TemplateView):
                 cart.save()
 
         else:
-            cart = Cart.objects.create(total = 0,user_id = users.objects.get(id = request.user.id))
+            cart = Cart.objects.create(total = 0,user_id = users.objects.get(id = self.request.user.id))
             self.request.session['cart_id'] = str(cart.id)
             cart_item = Cart_items.objects.create(
                 cart = cart, product = product, price = product.discount_price, quantity = 1, sub_total = product.discount_price
@@ -119,33 +119,15 @@ class ManageCartView(View):
         return redirect("cart")
         
 
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+class Manage_address_View(TemplateView):
+    template_name = "addresses.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        address = Address.objects.all()
 
-# class CheckoutAPIView(CreateView):
-#     template_name = 'checkout.html'
-#     form_class = AddressForm
-#     success_url = reverse_lazy('home')
-
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         cart_id = self.request.session.get("cart_id")
-#         if cart_id:
-#             cart = Cart.objects.get(id = cart_id)
-#         else:
-#             cart = None
-#         context['cart'] = cart
-#         return context
-    
-#     def form_valid(self,form):
-#         cart_id = self.request.session.get('cart_id')
-#         if cart_id:
-#             cart = Cart.objects.get(id = cart_id)
-            
-
-
-#         return super().form_valid(form)
-
-
+        context['address'] = address
+        return context
 
 
 
@@ -177,7 +159,7 @@ def add_addressform(request):
             form.instance.user = users.objects.get(id = request.user.id)
             form.save()
             return redirect('checkout')
-    return render(request,'contact.html',{'form':AddressForm})
+    return render(request,'addresses.html',{'form':AddressForm})
 
     
 @login_required(login_url='signin')
@@ -192,3 +174,24 @@ def addressform(request):
             form.save()
             return redirect('checkout')
     return render(request,'checkout.html',{'form':AddressForm})
+
+
+def address_default(request,id,action):
+    address = Address.objects.get(id = id)
+
+    if action == 'default':
+        address.default = True
+        address.save()
+
+        other = Address.objects.exclude(id = id)
+        for i in other:
+            i.default = False
+            i.save()
+
+        return redirect("add_address")
+    else:
+        address.delete()
+        messages.success(request,'successfully delted the address')
+        return redirect('add_address')
+
+    

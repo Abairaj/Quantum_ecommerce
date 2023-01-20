@@ -93,11 +93,14 @@
 								<li class="has-dropdown">
 									<a href="{%url 'shop'%}">Shop</a>
 								</li>
+								<li class="has-dropdown">
+									<a href="/order/user_dashboard/">Orders</a>
+								</li>
 								<li><a href="{%url 'signin'%}">Login/Register</a></li>
                                 <li><a href="{%url 'vendor-signup'%}">Become a Seller</a></li>
 								<li><a href="{%url 'logout'%}">Logout</a></li>
 								{%block cart%}
-								<li><a href=""><i class="icon-shopping-cart"></i> Cart [0]</a></li>
+							<li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
 								{%endblock%}
 							</ul>
 						</div>

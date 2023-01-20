@@ -1,0 +1,71 @@
+
+{%extends 'store_base.html'%}
+
+{% load widget_tweaks %}
+
+{%block title%}Checkout{%endblock%}
+{%block content%}
+
+
+
+
+
+		<div id="colorlib-contact" class="pt-5 mt-5">
+			<div class="container pt-5">
+				<div class="row">
+					{%if address%}
+					{%for i in address%}
+					<div class="col-md-4 col-md-offset-1">
+						<div class="contact-wrap">
+							<h3>Address</h3>
+
+							<h5>Name</h5>
+							<p style="color: black !important;">{{i.first_name}} {{i.last_name}}</p>
+							 <h5>Phone Number</h5>
+							 <p style="color: black !important;">{{i.mobile}}</p>
+							<h5>Address Line 1</h5>
+							<p style="color: black !important;">{{i.address_line_1}}</p>
+							<h5>Address Line 2</h5>
+							<p style="color: black !important;">{{i.address_line_2}}</p>
+							<h5>Country</h5>
+							<p style="color: black !important;">{{i.country}}</p>
+							<h5>State</h5>
+							<p style="color: black !important;">{{i.state}}</p>
+							<h5>City</h5>
+							<p style="color: black !important;">{{i.city}}</p>
+							<h5>Zip Code</h5>
+							<p style="color: black !important;">{{i.zip_code}}</p>
+							<h5>Landmark</h5>
+							<p style="color: black !important;">{{i.landmark}}</p>
+
+
+                                <div class="d-flex">
+                              {%if i.default == False%}
+                               
+							  <a href="/cart/address_default/{{i.id}}/default"><button class="btn btn-success"> Set default</button></a>
+
+							  {%endif%}
+
+							  <a href="/cart/address_default/{{i.id}}/delete"><button class="btn btn-danger"> Delete</button></a>
+							</div>
+
+
+
+								<!-- <div class="form-group text-center">
+									<input type="submit" value="Save" class="btn btn-primary">
+								</div>	 -->
+						</div>
+					</div>
+					{%endfor%}
+					{%endif%}
+			
+
+
+
+				</div>
+			</div>
+		</div>
+	
+
+
+		{%endblock%}

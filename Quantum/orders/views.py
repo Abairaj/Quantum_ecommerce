@@ -59,31 +59,39 @@ class PaymentAPI(View):
         cart_id = request.session.get('cart_id')
         cart = Cart.objects.get(id = cart_id)
         cart_items = Cart_items.objects.filter(cart = cart)
-        payment = Payment.objects.get(user_id = user_id)
         address =Address.objects.filter(default = True).get(user_id = user_id)
         print(address)
 
 
-        if payment:
-    
+        for i in cart_items:
             Order.objects.create(
-        cart = cart,
-        product_id = cart_items.product,
-        user_id = user_id,
-        user_address = address,
-        amount = cart.total,
-        quantity = cart_items.quantity
-                )
-            cart_items.delete()
+            cart = cart,
+            product_id = i.product,
+            user_id = user_id,
+            user_address = address,
+            amount = i.price * i.quantity,
+            quantity = i.quantity
+                    )
+            i.delete()
             cart.total = 0
             cart.save()
 
-            return redirect('thanku')
-        else:
-             messages.warning(request,'Enter the proper payment method and continue')
-             return redirect('checkout')
-
+        return redirect('thanku')
+    
         
+
+
+class User_dahboardView(TemplateView):
+     template_name = 'Dashboard.html'
+
+     def get_context_data(self, **kwargs):
+          context =  super().get_context_data(**kwargs)
+
+          order_id = Order.objects.filter(user_id = self.request.user.id)
+          context['order'] = order_id
+
+          return context
+     
 
     
    

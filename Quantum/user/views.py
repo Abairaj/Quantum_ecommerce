@@ -185,6 +185,7 @@ def verify_login(request,id):
 
 
 
+
 @login_required(login_url='/')
 def logout(request):
     auth.logout(request)

@@ -12,6 +12,7 @@ from django.views.generic import View,TemplateView,CreateView
 import random
 from sendotp import *
 from orders.models import Order
+from django.utils.decorators import method_decorator
 
 
 
@@ -291,20 +292,21 @@ def vendor_verify_login(request,id):
 
 
 
-
+@method_decorator(login_required(login_url='signin'), name='dispatch')
 class Order_management(TemplateView):
     template_name = 'vendor_orders.html'
 
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
-        vendor_id = self.request.user.id
+        vendor_id = users.objects.get(id = self.request.user.id)
         product = Product.objects.filter(vendor_name = vendor_id)
         print(product,'**********************************************************')
         order = Order.objects.filter(status = 'Orderpending')
-        print(order)
-        if order:
-            context['order'] = order
-            return context
+        for i in order:
+           if i.product_id.vendor_name == vendor_id:
+                if order:
+                        context['order'] = order
+                        return context
 
         
 
