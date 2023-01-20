@@ -3,25 +3,10 @@ from .views import *
 from .views import *
 
 urlpatterns = [
-    path('cart-items/<str:id>', CartItemAPIView.as_view(), name='cart-items'),
-    path('edit_cart-items/<str:id>/<str:cart_id>', edit_delete_CartItemAPIView.as_view(), name='edit_cart-items'),
-    path('add_cart-items/', Add_CartItemAPIView.as_view(), name='add_cart-items'),
-    
-    
-   
-    
-   
-    
-
-
-
-    # html
-
-    path('',cart,name='cart'),
-    path('delete_cart_item/<str:product_id>',delete_cart,name = 'del_cart'),
-    path('add_to_cart/<str:id>/<str:price>',add_to_cart,name = 'add_to_cart'),
-    path('manage_cart/<str:id>/<str:action>',manage_cart,name = 'manage_cart'),
-    path('checkout/',addressform,name = 'checkout'),
+    path('add_to_cart/<str:id>', AddtocartAPIView.as_view(), name='add_to_cart'),
+    path('', CartView.as_view(), name='cart'),
+    path('manage_cart/<str:id>/<str:action>', ManageCartView.as_view(), name='manage_cart'),
+    # path('checkout/',CheckoutAPIView.as_view(),name = 'checkout'),
     path('add_address/',add_addressform,name = 'add_address'), 
    
 

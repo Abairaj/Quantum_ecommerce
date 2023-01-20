@@ -23,7 +23,6 @@ from cart.models import *
 
 
 # Create your views here.
-@never_cache
 def home(request):
     context = {'banner':Banner.objects.all,'product':Product.objects.all()}
 
@@ -128,16 +127,7 @@ def signup(request):
 
                 user.save()
                 id = users.objects.get(id = user.id)
-                try:
-                   cart = Cart(
-                        user_id = id,
-                        total = 0
-                    )
 
-                   cart.save()
-
-                except Exception as e:
-                    print(e)
                 messages.success(request,'Registered successfully. Login with your credentials')
                 return redirect('signin')
             
@@ -180,9 +170,6 @@ def otp_login(request):
 
 
 def verify_login(request,id):
-    type(id)
-    print(id,'8888888888888888888888888888888888')
-
     
     if request.method == 'POST':
         otp = request.POST['otp']
@@ -193,28 +180,6 @@ def verify_login(request,id):
         else:
           return redirect('signup')
     return render(request,'otp.html',{'id':id})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

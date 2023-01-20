@@ -1,0 +1,338 @@
+
+{%extends 'store_base.html'%}
+
+{% load widget_tweaks %}
+
+{%block title%}Checkout{%endblock%}
+{%block content%}
+		<!-- <aside id="colorlib-hero" class="breadcrumbs">
+			<div class="flexslider">
+				<ul class="slides">
+			   	<li style="background-image: url(images/cover-img-1.jpg);">
+			   		<div class="overlay"></div>
+			   		<div class="container-fluid">
+			   			<div class="row">
+				   			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
+				   				<div class="slider-text-inner text-center">
+				   					<h1>Checkout</h1>
+				   					<h2 class="bread"><span><a href="index.html">Home</a></span> <span><a href="cart.html">Shopping Cart</a></span> <span>Checkout</span></h2>
+				   				</div>
+				   			</div>
+				   		</div>
+			   		</div>
+			   	</li>
+			  	</ul>
+		  	</div>
+		</aside> -->
+		<div class="text-center pb-5 pt-5 mb-5">
+			<h1>CHECKOUT</h1>
+		</div>
+
+		<div class="colorlib-shop pt-5 mt-5">
+			<div class="container">
+				<div class="row row-pb-md">
+					<div class="col-md-10 col-md-offset-1">
+						<div class="process-wrap">
+							<div class="process text-center active">
+								<p><span>01</span></p>
+								<h3>Shopping Cart</h3>
+							</div>
+							<div class="process text-center active">
+								<p><span>02</span></p>
+								<h3>Checkout</h3>
+							</div>
+							<div class="process text-center">
+								<p><span>03</span></p>
+								<h3>Order Complete</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+
+
+				
+					<div class="row row-pb-md">
+						<div class="col-md-10 col-md-offset-1">
+	
+							<div class="product-name">
+								<div class="one-forth text-center">
+									<span>Product Details</span>
+								</div>
+								<div class="one-eight text-center">
+									<span>Price</span>
+								</div>
+								<div class="one-eight text-center">
+									<span>Quantity</span>
+								</div>
+								<div class="one-eight text-center">
+									<span>Sub Total</span>
+								</div>
+								<div class="one-eight text-center">
+									<span>Actions</span>
+								</div>
+							</div>
+	
+
+						
+						{%if cart%}
+						{%for i in cart.cart_items_set.all%}
+						<div class="product-cart">
+							<div class="one-forth">
+								<div class="product-img" style="background-image: url(images/item-6.jpg);">
+								</div>
+								<div class="display-tc">
+									<h3>{{i.product.product_name}}</h3>
+								</div>
+							</div>
+							<div class="one-eight text-center">
+								<div class="display-tc">
+									<span class="price">{{i.price}}</span>
+								</div>
+							</div>
+							<div class="one-eight text-center">
+								<div class="d-flex pt-5">
+									
+									<a href="/cart/manage_cart/{{i.id}}/decrease"  class="btn btn-primary">-</a>
+									<input type="text" id="quantity" name="quantity" class="form-control input-number text-center ml-1 mr-1" value="{{i.quantity}}" min="1" max="100">
+									<a href="/cart/manage_cart/{{i.id}}/increase" class="btn btn-primary">+</a>
+								</div>
+							</div>
+							<div class="one-eight text-center">
+								<div class="display-tc">
+									<span class="price">{{i.sub_total}}</span>
+								</div>
+							</div>
+							<div class="one-eight text-center">
+								<div class="display-tc">
+									<a href="/cart/manage_cart/{{i.id}}/delete" class="btn btn-danger">x</a>
+								</div>
+							</div>
+						</div>
+						{%endfor%}
+						{%endif%}
+
+						</div>
+					</div>
+
+
+
+
+					<div class="col-md-7 col-md-offset-1">
+						<div class="contact-wrap">
+							<h3>Billing Address</h3>
+							<form method="post" action="{%url 'add_address'%}" >
+
+								{%csrf_token%}
+
+
+								<div class="col-md-12">
+									<div class="form-group">
+									  {%for err in form.country.errors %}
+									  <small class="text-danger">{{err}}</small>
+									  {%endfor%}
+									  
+										<label for="country">Select Country</label>
+									   <div class="form-field">
+										   <i class="icon icon-arrow-down3"></i>
+										  <select name="country" id="people" class="form-control">
+												<option value="#">Select country</option>
+											  <option value="India">India</option>
+											  <option value="UAE">UAE</option>
+											  <option value="Canads">Canada</option>
+											  <option value="UK">UK</option>
+										  </select>
+									   </div>
+									</div>
+								 </div>
+
+
+								<div class="form-group">
+									<div class="col-md-6">
+										{%for err in form.first_name.errors %}
+										<small class="text-danger">{{err}}</small>
+										{%endfor%}
+										<label for="fname">First Name</label>
+										
+										<p>{%render_field form.first_name class="form-control" type="text" id="first_name" name="first_name" placeholder="first_name"%}{%if form.is_bound%} value="{{form.first_name.value}}{%endif%}"</p>
+										
+										
+									</div>
+									<div class="col-md-6">
+										{%for err in form.last_name.errors %}
+										<small class="text-danger">{{err}}</small>
+										{%endfor%}
+										<label for="lname">Last Name</label>
+										<p>{%render_field form.last_name class="form-control" type="text" id="last_name" name="last_name" placeholder="last_name"%}{%if form.is_bound%} value="{{form.last_name.value}}{%endif%}"</p>
+									</div>
+								</div>
+
+								
+								<div class="col-md-12">
+									<div class="form-group">
+										{%for err in form.address_line_1.errors %}
+										<small class="text-danger">{{err}}</small>
+										{%endfor%}
+										<label for="fname">Address</label>
+										<p>{%render_field form.address_line_1 class="form-control" type="text" id="address_line_1" name="address_line_1" placeholder="Address line 1"%}{%if form.is_bound%} value="{{form.address_line_1.value}}{%endif%}"</p>
+			                  </div>					  
+			                  <div class="form-group">
+								{%for err in form.address_line_2.errors %}
+								<small class="text-danger">{{err}}</small>
+								{%endfor%}
+								<p>{%render_field form.address_line_2 class="form-control" type="text" id="address_line_2" name="address_line_2" placeholder="Address line 2"%}{%if form.is_bound%} value="{{form.address_line_2.value}}{%endif%}"</p>
+			                  </div>
+			               </div>
+
+
+						   <div class="col-md-12">
+							<div class="form-group">
+								{%for err in form.landmark.errors %}
+								<small class="text-danger">{{err}}</small>
+								{%endfor%}
+								<label for="landmark">Landmark</label>
+								<p>{%render_field form.landmark class="form-control" type="text" id="landmark" name="landmark" placeholder="landmark"%}{%if form.is_bound%} value="{{form.landmark.value}}{%endif%}"</p>
+					  </div>
+				   </div>
+
+
+
+				   <div class="form-group">
+					<div class="col-md-6">
+						{%for err in form.mobile.errors %}
+						<small class="text-danger">{{err}}</small>
+						{%endfor%}
+						<label for="Phone">Phone Number</label>
+						<p>{%render_field form.mobile class="form-control" type="text" id="mobile" name="mobile" placeholder="mobile"%}{%if form.is_bound%} value="{{form.mobile.value}}{%endif%}"</p>
+					</div>
+				</div>
+
+
+
+				   <div class="col-md-6">
+					<div class="form-group">
+						{%for err in form.city.errors %}
+						<small class="text-danger">{{err}}</small>
+						{%endfor%}
+						<label for="towncity">Town/City</label>
+						<p>{%render_field form.city class="form-control" type="text" id="city" name="city" placeholder="city"%}{%if form.is_bound%} value="{{form.city.value}}{%endif%}"</p>
+			  </div>
+		   </div>
+
+		                         
+		   <div class="form-group">
+			<div class="col-md-6">
+				{%for err in form.state.errors %}
+				<small class="text-danger">{{err}}</small>
+				{%endfor%}
+				<label for="stateprovince">State/Province</label>
+				<p>{%render_field form.state class="form-control" type="text" id="state" name="state" placeholder="state"%}{%if form.is_bound%} value="{{form.state.value}}{%endif%}"</p>
+			</div>
+			<div class="col-md-6">
+				{%for err in form.zip_code.errors %}
+				<small class="text-danger">{{err}}</small>
+				{%endfor%}
+				<label for="lname">Zip/Postal Code</label>
+				<p>{%render_field form.zip_code class="form-control" type="text" id="zip_code" name="zip_code" placeholder="zip_code"%}{%if form.is_bound%} value="{{form.zip_code.value}}{%endif%}"</p>
+			</div>
+			<div class="col-md-6">
+
+				<input type="radio" id="default" name="default" onclick="" value="toggle()">
+				<label for="Default">Default</label><br>
+			</div>
+		</div>
+
+
+
+					
+								<div class="form-group text-center">
+									<input type="submit" value="Submit" class="btn btn-primary">
+								</div>
+							</form>		
+						</div>
+					</div>
+
+                    
+
+						
+
+					<div class="col-md-4">
+						<div class="cart-detail">
+							<h2>Cart Total</h2>
+							<ul>
+								<li>
+
+									<ul>
+										{%if cart%}
+										{%for i in cart.cart_items_set.all%}
+										<li><span>{{i.product.product_name}}</span> <span>Rs. {{i.price}}</span></li>
+										{%endfor%}
+										{%endif%}
+									</ul>
+								</li>
+								<!-- <li><span>Shipping</span> <span>$0.00</span></li> -->
+								<li><span>Order Total</span> <span>Rs. {{cart.total}}</span></li>
+							</ul>
+							<div class="row d-flex justify-content-center">
+							<div class="col-md-7">
+
+
+								<h2>Payment Type</h2>
+								<form action="/order/payment/{{cart.total}}" method = 'POST'>
+									{%csrf_token%}
+								<input type="radio" id="COD" name="payment_method" value="Cash on Delivery">
+								   <label for="Cash on Delivery">Cash on Delivery</label><br>
+									<input type="radio" id="Razorpay" name="payment_method" value="Razorpay">
+									<label for="Razorpay">Razorpay</label><br>
+					
+							</div>
+								{%if cart%}				
+							<div class="col-md-6 pt-3 pr-5 mr-5 pt-5">
+								<p><a href=''><button   class="btn btn-primary" type="submit">Continue order</button></a></p>
+									
+							</div>
+							{%endif%}
+						
+
+					</form>
+
+
+						</div>
+						</div>
+
+
+
+					
+					
+					</div>
+
+				</div>
+
+
+
+
+				<div class="row pt-5 mt-4">
+
+
+										
+
+				</div>
+			</div>
+		</div>
+
+		<script>
+			let testBool = True;
+			  
+			console.log('Default value of bool is',
+									   testBool);
+		  
+			function toggle() {
+				testBool = !testBool;
+				  
+				console.log('Toggled bool is',
+									testBool);
+			}
+		</script>
+
+		
+{%endblock%}

@@ -6,7 +6,7 @@ from.models import *
 from vendor.models import*
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.views.generic import CreateView
+from django.views.generic import View,TemplateView,CreateView
 from django.http import HttpResponse
 from rest_framework import status
 from django.db.models import Q
@@ -14,174 +14,158 @@ import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 
 
-
-class edit_delete_CartItemAPIView(APIView):
-
-    def get_object(self,id):
-        try:
-            return Cart_items.objects.filter(cart = id)
-        except Cart_items.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-
-    def put(self,request,id,cart_id):
-        Cart_item = Cart_items.objects.get(Q(product = id) & Q(cart = cart_id))
-        print(request.data)
-        serializer = CartItemSerializer(Cart_item,data = request.data)
-        
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self,request,id,cart_id):
-        cart_item = Cart_items.objects.get(Q(product = id) & Q(cart = cart_id))
-        cart_item.delete()
-        
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+class  AddtocartAPIView (TemplateView):
+    template_name = 'cart.html'
     
+    def get(self,request, **kwargs):
+        #get product id
+        product_id = self.kwargs['id']
+       
+      #get product
+        product = Product.objects.get(id = product_id)
 
-class Add_CartItemAPIView(APIView):
-    def post(self,request):
-        print(request.data)
-        serializer = CartItemSerializer(data = request.data)
-        print(serializer)
+        #check if cart exists()
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            cart = Cart.objects.get(id = cart_id)
+            in_cart =Cart_items.objects.filter(product = product)
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        
-        return Response(serializer.errors,status = status.HTTP_400_BAD_REQUEST)
+#  if items already exist in cart increase quantity and subtotal
+            if in_cart.exists():
+                cart_items = in_cart.last()
+                cart_items.quantity += 1
+                cart_items.sub_total += product.discount_price
+                cart_items.save()
+                cart.total += product.discount_price
+                cart.save()
+# if new item addedd to cart ne cart product will be created
+            else:
+                cart_item = Cart_items.objects.create(cart = cart, product = product, price = product.discount_price,quantity = 1,sub_total = product.discount_price)
+                cart_item.save()
+                cart.total += product.discount_price
+                cart.save()
 
-
-
-class CartItemAPIView(APIView):
-
-    def get_object(self,id):
-        try:
-            return Cart_items.objects.filter(cart = id)
-        except Cart_items.DoesNotExist:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-
-    def get(self,request,id):
-        cart_item = self.get_object(id)
-        serializer = CartItemSerializer(cart_item,many = True)
-        return Response(serializer.data)
-
-    def delete(self,request,id):
-        cart_item = Cart_items.objects.get(cart = id)
-        cart_item.delete()
-        
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
-
-
-# html part
-@login_required(login_url='/signin')
-def cart(request):
-    user_id = request.user.id
-    print(user_id)
-    cart = Cart.objects.filter(user_id = user_id)
-    cart_items = cart[0].id
-    response = requests.get(f'http://127.0.0.1:8000/cart/cart-items/{cart_items}')
-    data = response.json()
-    dat = {'items':data}
-    for i in range(len(data)):
-        d= dat['items'][i]['product']
-        Product_name = Product.objects.filter(id = d)[0].product_name
-        dat['items'][i].update({'p_name':Product_name})
-    return render(request,'cart.html',{'dat':dat,'grand_total':cart[0].total})
-
-
-@login_required(login_url='/signin')
-def delete_cart(request,product_id):
-    user_id = request.user.id
-    print(user_id)
-    cart_id = Cart.objects.filter(user_id = user_id)[0].id
-    print(cart_id)
-    product = Product.objects.get(id = product_id)
-    cart = Cart.objects.get(user_id = request.user.id)
-# if cart item get deleted total and subtotal will be deducted by price of the deleted item
-    cart_item = Cart_items.objects.get(product = product_id)
-    cart.total -=  cart_item.sub_total
-    cart.save() 
-    response = requests.delete(f'http://127.0.0.1:8000/cart/edit_cart-items/{product_id}/{cart_id}')
-    messages.success(request,'cart item removed successfully')
-    return redirect('cart')
-# --------------------------------------------------------------------------------------------------------------
-
-@login_required(login_url='/signin')
-def add_to_cart(request,id,price):
-    
-    product = Product.objects.get(id = id)
-    cart = Cart.objects.get(user_id = request.user.id)
-    cartitem = Cart_items.objects.filter(product = id)
-    
-# if existing items added to cart again quantity will increase 
-    if cartitem.exists():
-        cart_product = cartitem.last()
-        cart_product.quantity += 1
-        cart_product.sub_total += product.discount_price
-        cart_product.save()
-        cart.total += product.discount_price
-        cart.save()
-    else:
-        cart_id = cart.id
-        cart_id = str(cart_id)
-        cart.total += product.discount_price
-        cart.save()
-        data = {'cart':cart_id,'product':id,'quantity': 1 ,'price':price,'sub_total':price} 
-        response = requests.post('http://127.0.0.1:8000/cart/add_cart-items/',json = data)
-
-        
-
-        messages.success(request,'Item added to cart')
-    return redirect('shop')
-
-
-@login_required(login_url='/signin')
-def manage_cart(request,id,action):
-
-    product = Product.objects.get(id = id)
-    cart = Cart.objects.get(user_id = request.user.id)
-    cartitem = Cart_items.objects.get(product = id)
-
-# Increasing qiantity using + button
-    if action == "increase":
-        cartitem.quantity += 1
-        cartitem.sub_total += product.discount_price
-        cartitem.save()
-        cart.total += product.discount_price
-        cart.save()
-        return redirect('cart')
-
-# Decreasing qiantity using - button
-    if action == "decrease":
-        if cartitem.quantity == 1:
-            cartitem.delete()
-            return redirect('cart')
         else:
-            cartitem.quantity -= 1
-            cartitem.sub_total -= product.discount_price
-            cartitem.save()
-            cart.total -= product.discount_price
+            cart = Cart.objects.create(total = 0,user_id = users.objects.get(id = request.user.id))
+            self.request.session['cart_id'] = str(cart.id)
+            cart_item = Cart_items.objects.create(
+                cart = cart, product = product, price = product.discount_price, quantity = 1, sub_total = product.discount_price
+            )
+           
+            cart.total += product.discount_price
             cart.save()
-            return redirect('cart')
+
+           
+        #check if product already exist in cart
+        return redirect("cart")
+
+
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+class CartView(TemplateView):
+    template_name = "cart.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_id = self.request.session.get("cart_id",None)
+        if cart_id:
+            cart = Cart.objects.get(id = cart_id)
+        else:
+            cart = None
+        context['cart'] = cart
+        return context
+
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+class ManageCartView(View):
+
+    def get(self,request,*args,**kwargs):
+        product_id =self.kwargs['id']
+        action = self.kwargs.get('action')
+        cart_item = Cart_items.objects.get(id = product_id)
+        cart = cart_item.cart
+        cart.save()
+  
+   
+        if action == 'increase':
+            cart_item.quantity += 1
+            cart_item.sub_total += cart_item.price
+            cart_item.save()
+            cart.total += cart_item.price
+            cart.save()
+
+
+        if action == 'decrease':
+            if cart_item.quantity == 1:
+                cart_item.delete()
+                cart.total -= cart_item.price
+                cart.save()
+                return redirect('cart')
+            cart_item.quantity -= 1
+            cart_item.sub_total -= cart_item.price
+            cart_item.save()
+            cart.total -= cart_item.price
+            cart.save()
+            
+
+        if action == 'delete':
+            cart.total -= cart_item.sub_total
+            cart.save()
+            cart_item.delete()
+
+
+
+        return redirect("cart")
+        
+
+
+# class CheckoutAPIView(CreateView):
+#     template_name = 'checkout.html'
+#     form_class = AddressForm
+#     success_url = reverse_lazy('home')
+
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         cart_id = self.request.session.get("cart_id")
+#         if cart_id:
+#             cart = Cart.objects.get(id = cart_id)
+#         else:
+#             cart = None
+#         context['cart'] = cart
+#         return context
     
-    return redirect('cart')
+#     def form_valid(self,form):
+#         cart_id = self.request.session.get('cart_id')
+#         if cart_id:
+#             cart = Cart.objects.get(id = cart_id)
+            
+
+
+#         return super().form_valid(form)
+
+
+
+
+
+
+
+
+
+
 
 
     
-# Address form
+  
+
+
+
+
+
+
+    
+@login_required(login_url='signin')
 def add_addressform(request):
     
 
@@ -192,18 +176,19 @@ def add_addressform(request):
 
             form.instance.user = users.objects.get(id = request.user.id)
             form.save()
-            return redirect('home')
+            return redirect('checkout')
     return render(request,'contact.html',{'form':AddressForm})
 
     
-# Address form
+@login_required(login_url='signin')
 def addressform(request):
     if request.POST:
         form = AddressForm(request.POST)
-        print(form.errors)       
-        if form.is_valid():
+        print(form.errors) 
 
+        if form.is_valid():
+            
             form.instance.user = users.objects.get(id = request.user.id)
             form.save()
-            return redirect('home')
+            return redirect('checkout')
     return render(request,'checkout.html',{'form':AddressForm})

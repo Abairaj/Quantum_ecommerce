@@ -25,9 +25,6 @@
                             Order Id
                           </th>
                           <th>
-                            Username
-                          </th>
-                          <th>
                             product Name
                           </th>
                           <th>
@@ -45,32 +42,43 @@
                         </tr>
                       </thead>
                       <tbody>
+                        {%if order%}
+                        {%for i in order%}
                         <tr>
                           <td class="py-1">
-                            1
+                           #ORDER_ {{i.id}}
+                           
                           </td>
                           <td>
-                            Herman Beck
+                            {{i.product_id.product_name}}
                           </td>
                           <td>
-                            Rolex legend
+                           {{i.order_date.date}}
                           </td>
                           <td>
-                            May 15, 2015
+                            {{i.amount}}
                           </td>
                           <td>
-                            11,000
-                          </td>
-                          <td>
-                            Delivered
+                            <form action="{%url 'update_orders' i.id%}" method="POST">
+                              {% csrf_token %}
+                              <div class="">
+                                <select name="status" >
+                                  <option value="">{{i.status}}</option>
+                                 <option value="OrderPending">OrderPending</option>
+                                 <option value="Packed">Packed</option>
+                                 <option value="Shipped">Shipped</option>
+                                 <option value="Delivered">Delivered</option>
+                                 <option value="Cancelled">Cancelled</option>
+                                </select>
+                                 </div>
                           </td>
                           <td >
-                            <div style="justify-content: space-around;">
-                              <div class="d-flex justify-content-between">
-                                <h4><a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h4>
-                                <h4><a href="#"><i class="fa-solid fa-trash"></i></a></h4>
+                            {%endfor%}
+                            {%endif%}
+                              <div class="d-flex justify-content-center">
+                                <h4><button class="btn btn-primary">Submit</button></h4>
+                              </form>
                               </div>
-                          </div>
                           </td> 
                         </tr>
 

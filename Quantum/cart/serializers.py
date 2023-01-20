@@ -28,7 +28,12 @@ class Formserializer(serializers.ModelSerializer):
     mobile= serializers.CharField(max_length=10)
 
 
+
 class AddressAPIserializer(serializers.ModelSerializer):
     class Meta:
         model = Address
         fields = ('__all__')
+
+
+
+

@@ -15,7 +15,7 @@
 				   			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
 				   				<div class="slider-text-inner text-center">
 				   					<h1>Shopping Cart</h1>
-				   					<h2 class="bread"><span><a href="{%url 'home'%}">Home</a></span> <span><a href="{%url 'shop'%}">Shop</a></span> <span><a href="{%url 'cart'%}">Cart</a></span></h2>
+				   					<h2 class="bread"><span><a href="{%url 'home'%}">Home</a></span> <span><a href="{%url 'shop'%}">Shop</a></span> <span><a href="">Cart</a></span></h2>
 				   				</div>
 				   			</div>
 				   		</div>
@@ -24,6 +24,7 @@
 			  	</ul>
 		  	</div>
 		</aside> -->
+		
 
 		<div class="text-center mt-5 pt-5 pb-5 mb-5">
 			<h1>SHOPPING CART</h1>
@@ -70,14 +71,14 @@
 							</div>
 						</div>
 
-						{%if dat.items%}
-						{%for i in dat.items%}
+						{%if cart%}
+						{%for i in cart.cart_items_set.all%}
 						<div class="product-cart">
 							<div class="one-forth">
 								<div class="product-img" style="background-image: url(images/item-6.jpg);">
 								</div>
 								<div class="display-tc">
-									<h3>{{i.p_name}}</h3>
+									<h3>{{i.product.product_name}}</h3>
 								</div>
 							</div>
 							<div class="one-eight text-center">
@@ -88,9 +89,9 @@
 							<div class="one-eight text-center">
 								<div class="d-flex pt-5">
 									
-									<a href="/cart/manage_cart/{{i.product}}/decrease"  class="btn btn-primary">-</a>
+									<a href="/cart/manage_cart/{{i.id}}/decrease"  class="btn btn-primary">-</a>
 									<input type="text" id="quantity" name="quantity" class="form-control input-number text-center ml-1 mr-1" value="{{i.quantity}}" min="1" max="100">
-									<a href="/cart/manage_cart/{{i.product}}/increase" class="btn btn-primary">+</a>
+									<a href="/cart/manage_cart/{{i.id}}/increase" class="btn btn-primary">+</a>
 								</div>
 							</div>
 							<div class="one-eight text-center">
@@ -100,7 +101,7 @@
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<a href="/cart/delete_cart_item/{{i.product}}" class="btn btn-danger">x</a>
+									<a href="/cart/manage_cart/{{i.id}}/delete" class="btn btn-danger">x</a>
 								</div>
 							</div>
 						</div>
@@ -136,11 +137,14 @@
 											<p><span>Discount:</span> <span>$45.00</span></p>
 										</div> -->
 										
-										{%if grand_total%}
+										
+						{%if cart%}
+						
 										<div class="grand-total">
-											<p><span><strong>Total:</strong></span> <span>{{grand_total}}</span></p>
-											<a href="/cart/checkout/"  class="btn btn-primary">Checkout</a>
+											<p><span><strong>Total:</strong></span> <span>{{cart.total}}</span></p>
+											<a href="/order/checkout/"  class="btn btn-primary">Checkout</a>
 										</div>
+									
 										{%endif%}
 									</div>
 								</div>

@@ -5,7 +5,7 @@ from.models import *
 
 class OrderAdmin(admin.ModelAdmin):
     model = Order
-    list_display = ('id', 'product_id', 'payment_type', 'order_date','user_address','status') 
+    list_display = ('id', 'product_id', 'order_date','user_address','status') 
     
   
     ordering = ('order_date', )
@@ -20,10 +20,10 @@ admin.site.register(Order,OrderAdmin)
 
 class PaymentAdmin(admin.ModelAdmin):
     model = Order
-    list_display = ('user_id', 'order_id', 'amount', 'payment_method','expiry_date','is_active') 
+    list_display = ('user_id', 'amount', 'payment_method','expiry_date','is_active') 
     
 
-    ordering = ('order_id', )
+
     filter_horizontal =()
     list_filter = ()
     fieldsets =()

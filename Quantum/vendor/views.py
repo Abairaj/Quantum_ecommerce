@@ -7,8 +7,11 @@ from django.core.validators import validate_email
 from django.contrib import auth
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
+from rest_framework.renderers import TemplateHTMLRenderer
+from django.views.generic import View,TemplateView,CreateView
 import random
 from sendotp import *
+from orders.models import Order
 
 
 
@@ -139,8 +142,7 @@ def delete_product(request,id):
 
 
 
-def vendor_orders(request):
-    return render(request,'vendor_orders.html')
+
 
 
 def vendor_coupon(request):
@@ -290,9 +292,47 @@ def vendor_verify_login(request,id):
 
 
 
+class Order_management(TemplateView):
+    template_name = 'vendor_orders.html'
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        vendor_id = self.request.user.id
+        product = Product.objects.filter(vendor_name = vendor_id)
+        print(product,'**********************************************************')
+        order = Order.objects.filter(status = 'Orderpending')
+        print(order)
+        if order:
+            context['order'] = order
+            return context
+
+        
+
+
+
+class Update_order_status(View):
+        
+    def post(self,request,**kwargs):
+        id = self.kwargs.get('id')
+        status = request.POST['status']
+
+        order = Order.objects.get(id = id)
+
+        order.status = status
+        order.save()
+        return 
+        
+        
+
+
+
+
+
+
+
+
 
 @login_required(login_url='/vendor-signin')
 def logout(request):
     auth.logout(request)
-    request.session['username'].flush()
     return redirect('vendor-signin')
