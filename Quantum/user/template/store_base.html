@@ -28,6 +28,7 @@
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
 	
+	<script src="path/to/zoom.js"></script>
 	<!-- lightbox -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css"></script>
 	<!-- Animate.css -->
@@ -206,7 +207,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</div>
 	
 	<!-- jQuery -->
-	<script src="{%static '/store/js/jquery.min.js'%}"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<!-- jQuery Easing -->
 	<script src="{%static '/store/js/jquery.easing.1.3.js'%}"></script>
 	<!-- Bootstrap -->
@@ -224,19 +225,41 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<script src="{%static '/store/js/bootstrap-datepicker.js'%}"></script>
 	<!-- Stellar Parallax -->
 	<script src="{%static '/store/js/jquery.stellar.min.js'%}"></script>
-	<!-- lightbox -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
-	<script>
-		$(document).ready(function(){
-			$('.thumb-nail a').mouseover(function(e){
-				e.preventDefault();
-				$('.img-box').attr("src",$(this).attr("href"));
-			})
-			
-		})
-	</script>
+
 	<!-- Main -->
 	<script src="{%static '/store/js/main.js'%}"></script>
+
+	<!-- zoomjquery -->
+
+
+	<script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script>
+
+
+	<script>
+		function change_image(image){
+	
+	var container = document.getElementById("main-image");
+	
+	container.src = image.src;
+	}
+	
+	
+	
+	document.addEventListener("DOMContentLoaded", function(event) {
+	
+	});
+
+	
+// zoom
+    // var options = {
+    //     width: 400,
+    //     zoomWidth: 500,
+    //     offset: {vertical: 0, horizontal: 10}
+    //     };
+    // new ImageZoom(document.getElementById("image-container"), options);
+ 
+
+	</script>
 
 	</body>
 </html>

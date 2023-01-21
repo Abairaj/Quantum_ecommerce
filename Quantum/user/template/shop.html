@@ -40,7 +40,9 @@
 								<p class="tag"><span class="new">New</span></p>
 								<div class="cart">
 									<p>
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
 										<span class="addtocart"><a href="/cart/add_to_cart/{{i.id}}"><i class="icon-shopping-cart"></i></a></span> 
+										{%endif%}
 										<span><a href="/product_details/{{i.id}}"><i class="icon-eye"></i></a></span> 
 										<span><a href="#"><i class="icon-heart3"></i></a></span>
 										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>

@@ -35,12 +35,20 @@
 
 								<div class="col-md-5" data-mdb-zoom-effect="true" data-mdb-auto-height="true">
 									<div class="product-entry">
-										<div class="product-img" style="background-image: url({{i.image_1.url}});">
+										<div  class="product-image-container" id="image-container" style="height: 550px;">
+											<img src="{{i.image_1.url}}" alt="product_img" class="image-fluid" id="main-image"style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
 										</div>
-										<div class="thumb-nail">
-											<a href="#" class="thumb-img" style="background-image: url({{i.image_1.url}});"></a>
-											<a href="#" class="thumb-img" style="background-image: url({{i.image_2.url}});"></a>
-											<a href="#" class="thumb-img" style="background-image: url({{i.image_3.url}});"></a>
+
+										<div class="thumb-nail thumbnail-container">
+											<div class="thumb-img">
+												<img src="{{i.image_1.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+											</div>
+											<div class="thumb-img">
+												<img src="{{i.image_2.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+											</div>
+											<div class="thumb-img">
+												<img src="{{i.image_3.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+											</div>
 										</div>
 									</div>
 								</div>
@@ -50,8 +58,8 @@
 									<div class="desc">
 										<h3>{{i.product_name}}</h3>
 										<p class="price">
-											<del>{{i.price}}</del> 
-											<p>{{i.discount_price}}</p>
+											<del style="color:brown;" >{{i.price}}</del> 
+											<p style="color: black !important;">{{i.discount_price}}</p>
 											<span class="rate text-right">
 												<i class="icon-star-full"></i>
 												<i class="icon-star-full"></i>
@@ -82,7 +90,9 @@
                                  	</div>
                         			</div>
 										</div>
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
 										<p><a href="/cart/add_to_cart/{{i.id}}" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
+										{%endif%}
 									</div>
 								</div>
 							</div>
@@ -192,6 +202,7 @@
 				</div>
 			</div>
 		</div>
+
 
 
 {%endblock%}

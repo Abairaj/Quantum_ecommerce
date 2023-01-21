@@ -60,7 +60,6 @@ def signin(request):
 
 
         user = auth.authenticate(email = email,password = password)
-        print(users.objects.get(is_staff = 'False' ),'*********************************************************')
         
         if user is not None and user.is_active == True and user.is_staff == False:
             auth.login(request,user)
@@ -74,8 +73,6 @@ def signin(request):
 
 @never_cache
 def signup(request):
-    if request.user.is_authenticated:
-      return redirect('home')
     if request.method == 'POST':
             first_name = request.POST['firstname']
             last_name = request.POST['lastname']

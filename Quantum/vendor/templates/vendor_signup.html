@@ -1,3 +1,195 @@
+
+{%extends 'store_base.html'%}
+
+
+{%block title%}Vendor Signup{%endblock%}
+{%block content%}
+
+
+
+
+		<div id="colorlib-contact" class="pt-5 mt-5">
+			<div class="container pt-5">
+				<div class="row d-flex justify-content-center">
+					<div class="col-md-6 col-md-offset-1">
+						<div class="contact-wrap">
+							<h3>Vendor Signup</h3>
+                            {%if messages%}
+                            {%for message in messages%}
+                            <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                                <strong></strong> {{message}}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                            {%endfor%}
+                            {%endif%}
+							<form action="/vendor/vendor-signup/" method="POST">
+
+								{%csrf_token%}
+
+
+
+								
+								<div class="col-md-12">
+									<div class="form-group col-md-6">
+										<label for="fname">First Name</label>
+                                        <input type="text" class="form-control"  id="firstname" name="firstname" placeholder="First Name" required>
+										
+			                  </div>	
+                        <div class="form-group col-md-6">
+                          <label for="lname">Last Name</label>
+                                              <input type="text" class="form-control"  id="lastname" name="lastname" placeholder="Last Name" required>
+                          
+                              </div>				  
+
+			               </div>
+
+                     								
+								<div class="col-md-12">
+									<div class="form-group col-md-6">
+										<label for="Email">Email</label>
+                                        <input type="email" class="form-control"  id="Email" name="email" placeholder="Email" required>
+										
+			                  </div>	
+                        <div class="form-group col-md-6">
+                          <label for="mobile">Mobile</label>
+                                              <input type="number" class="form-control"  id="mobile" name="phone" placeholder="Mobile" required>
+                          
+                              </div>				  
+
+			               </div>
+
+                     <div class="col-md-12">
+                      <div class="form-group col-md-6">
+                          <label for="GSTIN">GSTIN</label>
+                          <input type="GSTIN" class="form-control"  id="GSTIN" name="gstin" placeholder="GSTIN" required>
+                          
+                </div>			
+                
+
+             </div>
+
+
+                           <div class="col-md-12">
+                            <div class="form-group col-md-6">
+                                <label for="pass-1">Password</label>
+                                <input type="password" class="form-control"  id="pass-1" name="pass-1" placeholder="password" required>
+                                
+                      </div>			
+                      
+                      <div class="form-group col-md-6">
+                        <label for="pass-2">Password</label>
+                        <input type="password" class="form-control"  id="pass-2" name="pass-2" placeholder="password" required>
+                        
+              </div>	
+
+                   </div>
+
+                   <div class="pb-3">
+                    <div class="text-center pt-4 text-muted">Already have an account? <a href="{%url 'vendor-signin'%}">Sign in</a>
+                    </div>
+                   </div>
+
+                   <div class="form-group text-center pt-2">
+                    <input type="submit" value="Signup" class="btn btn-primary">
+                  </div>
+
+					
+							</form>		
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		{%endblock%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

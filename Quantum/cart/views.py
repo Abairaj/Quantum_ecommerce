@@ -156,13 +156,17 @@ def addressform(request):
     if request.POST:
         form = AddressForm(request.POST)
         print(form.errors) 
+        
 
         if form.is_valid():
             
             form.instance.user = users.objects.get(id = request.user.id)
             form.save()
             return redirect('checkout')
-    return render(request,'checkout.html',{'form':AddressForm})
+        else:
+            messages.warning(request,' Please submit the form with proper values')
+            return redirect('checkout')
+    return render('checkout',{'form':form})
 
 
 def address_default(request,id,action):
