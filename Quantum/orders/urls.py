@@ -9,6 +9,8 @@ urlpatterns = [
     path('payment/<str:amount>',PaymentAPI.as_view(),name='payment'),
     path('thanku/',thanku,name='thanku'),
     path('order_tracking/',OrderTracking.as_view(),name = 'order_tracking'),
+    path('success/',success.as_view(),name = 'success')
+                                                 
 
 
  ]

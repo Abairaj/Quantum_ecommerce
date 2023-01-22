@@ -18,6 +18,7 @@ admin.site.register(Order,OrderAdmin)
 
 
 
+
 class PaymentAdmin(admin.ModelAdmin):
     model = Order
     list_display = ('user_id', 'amount', 'payment_method','expiry_date','is_active') 
@@ -30,3 +31,18 @@ class PaymentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Payment,PaymentAdmin)
+
+
+
+class razorpay_detailsAdmin(admin.ModelAdmin):
+    model = razorpay_details
+    list_display = ('razorpay_order_id','razorpay_payment_id','razorpay_payment_signature') 
+    
+  
+    ordering = ('razorpay_order_id', )
+    filter_horizontal =()
+    list_filter = ()
+    fieldsets =()
+
+
+admin.site.register(razorpay_details,razorpay_detailsAdmin)

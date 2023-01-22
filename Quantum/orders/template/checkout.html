@@ -257,23 +257,27 @@
 
 
 								<h2>Payment Type</h2>
-								<form action="/order/payment/{{cart.total}}" method = 'POST'>
+								<form action="/order/payment/{{cart.total}}" method = 'POST' id="pay-option">
 									{%csrf_token%}
-								<input type="radio" id="COD" name="payment_method" value="Cash on Delivery">
+								<input type="radio" id="COD" name="payment_method" onchange="changeButtonId()" value="Cash on Delivery">
 								   <label for="Cash on Delivery">Cash on Delivery</label><br>
-									<input type="radio" id="Razorpay" name="payment_method" value="Razorpay">
+									<input type="radio" id="Razorpay" onchange="changeButtonId()" name="payment_method" value="Razorpay">
 									<label for="Razorpay">Razorpay</label><br>
 					
 							</div>
 								{%if cart%}				
 							<div class="col-md-6 pt-3 pr-5 mr-5 pt-5">
-								<p><a href=''><button   class="btn btn-primary" type="submit">Continue order</button></a></p>
+								<p><a href=''><button id=""  class="btn btn-primary" type="">Continue order</button></a></p>
 									
 							</div>
 							{%endif%}
+
+
 						
 
 					</form>
+
+					<p><a href=''><button id="rzp-button1"  class="btn btn-primary" type="">Continue order</button></a></p>
 
 
 						</div>
@@ -299,19 +303,80 @@
 			</div>
 		</div>
 
-		<script>
-			let testBool = True;
-			  
-			console.log('Default value of bool is',
-									   testBool);
-		  
-			function toggle() {
-				testBool = !testBool;
-				  
-				console.log('Toggled bool is',
-									testBool);
-			}
-		</script>
+		<!-- <script>
+	function changeButtonId(){
+		var button = document.getElementById("pay-btn");
+
+		if (document.getElementById("COD").checked){
+			button.id = "";
+		}else if
+		(document.getElementById("Razorpay").checked)
+		{
+			button.id = "rzp-button1"
+			button.type = ''
+	
+		}
+	}
+
+
+	
+	
+		</script> -->
+
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<script>
+	var options = {
+		"key": "rzp_test_YSiLo2PdxfSWUw", // Enter the Key ID generated from the Dashboard
+		"amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+		"currency": "INR",
+		"name": "Quantum Times",
+		"description": "Test Transaction",
+		"image": "https://example.com/your_logo",
+		"order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+		"handler": function (response){
+			
+	
+
+			window.location.href = `http://127.0.0.1:8000/order/success/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}`
+			// alert(response.razorpay_payment_id);
+			// alert(response.razorpay_order_id);
+			// alert(response.razorpay_signature)
+		},
+		"prefill": {
+			"name": "{{cart.user_id.first_name}}",
+			"email": "{{cart.user_id.email}}",
+			"contact": "{{cart.user_id.email}}"
+		},
+		"notes": {
+			"address": "Razorpay Corporate Office"
+		},
+		"theme": {
+			"color": "#3399cc"
+		}
+	};
+	var rzp1 = new Razorpay(options);
+	rzp1.on('payment.failed', function (response){
+			alert(response.error.code);
+			alert(response.error.description);
+			alert(response.error.source);
+			alert(response.error.step);
+			alert(response.error.reason);
+			alert(response.error.metadata.order_id);
+			alert(response.error.metadata.payment_id);
+	});
+	document.getElementById('rzp-button1').onclick = function(e){
+		rzp1.open();
+		e.preventDefault();
+	}
+	</script>
+
+
+
 
 		
 {%endblock%}

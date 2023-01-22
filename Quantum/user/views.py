@@ -62,6 +62,8 @@ def signin(request):
         user = auth.authenticate(email = email,password = password)
         
         if user is not None and user.is_active == True and user.is_staff == False:
+            cart = Cart.objects.get(user_id = user.id)
+            request.session['cart_id'] = str(cart)
             auth.login(request,user)
             return redirect('home')
         else:
@@ -123,8 +125,17 @@ def signup(request):
 
                 )
 
-                user.save()
                 id = users.objects.get(id = user.id)
+
+                cart = Cart.objects.create(
+                     user_id = id,
+                     total = 0
+                )
+                
+                cart.save()
+                request.session['cart_id'] = str(cart)
+                print(request.session.get('cart_id'))
+            
 
                 messages.success(request,'Registered successfully. Login with your credentials')
                 return redirect('signin')

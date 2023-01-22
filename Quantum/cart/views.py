@@ -31,7 +31,8 @@ class  AddtocartAPIView (TemplateView):
         product = Product.objects.get(id = product_id)
 
         #check if cart exists()
-        cart_id = self.request.session.get("cart_id",None)
+        cart_id = self.request.session.get('cart_id')
+        print(cart_id)
         if cart_id:
             cart = Cart.objects.get(user_id = self.request.user.id)
             in_cart =Cart_items.objects.filter(product = product)
@@ -52,14 +53,9 @@ class  AddtocartAPIView (TemplateView):
                 cart.save()
 
         else:
-            cart = Cart.objects.create(total = 0,user_id = users.objects.get(id = self.request.user.id))
-            self.request.session['cart_id'] = str(cart.id)
-            cart_item = Cart_items.objects.create(
-                cart = cart, product = product, price = product.discount_price, quantity = 1, sub_total = product.discount_price
-            )
-           
-            cart.total += product.discount_price
-            cart.save()
+          messages.warning(request,'invalid account')
+          return redirect('home')
+
 
            
         #check if product already exist in cart

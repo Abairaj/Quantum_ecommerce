@@ -15,6 +15,8 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 import random
+import razorpay
+from django.conf import settings
 # Create your views here.
 
 
@@ -37,6 +39,15 @@ class CheckoutAPIView(TemplateView):
             cart = Cart.objects.get(id = cart_id)
         else:
             cart = None
+        try:
+          client = razorpay.Client(auth =(settings.KEY , settings.SECRET))
+          payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
+          cart.razorpay_order_id = payment['id']
+          cart.save()
+          context['payment'] = payment
+          print(payment)
+        except Exception as e:
+            print(e)
         context['cart'] = cart
         return context
     
@@ -53,10 +64,10 @@ class PaymentAPI(View):
              return redirect('checkout')
 
         if address:
-                Payment.objects.create(
+                payment =Payment.objects.create(
                     user_id = user_id,
                     amount = amt,
-                    payment_method = data
+                    payment_method = data,
                 )
         else:
              messages.warning(request,'Add a default address and try again')
@@ -74,6 +85,7 @@ class PaymentAPI(View):
             Order.objects.create(
             id = random.randint(100000,999999),
             cart = cart,
+            payment_id = Payment.objects.get(id = payment.id),
             product_id = i.product,
             user_id = user_id,
             user_address = address,
@@ -104,7 +116,72 @@ class OrderTracking(TemplateView):
           return context
      
 
-    
+class success(View):
+
+    def get(self,request, **kwargs):
+         cart = self.request.session['cart_id']
+         cart = Cart.objects.get(id = cart)
+         user_id = users.objects.get(id = self.request.user.id)
+         if Address.objects.exists():
+                address =Address.objects.filter(default = True).get(user_id = user_id)
+         else:
+             messages.warning(self.request,'Set a default address and continue order')
+             return redirect('checkout')
+
+         if address:
+                
+                raz_details = razorpay_details.objects.create(
+                     
+                razorpay_order_id = self.request.GET.get('razorpay_order_id'),
+                razorpay_payment_id =self.request.GET.get('razorpay_payment_id'),
+                razorpay_payment_signature =self.request.GET.get('razorpay_signature'),
+                )
+                
+
+
+
+
+
+                payment =Payment.objects.create(
+                    user_id = user_id,
+                    amount = cart.total,
+                    payment_method = 'Razorpay',
+                    raz_id = raz_details
+
+                )
+         else:
+             messages.warning(self.request,'Add a default address and try again')
+             return redirect('checkout')
+
+        # creating order
+         cart_id = self.request.session.get('cart_id')
+         cart = Cart.objects.get(id = cart_id)
+         cart_items = Cart_items.objects.filter(cart = cart)
+         address =Address.objects.filter(default = True).get(user_id = user_id)
+         print(address)
+
+
+         for i in cart_items:
+            order =Order.objects.create(
+            id = random.randint(100000,999999),
+            cart = cart,
+            payment_id = Payment.objects.get(id = payment.id),
+            product_id = i.product,
+            user_id = user_id,
+            user_address = address,
+            amount = i.price * i.quantity,
+            quantity = i.quantity
+                    )
+
+            i.delete()
+            cart_items.delete()
+            cart.total = 0
+            cart.save()
+
+            return redirect('thanku')
+
+
+
    
 def thanku(request):
     user = request.user

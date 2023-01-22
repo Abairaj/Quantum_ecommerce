@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'admin_app',
     'cart',
     'orders',
+    'razorpay_payment'
     
     
 ]
@@ -149,3 +150,7 @@ MEDIA_URL = 'media/'
 
 TWILIO_ACCOUNT_SID ='AC133a1c34281bdc064bd85af563df66cd'
 TWILIO_AUTH_TOKEN = 'd9f8662e4fbe760fa7a8711ff1207d3d'
+
+
+KEY = 'rzp_test_YSiLo2PdxfSWUw'
+SECRET = 'pEcPzuvlQBWbOgiOj5gXelYF'
