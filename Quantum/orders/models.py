@@ -48,6 +48,7 @@ class Order(models.Model):
     cart = models.ForeignKey(Cart,on_delete=models.CASCADE)
     payment_id = models.ForeignKey(Payment,on_delete=models.CASCADE,null = True,blank=True)
     product_id = models.ForeignKey(Product,on_delete=models.CASCADE)
+    Variant = models.ForeignKey(Variant,on_delete=models.CASCADE,null=True,blank=True)
     order_date = models.DateTimeField(auto_now_add=True)
     user_id = models.ForeignKey(users,on_delete=models.CASCADE)
     user_address = models.ForeignKey(Address,on_delete=models.CASCADE)

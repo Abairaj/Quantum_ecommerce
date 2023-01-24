@@ -6,6 +6,13 @@ urlpatterns = [
     path('vendor-signup/',views.vendor_signup,name='vendor-signup'),
     path('vendor-logout/',views.logout,name = 'vendor-logout'),
     path('vendor_products/',views.vendor_products,name = 'vendor_products'),
+    path('variant_view/',views.variant_view,name = 'variant_view'),   
+    path('vendor_variant/<str:id>',views.variant,name = 'vendor_variant'),
+    path('add_variant/<str:id>',views.add_variants,name = 'add_variant'),
+    path('add_variant_re',views.add_variants,name = 'add_variant_re'),
+    path('edit_variant/<str:id>',views.edit_variant,name = 'edit_variant'),
+    path('delete_variant/<str:id>',views.delete_variants,name = 'delete_variant'),
+    
     path('vendor_orders/', views.Order_management.as_view(),name = 'vendor_orders'),
     path('update_orders/<int:id>', views.Update_order_status.as_view(),name = 'update_orders'),
     path('vendor_coupon/', views.vendor_coupon,name = 'vendor_coupon'),

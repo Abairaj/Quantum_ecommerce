@@ -30,14 +30,14 @@ def home(request):
 
 
 def shop(request):
-    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10]}
+    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all(),'image':Image.objects.all()}
     return render(request,'shop.html',context)
 
 
 
 def product_detail(request,id):
       
-    context ={'product':Product.objects.filter(id=id)}
+    context ={'product':Product.objects.filter(id=id),'variant':Variant.objects.filter(Product = id),'image':Image.objects.filter(variant = id.variant)}
 
     print(context)
 
@@ -62,6 +62,7 @@ def signin(request):
         user = auth.authenticate(email = email,password = password)
         
         if user is not None and user.is_active == True and user.is_staff == False:
+
             cart = Cart.objects.get(user_id = user.id)
             request.session['cart_id'] = str(cart)
             auth.login(request,user)

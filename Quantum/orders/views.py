@@ -14,15 +14,28 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+import hmac
 import random
 import razorpay
 from django.conf import settings
 # Create your views here.
 
 
+client = razorpay.Client(auth =(settings.KEY , settings.SECRET))
 
+def split_payment(amount,admin_percentage,id):
+     
+     admin_amount = (admin_percentage/100) * amount * 100
 
+     vendor_amount = (amount - admin_amount) * 100
 
+     payment = client.payment.capture(amount,id)
+
+     client.refund.create(payment["id"], {"amount": vendor_amount})
+
+    # refund the admin's share of the payment
+     client.refund.create(payment["id"], {"amount": admin_amount})
+     return payment
 
 
 
@@ -37,17 +50,15 @@ class CheckoutAPIView(TemplateView):
         cart_id = self.request.session.get("cart_id",None)
         if cart_id:
             cart = Cart.objects.get(id = cart_id)
+
         else:
             cart = None
-        try:
-          client = razorpay.Client(auth =(settings.KEY , settings.SECRET))
-          payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
-          cart.razorpay_order_id = payment['id']
-          cart.save()
-          context['payment'] = payment
-          print(payment)
-        except Exception as e:
-            print(e)
+        
+        payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
+        cart.razorpay_order_id = payment['id']
+        cart.save()
+        context['payment'] = payment
+        print(payment)
         context['cart'] = cart
         return context
     
@@ -122,6 +133,12 @@ class success(View):
          cart = self.request.session['cart_id']
          cart = Cart.objects.get(id = cart)
          user_id = users.objects.get(id = self.request.user.id)
+         cart_items = Cart_items.objects.filter(cart = cart)
+         total_perc = 0 
+         for i in cart_items:
+                admin_per = i.product.category.commission * i.quantity
+                total_perc += admin_per
+         print(total_perc,'************************************************************')
          if Address.objects.exists():
                 address =Address.objects.filter(default = True).get(user_id = user_id)
          else:
@@ -140,7 +157,12 @@ class success(View):
 
 
 
+                # generated_signature = hmac.new(raz_details.razorpay_order_id + "|" + raz_details.razorpay_payment_id, secret);
 
+                # if not (generated_signature == raz_details.razorpay_payment_signature):
+                #         messages.warning(request,'Payment is not successfull try again')
+                #         return redirect('checkout')
+  
 
                 payment =Payment.objects.create(
                     user_id = user_id,
@@ -186,6 +208,10 @@ class success(View):
 def thanku(request):
     user = request.user
     return render(request,'thanku.html')
+
+
+
+
 
 
 

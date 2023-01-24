@@ -7,7 +7,7 @@ from.models import *
 
 class AdminProduct(admin.ModelAdmin):
     model = Product
-    list_display = ('product_name', 'price', 'discount_price', 'category','brand','quantity') 
+    list_display = ('product_name', 'category','brand') 
     
     readonly_fields = ('time_added',)
     ordering = ('time_added', )
@@ -17,3 +17,33 @@ class AdminProduct(admin.ModelAdmin):
 
 
 admin.site.register(Product,AdminProduct)
+
+
+class Admincolor(admin.ModelAdmin):
+    model = Color
+    list_display = ('name', 'product') 
+
+
+    def __str__(self):
+        return self.color.product
+
+
+admin.site.register(Color,Admincolor)
+
+
+
+
+class AdminVariant(admin.ModelAdmin):
+    model = Variant
+
+    list_display = ( 'color','price','discount_percentage','quantity') 
+    
+
+    def __str__(self):
+        return self.product
+
+
+admin.site.register(Variant,AdminVariant)
+
+
+admin.site.register(Image)

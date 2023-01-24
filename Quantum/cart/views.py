@@ -15,6 +15,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
 
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
@@ -131,7 +132,7 @@ class Manage_address_View(TemplateView):
 
 
 
-    
+@never_cache
 @login_required(login_url='signin')
 def add_addressform(request):
     

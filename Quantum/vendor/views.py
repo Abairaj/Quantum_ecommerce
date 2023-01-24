@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from user.models import users
 from admin_app.models import *
-from .models import Product
+from .models import Product,Color,Variant,Image
 from django.core.validators import validate_email
 from django.contrib import auth
 from django.views.decorators.cache import never_cache
@@ -42,18 +42,16 @@ def add_product(request):
         
         product_name = request.POST['product_name']
         product_description = request.POST['product_description']
-        product_price = request.POST['product_price']
-        discount_price = request.POST['discount_price']
-        quantity = request.POST['stock']
-        image_1 = request.FILES['img-1']
-        image_2 = request.FILES['img-2']
-        image_3 = request.FILES['img-3']
         category_id= request.POST['category']
         brand_id= request.POST['brand']
-
+        images = request.FILES['image']
+        color = str(request.POST['color'])
         category = Category.objects.get(category_name = category_id)
         brand = Brand.objects.get(brand_name = brand_id)
         vendor_id = users.objects.get(id = request.user.id)
+        colors = color.split(',')
+
+        
       
 
 
@@ -63,19 +61,25 @@ def add_product(request):
         product = Product(
          product_name = product_name,
         product_description = product_description,
-        price = product_price,
-        discount_price = discount_price,
-        quantity = quantity,
-        image_1 = image_1,
-        image_2 = image_2,
-        image_3 = image_3,
         category= category,
         brand = brand,
-        vendor_name = vendor_id
+        vendor_name = vendor_id,
+        product_image = images
       
           )
 
         product.save()
+
+        for i in colors:
+            colour = Color (
+                product = Product.objects.get(id = product.pk),
+                name = i
+
+            )
+
+            colour.save()
+
+
         messages.success(request,'Product added successfully')
         return redirect('vendor_products')
   
@@ -86,25 +90,34 @@ def add_product(request):
 @login_required(login_url='/vendor-signin')
 def edit_product(request,id):
 
-    context ={'brand':Brand.objects.all(),'categorys':Category.objects.all(),'product':Product.objects.filter(id = id)}
+    colors = []
+
+
+    context ={'brand':Brand.objects.all(),'categorys':Category.objects.all(),'product':Product.objects.filter(id = id),'colour':Color.objects.filter(product = id)}
 
 
     if request.method == 'POST':
         product_name = request.POST['product_name']
         product_description = request.POST['product_description']
-        product_price = request.POST['product_price']
-        discount_price = request.POST['discount_price']
-        quantity = request.POST['stock']
-        image_1 = request.FILES['img-1']
-        image_2 = request.FILES['img-2']
-        image_3 = request.FILES['img-3']
         category_id= request.POST['category']
         brand_id= request.POST['brand']
+        image = request.FILES['image']
+
+        for i in Color.objects.filter(product = id):
+            print(i.id)
+            g = request.POST[f'color{i.id}']
+            print(g)
+            colors.append(g)
+        
+        colors = iter(colors)
+        
+        print(colors)
 
 
         category = Category.objects.get(category_name = category_id)
         brand = Brand.objects.get(brand_name = brand_id)
-        vendor_id = users.objects.get(id = request.user.id)
+        vendor_id = users.objects.get(id = request.user.id)        
+        
       
 
 
@@ -115,20 +128,26 @@ def edit_product(request,id):
             id = id,
          product_name = product_name,
         product_description = product_description,
-        price = product_price,
-        discount_price = discount_price,
-        quantity = quantity,
-        image_1 = image_1,
-        image_2 = image_2,
-        image_3 = image_3,
         category= category,
         brand = brand,
         vendor_name = vendor_id,
+        product_image = image,
         time_added = datetime.now()
       
           )
 
         product.save()
+
+        colour_id = Color.objects.filter(product = product.pk)
+        
+        for i in colour_id:
+                colour = Color(
+                    id = i.id,
+                    product = Product.objects.get(id = product.pk),
+                    name = next(colors)
+                )
+
+                colour.save()
         messages.success(request,'Product updated successfully')
         return redirect('vendor_products')
   
@@ -142,7 +161,139 @@ def delete_product(request,id):
     return redirect('vendor_products')
 
 
+@login_required(login_url='/vendor-signin')
+def variant_view(request):
+    product = {
+        'product':Product.objects.all().filter(vendor_name = request.user.id)
+    }
+    return render(request,'variant_view.html',product)
 
+
+
+@login_required(login_url='/vendor-signin')
+def variant(request,id):
+    product=Product.objects.get(id = id)
+    variant =Variant.objects.filter(Product = id)
+    variants = {
+        'variant':variant,'product':product
+                                         }
+
+    return render(request,'variants.html',variants)
+
+
+
+
+
+def add_variants(request,id):
+    context = {
+        'product':Product.objects.get(id = id),'color':Color.objects.filter(product = id)
+    }
+
+    if request.method == 'POST':
+        color = request.POST['color']
+        price = request.POST['price']
+        discount = request.POST['discount']
+        quantity = request.POST['stock']
+        image_1 = request.FILES['image-1']
+        image_2 = request.FILES['image-2']
+        image_3 = request.FILES['image-3']
+        image_4 = request.FILES['image-4']
+
+        colour = Color.objects.filter(product = id).get(name = color)
+        print(colour)
+
+
+
+        images = Image.objects.create(
+            product = Product.objects.get(id = id),
+            image_1 = image_1,
+            image_2 = image_2,
+            image_3 = image_3,
+    
+        )
+
+
+
+        variant = Variant.objects.create(
+            Product = Product.objects.get(id = id),
+            color = colour,
+            price = price,
+            discount_percentage = discount,
+            quantity = quantity,
+            image = Image.objects.get( id=images.pk),
+            final_price = (int(price) * int(discount)) / 100
+                                          
+        )
+
+
+
+        return redirect('add_variant',id)
+
+    return render(request,'add_variant.html',context)
+
+
+def edit_variant(request,id):
+    variants = Variant.objects.get(id = id)
+    context = {
+        'variant':Variant.objects.filter(id = id), 'color':Color.objects.filter(product = variants.Product.pk)
+    }
+
+
+    if request.method == 'POST':
+        color = request.POST['color']
+        price = request.POST['price']
+        discount = request.POST['discount']
+        quantity = request.POST['stock']
+        image_1 = request.FILES['image-1']
+        image_2 = request.FILES['image-2']
+        image_3 = request.FILES['image-3']
+        colour = Color.objects.filter(product = variants.Product.pk).get(name = color)
+        img = Image.objects.get(id = variants.Product.pk)
+    
+
+        
+        print(colour,'////////////////////////////////////////////////////////////////////////////////////////////////////////////')
+
+        
+
+
+                
+        # imageid = Image.objects.get(product =  variants.Product.pk)
+
+        images = Image(
+            id = Image.objects.get(id = img.pk).pk,
+            image_1 = image_1,
+            image_2 = image_2,
+            image_3 = image_3,
+        )
+
+
+        images.save()
+       
+        variant = Variant(
+            id = id,
+            Product = Product.objects.get(id = variants.Product.pk),
+            color = colour,
+            price = price,
+            discount_percentage = discount,
+            image = images.pk,
+            quantity = quantity,
+            final_price = (float(price) * float(discount))/ 100
+                                          
+        )
+
+        variant.save()
+
+        return redirect('edit_variant',variants.pk)
+
+    return render(request,'edit_variant.html',context)
+
+
+
+def delete_variants(request,id):
+    variant = Variant.objects.get(id = id)
+    variant.delete()
+    return redirect('vendor_variant',variant.Product.pk)
 
 
 

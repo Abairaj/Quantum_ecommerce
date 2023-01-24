@@ -1,0 +1,30 @@
+{%extends 'dash_base.html'%}
+
+{%block title%}Products{%endblock%}
+         
+              
+
+
+{%block table%}
+
+<div class="container">
+
+  <div class="row">
+{%if product%}
+{%for i in product%}
+<div class="card col-12 col-md-3 mt-5 d-flex justify-content-center" style="width: 18rem;">
+  <img src="{{i.image.url}}" class="card-img-top text-center" style="width: 240px;height: 200px;" alt="...">
+  <div class="card-body text-center">
+    <a href="{%url 'vendor_variant' i.id%}" class="btn btn-primary pb-0"><h4 class="card-title">{{i.product_name}}</h4></a>
+  </div>
+</div>
+{%endfor%}
+{%endif%}
+
+</div>
+        
+</div>
+</div>
+        {%endblock%}
+
+

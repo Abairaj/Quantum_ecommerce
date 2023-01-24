@@ -1,5 +1,5 @@
 from django.db import models
-from vendor.models import Product
+from vendor.models import Product,Variant
 from user.models import users
 import uuid
 
@@ -19,6 +19,7 @@ class Cart(models.Model):
 class Cart_items(models.Model):
     cart =models.ForeignKey(Cart,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    variant = models.ForeignKey(Variant,on_delete=models.CASCADE,null=True,blank=True)
     quantity = models.IntegerField(default=0)
     price = models.DecimalField(max_digits=15,decimal_places=2)
     sub_total = models.PositiveIntegerField()
