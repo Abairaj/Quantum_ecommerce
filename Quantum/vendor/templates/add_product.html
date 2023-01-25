@@ -24,7 +24,7 @@
      <div class="form-group col-sm-6">
       <label for="name"  class="col-sm-3 control-label">Product Name</label>
       <div class="">
-        <input type="text" class="form-control" name="product_name" id="name" placeholder="Product name">
+        <input type="text" class="form-control" name="product_name" id="name" placeholder="Product name" required>
       </div>
     </div> <!-- form-group // -->
 
@@ -32,7 +32,7 @@
     <div class="form-group col-sm-6">
         <label for="name"  class="col-sm-6 control-label">Product Description</label>
         <div class="">
-            <textarea class="form-control" name="product_description"></textarea>
+            <textarea class="form-control" name="product_description" required></textarea>
         </div>
       </div> <!-- form-group // -->
 </div>
@@ -46,7 +46,7 @@
 
       <div class=""> 
         <label class="control-label small" for="date_start">Colour</label>
-        <input type="text" class="form-control" name="color" id="color" placeholder="Colour">
+        <input type="text" class="form-control" name="color" id="color" placeholder="Colour" required>
     </div> <!-- form-group // -->
     </div>
 
@@ -55,7 +55,7 @@
 
     <div class="form-group col-sm-6">
       <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image_1</label> <input type="file" name="image">
+        <label class="control-label small" for="file_img">Image</label> <input type="file" name="image" required>
       </div>
       
     </div> <!-- form-group // -->
@@ -67,7 +67,7 @@
     <div class="form-group col-sm-5">
       <label for="category" class="col-sm-6 control-label">Select Category</label>
       <div class="">
-     <select class="form-control" name="category">
+     <select class="form-control" name="category" required>
       <option value="">Category</option>
       {%if categorys%}
       {%for i in categorys%}
@@ -79,11 +79,24 @@
       </div>
     </div> <!-- form-group // -->
 
+    <div class="form-group col-sm-6">
+      <label for="qty" class="col-sm-6 control-label">Max Price</label>
+      <div class="">
+     <input type="text" class="form-control" name="price" id="price" placeholder="Price" required>
+      </div>
+    </div> <!-- form-group // -->
+    <div class="form-group col-sm-6">
+      <label for="qty" class="col-sm-6 control-label">Max Discount</label>
+      <div class="">
+     <input type="text" class="form-control" name="discount" id="price" placeholder="Discount in percentage" required>
+      </div>
+    </div> <!-- form-group // -->
+
 
     <div class="form-group col-sm-5">
         <label for="brand" class="col-sm-6 control-label">Select Brand</label>
         <div class="">
-       <select class="form-control" name="brand">
+       <select class="form-control" name="brand" required>
         <option value="">Brand</option>
         {%if brand%}
         {%for i in brand%}

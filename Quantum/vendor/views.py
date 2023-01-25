@@ -46,10 +46,16 @@ def add_product(request):
         brand_id= request.POST['brand']
         images = request.FILES['image']
         color = str(request.POST['color'])
+        max_price = request.POST['price']
+        max_discount = request.POST['discount']
+        final_price = float(max_price) - (float(max_discount)/100)*float(max_price)
         category = Category.objects.get(category_name = category_id)
         brand = Brand.objects.get(brand_name = brand_id)
         vendor_id = users.objects.get(id = request.user.id)
         colors = color.split(',')
+
+
+
 
         
       
@@ -64,7 +70,11 @@ def add_product(request):
         category= category,
         brand = brand,
         vendor_name = vendor_id,
-        product_image = images
+        product_image = images,
+        max_price = max_price,
+        max_discount = max_discount,
+        final_price = final_price
+
       
           )
 
@@ -101,13 +111,18 @@ def edit_product(request,id):
         product_description = request.POST['product_description']
         category_id= request.POST['category']
         brand_id= request.POST['brand']
+        max_price = request.POST['price']
+        max_discount = request.POST['discount']
+        final_price = float(max_price) - (float(max_discount)/100)*float(max_price)
         image = request.FILES['image']
+        colors = []
 
         for i in Color.objects.filter(product = id):
             print(i.id)
             g = request.POST[f'color{i.id}']
             print(g)
             colors.append(g)
+        
         
         colors = iter(colors)
         
@@ -129,6 +144,9 @@ def edit_product(request,id):
          product_name = product_name,
         product_description = product_description,
         category= category,
+        max_price = max_price,
+        max_discount  = max_discount,
+        final_price = final_price,
         brand = brand,
         vendor_name = vendor_id,
         product_image = image,
@@ -145,6 +163,7 @@ def edit_product(request,id):
                     id = i.id,
                     product = Product.objects.get(id = product.pk),
                     name = next(colors)
+                    
                 )
 
                 colour.save()
@@ -185,8 +204,9 @@ def variant(request,id):
 
 
 def add_variants(request,id):
+    product = Product.objects.get(id = id)
     context = {
-        'product':Product.objects.get(id = id),'color':Color.objects.filter(product = id)
+        'product':product,'color':Color.objects.filter(product = id)
     }
 
     if request.method == 'POST':
@@ -197,10 +217,18 @@ def add_variants(request,id):
         image_1 = request.FILES['image-1']
         image_2 = request.FILES['image-2']
         image_3 = request.FILES['image-3']
-        image_4 = request.FILES['image-4']
+    
 
         colour = Color.objects.filter(product = id).get(name = color)
         print(colour)
+        
+        if float(price) > float(product.max_price):
+            messages.warning(request,f'Price can\'t be greater than {product.max_price}.Make changes in product and try again ')
+            return redirect('add_variant',id)
+        if float(discount) > float(product.max_discount):
+            messages.warning(request,f'Discount more than {product.max_discount} is not possible.Make changes in product and try again')
+            return redirect('add_variant',id)
+
 
 
 
@@ -221,7 +249,7 @@ def add_variants(request,id):
             discount_percentage = discount,
             quantity = quantity,
             image = Image.objects.get( id=images.pk),
-            final_price = (int(price) * int(discount)) / 100
+            final_price = float(price) - (float(discount) / 100) * float(price) 
                                           
         )
 
@@ -234,6 +262,7 @@ def add_variants(request,id):
 
 def edit_variant(request,id):
     variants = Variant.objects.get(id = id)
+    product = variants.Product
     context = {
         'variant':Variant.objects.filter(id = id), 'color':Color.objects.filter(product = variants.Product.pk)
     }
@@ -252,6 +281,14 @@ def edit_variant(request,id):
     
 
         
+
+        if float(price) > (product.max_price):
+            messages.warning(request,f'Price can\'t be greater than {product.max_price}.Make changes in product and try again ')
+            return redirect('add_variant',id)
+        if float(discount) > float(product.max_discount):
+            messages.warning(request,f'Discount more than {product.max_discount} is not possible.Make changes in product and try again')
+            return redirect('add_variant',id)
+
         print(colour,'////////////////////////////////////////////////////////////////////////////////////////////////////////////')
 
         
@@ -259,16 +296,20 @@ def edit_variant(request,id):
 
                 
         # imageid = Image.objects.get(product =  variants.Product.pk)
+        print(Image.objects.get(pk = id).id)
+        img_id = Image.objects.get(id = variants.image.id)
+        print('==========================================================================')
 
-        images = Image(
-            id = Image.objects.get(id = img.pk).pk,
+        images = Image.objects.filter(pk =variants.image.id)        
+        images.update( 
+            id = img_id.id,
+            product = Product.objects.get(id =variants.Product.pk),
             image_1 = image_1,
             image_2 = image_2,
             image_3 = image_3,
         )
 
 
-        images.save()
        
         variant = Variant(
             id = id,
@@ -276,9 +317,9 @@ def edit_variant(request,id):
             color = colour,
             price = price,
             discount_percentage = discount,
-            image = images.pk,
+            image = images.get(id = variants.image.pk),
             quantity = quantity,
-            final_price = (float(price) * float(discount))/ 100
+            final_price = float(price) - (float(discount) / 100) * float(price) 
                                           
         )
 

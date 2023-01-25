@@ -26,7 +26,7 @@
      <div class="form-group col-sm-6">
       <label for="name"  class="col-sm-3 control-label">Product Name</label>
       <div class="">
-        <input type="text" class="form-control" name="product_name" id="name" placeholder="Product name" value="{{i.product_name}}">
+        <input type="text" class="form-control" name="product_name" id="name" placeholder="Product name" value="{{i.product_name}}" required>
       </div>
     </div> <!-- form-group // -->
 
@@ -34,7 +34,7 @@
     <div class="form-group col-sm-6">
         <label for="name"  class="col-sm-6 control-label">Product Description</label>
         <div class="">
-            <textarea class="form-control"  name="product_description">{{i.product_description}}</textarea>
+            <textarea class="form-control"  name="product_description" required>{{i.product_description}}</textarea>
         </div>
       </div> <!-- form-group // -->
 </div>
@@ -44,7 +44,7 @@
   {%for i in colour%}
   <div class=""> 
     <label class="control-label small" for="date_start">Colour</label>
-    <input type="text" class="form-control"value = '{{i.name}}' name="color{{i.id}}" id="color" placeholder="Colour">
+    <input type="text" class="form-control"value = '{{i.name}}' name="color{{i.id}}" id="color" placeholder="Colour" required>
 </div> <!-- form-group // -->
 {%endfor%}
 </div>
@@ -56,19 +56,32 @@
 
     <div class="form-group col-sm-6">
       <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image_1</label> <input type="file" name="image" value="{{i.image.url}}">
+        <label class="control-label small" for="file_img">Image</label> <input type="file" name="image" value="{{i.image.url}}" required>
       </div>
      
     </div> <!-- form-group // -->
 
 </div>
 
+<div class="form-group col-sm-6">
+  <label for="qty" class="col-sm-6 control-label">Max Price</label>
+  <div class="">
+ <input type="text" class="form-control" name="price" value="{{i.max_price}}" id="price" placeholder="Price" required>
+  </div>
+</div> <!-- form-group // -->
+<div class="form-group col-sm-6">
+  <label for="qty" class="col-sm-6 control-label">Max percentage</label>
+  <div class="">
+ <input type="text" class="form-control" name="discount" value="{{i.max_discount}}" id="price" placeholder="Discount in percentage" required>
+  </div>
+</div> <!-- form-group // -->
+
     <div class="row">
 
     <div class="form-group col-sm-5">
       <label for="category" class="col-sm-6 control-label">Select Category</label>
       <div class="">
-     <select class="form-control" name="category">
+     <select class="form-control" name="category" required>
       <option value="">Category</option>
       {%if categorys%}
       {%for i in categorys%}
@@ -84,7 +97,7 @@
     <div class="form-group col-sm-5">
         <label for="brand" class="col-sm-6 control-label">Select Brand</label>
         <div class="">
-       <select class="form-control" name="brand">
+       <select class="form-control" name="brand" required>
         <option value="">Brand</option>
         {%if brand%}
         {%for i in brand%}

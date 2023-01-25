@@ -22,36 +22,44 @@ from django.views.decorators.cache import never_cache
 class  AddtocartAPIView (TemplateView):
     template_name = 'cart.html'
     
+    
     def get(self,request, **kwargs):
         
         user = self.request.user
         #get product id
-        product_id = self.kwargs['id']
+        variant_id = self.kwargs['id']
        
       #get product
-        product = Product.objects.get(id = product_id)
+        product = Variant.objects.get(id = variant_id)
+        product_id = Product.objects.get(id = product.Product.pk)
 
         #check if cart exists()
         cart_id = self.request.session.get('cart_id')
         print(cart_id)
         if cart_id:
             cart = Cart.objects.get(user_id = self.request.user.id)
-            in_cart =Cart_items.objects.filter(product = product)
+            in_cart =Cart_items.objects.filter(variant = product.pk)
 
 #  if items already exist in cart increase quantity and subtotal
             if in_cart.exists():
                 cart_items = in_cart.last()
+                if cart_items.quantity == product.quantity:
+                    messages.warning(request,"The item is currently out of stock")
+                    return redirect('cart')
                 cart_items.quantity += 1
-                cart_items.sub_total += product.discount_price
+                cart_items.sub_total += product.final_price
                 cart_items.save()
-                cart.total += product.discount_price
+                cart.total += product.final_price
                 cart.save()
+
 # if new item addedd to cart ne cart product will be created
             else:
-                cart_item = Cart_items.objects.create(cart = cart, product = product, price = product.discount_price,quantity = 1,sub_total = product.discount_price)
+                cart_item = Cart_items.objects.create(cart = cart,product =product_id, variant = product, price = product.final_price,quantity = 1,sub_total = product.final_price)
                 cart_item.save()
-                cart.total += product.discount_price
+                cart.total += product.price
                 cart.save()
+             
+
 
         else:
           messages.warning(request,'invalid account')
@@ -79,21 +87,32 @@ class CartView(TemplateView):
 @method_decorator(login_required(login_url='signin'), name='dispatch')
 class ManageCartView(View):
 
+   
+
+
     def get(self,request,*args,**kwargs):
         user = self.request.user
-        product_id =self.kwargs['id']
+        variant_id =self.kwargs['id']
+
         action = self.kwargs.get('action')
-        cart_item = Cart_items.objects.get(id = product_id)
+        cart_item = Cart_items.objects.get(id = variant_id)
+        print( Variant.objects.get(id = variant_id),'////////////////////////////////////////////////////////////////////////////////')
+        variant = Variant.objects.get(id = variant_id)
         cart = cart_item.cart
         cart.save()
   
    
         if action == 'increase':
+          if variant.quantity < cart_item.quantity:
+            messages.warning(request,'The item is currently out of stock')
+            return redirect('cart')
+          else:
             cart_item.quantity += 1
             cart_item.sub_total += cart_item.price
             cart_item.save()
             cart.total += cart_item.price
             cart.save()
+
 
 
         if action == 'decrease':
@@ -107,12 +126,14 @@ class ManageCartView(View):
             cart_item.save()
             cart.total -= cart_item.price
             cart.save()
+
             
 
         if action == 'delete':
             cart.total -= cart_item.sub_total
             cart.save()
             cart_item.delete()
+    
 
 
 

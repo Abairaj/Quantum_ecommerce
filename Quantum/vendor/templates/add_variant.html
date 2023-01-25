@@ -25,7 +25,7 @@
       <div class="form-group col-sm-5">
         <label for="brand" class="col-sm-6 control-label">Select Colour</label>
         <div class="">
-       <select class="form-control" name="color">
+       <select class="form-control" name="color" required>
         <option value="">Colour</option>
         {%if color%}
         {%for i in color%}
@@ -42,7 +42,7 @@
       <div class="form-group col-sm-6">
         <label for="qty" class="col-sm-6 control-label">Product Price</label>
         <div class="">
-       <input type="text" class="form-control" name="price" id="price" placeholder="Price">
+       <input type="text" class="form-control" name="price" id="price" placeholder="Price" required>
         </div>
       </div> <!-- form-group // -->
 
@@ -59,7 +59,7 @@
     <div class="form-group col-sm-6">
       <label for="qty" class="col-sm-6 control-label">Discount percentage</label>
       <div class="">
-     <input type="text" class="form-control" name="discount" id="price" placeholder="Discount in percentage">
+     <input type="text" class="form-control" name="discount" id="price" placeholder="Discount in percentage" required>
       </div>
     </div> <!-- form-group // -->
 
@@ -67,7 +67,7 @@
 
       <div class=""> 
         <label class="control-label small" for="date_start">Stock</label>
-        <input type="text" class="form-control" name="stock" id="stock" placeholder="Stock">
+        <input type="text" class="form-control" name="stock" id="stock" placeholder="Stock" required>
     </div> <!-- form-group // -->
     </div>
 
@@ -82,16 +82,13 @@
     
     <div class="form-group col-sm-6">
       <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image_1</label> <input type="file" name="image-1">
+        <label class="control-label small" for="file_img">Image_1</label> <input type="file" name="image-1" required>
       </div>
       <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image-2</label>  <input type="file" name="image-2">
+        <label class="control-label small" for="file_img">Image-2</label>  <input type="file" name="image-2" required>
       </div>
       <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image-3</label>  <input type="file" name="image-3">
-      </div>
-      <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image-4</label>  <input type="file" name="image-4">
+        <label class="control-label small" for="file_img">Image-3</label>  <input type="file" name="image-3" required>
       </div>
     </div> <!-- form-group // -->
 

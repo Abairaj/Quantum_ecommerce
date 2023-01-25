@@ -46,4 +46,16 @@ class AdminVariant(admin.ModelAdmin):
 admin.site.register(Variant,AdminVariant)
 
 
-admin.site.register(Image)
+
+
+
+class AdminImage(admin.ModelAdmin):
+    model = Image
+
+    list_display = ( 'id','product') 
+    
+
+    def __str__(self):
+        return self.product
+
+admin.site.register(Image,AdminImage)

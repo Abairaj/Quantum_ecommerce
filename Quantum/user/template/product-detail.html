@@ -28,27 +28,27 @@
 					<div class="col-md-10 col-md-offset-1">
 						<div class="product-detail-wrap">
 
-							{%if product%}
-							{%for i in product%}
+							
 							<div class="row">
-
+								
 
 								<div class="col-md-5" data-mdb-zoom-effect="true" data-mdb-auto-height="true">
 									<div class="product-entry">
-										<div  class="product-image-container" id="image-container" style="height: 550px;">
-											<img src="{{i.image_1.url}}" alt="product_img" class="image-fluid" id="main-image"style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+										<div  class="product-image-container" id="image-container" style="height: 500px;">
+											<img src="{{product.product_image.url}}" alt="product_img" class="image-fluid" id="main-image"style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
 										</div>
 
-										<div class="thumb-nail thumbnail-container">
-											<div class="thumb-img">
-												<img src="{{i.image_1.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+										<div class="thumb-nail thumbnail-container mt-2">
+											 <div class="thumb-img">
+												<img src="{{i.image.image_1.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
 											</div>
 											<div class="thumb-img">
-												<img src="{{i.image_2.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+												<img src="{{i.image.image_2.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
 											</div>
 											<div class="thumb-img">
-												<img src="{{i.image_3.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
-											</div>
+												<img src="{{i.image.image_3.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+											</div> 
+										
 										</div>
 									</div>
 								</div>
@@ -56,10 +56,10 @@
 								
 								<div class="col-md-7">
 									<div class="desc">
-										<h3>{{i.product_name}}</h3>
+										<h3>{{product.product_name}}</h3>
 										<p class="price">
-											<del style="color:brown;" >{{i.price}}</del> 
-											<p style="color: black !important;">{{i.discount_price}}</p>
+											<del style="color:brown;" >{{product.max_price}}</del> 
+											<p style="color: black !important;">{{product.final_price}}</p>
 											<span class="rate text-right">
 												<i class="icon-star-full"></i>
 												<i class="icon-star-full"></i>
@@ -68,7 +68,7 @@
 												<i class="icon-star-half"></i>
 												(74 Rating)
 											</span>
-										</p>{{i.product_description}}</p>
+										</p>{{product.product_description}}</p>
 										<div class="color-wrap">
 
 										</div>
@@ -90,14 +90,17 @@
                                  	</div>
                         			</div>
 										</div>
+										<div class="d-flex">
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}
 										<p><a href="/cart/add_to_cart/{{i.id}}" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
 										{%endif%}
+										<p><a href="#variants" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i>Variants</a></p>
+									</div>
 									</div>
 								</div>
 							</div>
-							{%endfor%}
-							{%endif%}
+							
+							
 
 
 
@@ -169,34 +172,42 @@
 			</div>
 		</div>
 
-		<div class="colorlib-shop">
+		<div class="colorlib-shop" id = 'variants'>
 			<div class="container">
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3 text-center colorlib-heading">
-						<h2><span>Similar Products</span></h2>
+						<h2><span>Variants</span></h2>
 						<p>We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
 					</div>
 				</div>
 				<div class="row">
+
+					{%for i in variant%}
+				
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
-							<div class="product-img" style="background-image: url(images/item-5.jpg);">
+							<div class="product-img" style="background-image: url({{i.image.image_1.url}});width: 250px;" >
 								<p class="tag"><span class="new">New</span></p>
 								<div class="cart">
 									<p>
-										<span class="addtocart"><a href="#"><i class="icon-shopping-cart"></i></a></span> 
-										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
+										<span class="addtocart"><a href="/cart/add_to_cart/{{i.id}}"><i class="icon-shopping-cart"></i></a></span> 
+										{%endif%}
+										<span><a href="/product_details/{{i.Product.id}}"><i class="icon-eye"></i></a></span> 
 										<span><a href="#"><i class="icon-heart3"></i></a></span>
 										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
 									</p>
 								</div>
 							</div>
 							<div class="desc">
-								<h3><a href="shop.html">Floral Dress</a></h3>
-								<p class="price"><span>$300.00</span></p>
+								<h3><a href="shop.html">{{i.Product.product_name}}</a></h3>
+							
+								<p class="price"><span>{{i.final_price}}</span></p>
+								<del class="price"><span>{{i.price}}</span></del>
 							</div>
 						</div>
 					</div>
+					{%endfor%}
 
 
 				</div>

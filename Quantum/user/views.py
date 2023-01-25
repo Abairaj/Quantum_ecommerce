@@ -24,20 +24,26 @@ from cart.models import *
 
 # Create your views here.
 def home(request):
-    context = {'banner':Banner.objects.all,'product':Product.objects.all()}
+    context = {'banner':Banner.objects.all,'product':Product.objects.all(),'variant':Variant.objects.all()}
 
     return render(request,'index.html',context)
 
 
 def shop(request):
-    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all(),'image':Image.objects.all()}
+    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all()}
     return render(request,'shop.html',context)
 
 
 
 def product_detail(request,id):
+    product = Product.objects.get(id = id)
       
-    context ={'product':Product.objects.filter(id=id),'variant':Variant.objects.filter(Product = id),'image':Image.objects.filter(variant = id.variant)}
+    context ={'product':Product.objects.get(id=id),'variant':Variant.objects.filter(Product = product.pk),'image':Image.objects.filter(product = id)}
+
+    varian = Variant.objects.filter(Product = product.pk)
+
+    for i in varian:
+         print(i,'//////////////////////////////////////////////////////////////////////////////////////')
 
     print(context)
 

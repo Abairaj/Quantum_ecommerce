@@ -19,6 +19,9 @@ class Product(models.Model):
     vendor_name = models.ForeignKey(users,on_delete=models.CASCADE,null=True)
     product_image = models.ImageField(upload_to='products/',blank=True,null=True)
     product_description = models.TextField()
+    max_price = models.FloatField(null=True,blank=True)
+    max_discount = models.FloatField(null = True,blank=True)
+    final_price = models.FloatField(null=True,blank = True)
     Variant = models.CharField(max_length=200,choices=Variant_choice,default = 'color',null=True,blank=True)
     time_added = models.DateTimeField(auto_now_add=True)
 
@@ -43,9 +46,15 @@ class Color(models.Model):
 class Image(models.Model):
       id = models.BigAutoField(primary_key=True,blank=True)
       product = models.ForeignKey(Product,on_delete=models.CASCADE,null=True,blank=True)
-      image_1 = models.ImageField(upload_to='products/',blank=True,null=True)
-      image_2 = models.ImageField(upload_to='products/',blank=True,null=True)
-      image_3 = models.ImageField(upload_to='products/',blank=True,null=True)
+      image_1 = models.ImageField(upload_to='variants/',blank=True,null=True)
+      image_2 = models.ImageField(upload_to='variants/',blank=True,null=True)
+      image_3 = models.ImageField(upload_to='variants/',blank=True,null=True)
+
+
+      def __str__(self):
+            return str(self.pk)
+      
+     
     
 
 
