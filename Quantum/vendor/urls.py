@@ -13,9 +13,14 @@ urlpatterns = [
     path('edit_variant/<str:id>',views.edit_variant,name = 'edit_variant'),
     path('delete_variant/<str:id>',views.delete_variants,name = 'delete_variant'),
     
+
+    
     path('vendor_orders/', views.Order_management.as_view(),name = 'vendor_orders'),
     path('update_orders/<int:id>', views.Update_order_status.as_view(),name = 'update_orders'),
     path('vendor_coupon/', views.vendor_coupon,name = 'vendor_coupon'),
+    path('add_coupon/', views.add_coupon.as_view(),name = 'add_coupon'),
+    path('delete_coupon/<str:id>',views.delete_coupon,name = 'delete_coupon'),
+    path('edit_coupon/<str:id>',views.edit_coupon,name = 'edit_coupon'),
     path('vendor_offers/', views.vendor_offers,name = 'vendor_offers'),
     path('vendor_salesreport/', views.vendor_salesreport,name = 'vendor_salesreport'),
 

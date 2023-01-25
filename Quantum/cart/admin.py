@@ -25,3 +25,6 @@ class Cart_itemsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Cart_items,Cart_itemsAdmin)
+
+
+admin.site.register(Coupon)

@@ -5,8 +5,10 @@ from django.contrib import messages
 from django.views.decorators.cache import cache_control,never_cache
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.views.generic import TemplateView
 from.models import *
 import datetime
+from vendor.models import Product
 # Create your views here.
 @never_cache
 @login_required(login_url='/admin')
@@ -377,3 +379,16 @@ login_required(login_url='/admin')
 def logout(request):
     auth.logout(request)
     return redirect('admin')
+
+
+class Admin_product(TemplateView):
+    template_name = 'admin product.html'
+
+    def get_context_data(self, **kwargs):
+       context = super().get_context_data(**kwargs)
+
+       product = Product.objects.all()
+
+       context['product'] = product
+
+       return context

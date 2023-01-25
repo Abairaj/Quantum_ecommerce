@@ -116,17 +116,21 @@
 						<div class="total-wrap">
 							<div class="row">
 								<div class="col-md-8">
-									<form action="#">
+									<form action="{% url 'apply_coupon'%}" method="POST">
+
+										{% csrf_token %}
 										<div class="row form-group">
+
 											<div class="col-md-7">
-												<input type="text" name="quantity" class="form-control input-number" placeholder="Your Coupon Number...">
+												<input type="text" name="coupon" class="form-control input-number" placeholder="Your Coupon Number...">
 											</div>
 											<div class="col-md-2">
 												<input type="submit" value="Apply Coupon" class="btn btn-primary">
 											</div>
+											</form>
 									
 										</div>
-									</form>
+		
 								</div>
 								<div class="col-md-3 col-md-push-1 text-center">
 									<div class="total">

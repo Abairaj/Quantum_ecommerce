@@ -3,6 +3,7 @@ from django.contrib import messages
 from user.models import users
 from admin_app.models import *
 from .models import Product,Color,Variant,Image
+from cart.models import Coupon
 from django.core.validators import validate_email
 from django.contrib import auth
 from django.views.decorators.cache import never_cache
@@ -339,7 +340,10 @@ def delete_variants(request,id):
 
 
 def vendor_coupon(request):
-    return render(request,'vendor_coupon.html')
+    context = {
+        'coupon':Coupon.objects.all
+    }
+    return render(request,'vendor_coupon.html',context)
 
 def vendor_offers(request):
     return render(request,'vendor_offer.html')
@@ -518,7 +522,56 @@ class Update_order_status(View):
         
         
 
+class add_coupon(View):
+    def post(self,request):
+        code = request.POST['code']
+        expiry = request.POST['expiry']
+        minimum_amount = request.POST['minimum_amount']
+        discount_price = request.POST['discount_price']
 
+        coupon = Coupon(
+            coupon_code = code,
+            expiry_date = expiry,
+            minimum_amount = minimum_amount,
+            discount_price = discount_price
+        )
+
+        coupon.save()
+        messages.warning(request,'Coupon added successfully')
+        return redirect('vendor_coupon')
+    
+
+
+
+
+def delete_coupon(request,id):
+    coupon = Coupon.objects.get(id = id)
+    coupon.delete()
+    messages.warning(request,'Coupon deleted successfully')
+    return redirect('vendor_coupon')
+
+
+
+def edit_coupon(request,id):
+    if request.method == 'POST':
+
+        code = request.POST['code']
+        expiry = request.POST['expiry']
+        minimum_amount = request.POST['minimum_amount']
+        discount_price = request.POST['discount_price']
+
+        coupon = Coupon(
+            id = id,
+            coupon_code = code,
+            expiry_date = expiry,
+            minimum_amount = minimum_amount,
+            discount_price = discount_price
+
+        )
+        coupon.save()
+
+        messages.success(request,'Coupon updated successfully')
+        return redirect('vendor_coupon')
 
 
 

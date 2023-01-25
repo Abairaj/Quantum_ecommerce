@@ -11,6 +11,57 @@
         <div class="col-lg-12 grid-margin stretch-card">
           <div class="card">
             <div class="card-body">
+              <div class="row ">
+                <div class="col-sm-6">
+                  <h4 class="card-title">COUPON</h4>
+             </div>
+             <div class="col-sm-6">
+      
+              <div>
+                <div class="modal fade" id="exampleModalTogglebrand" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalToggleLabel">ADD</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <form action='/vendor/add_coupon/' method="POST">
+                            {%csrf_token%}
+                            <div class="form-outline mb-4">
+                              <input type="text"  class="form-control" name="code" id="brand_name" placeholder="Name" fdprocessedid="dl50sd" required>
+                              <label for="floatingPassword">CouponCode</label>
+                            </div>
+      
+                            <div class="form-outline mb-4">
+                              <input type="date"  class="form-control" name="expiry" id="brand_name" placeholder="expiry" fdprocessedid="dl50sd" required>
+                              <label for="floatingPassword">Expiry Date</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                              <input type="number"  class="form-control" name="discount_price" id="brand_nam" placeholder="Discount" fdprocessedid="dl50sd" required>
+                              <label for="floatingPassword">Discount</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                              <input type="number"  class="form-control" name="minimum_amount" id="brand_name" placeholder="Minimum Amount" fdprocessedid="dl50sd" required>
+                              <label for="floatingPassword">Minimum purchase</label>
+                            </div>
+      
+                    
+                            </div>
+                            <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+      
+                  <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalTogglebrand" role="button">ADD</i></a> 
+                </div>
+      
+      <!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+      
+                </div>
+                </div>
+                 
               <h4 class="card-title">Coupons</h4>
               <div class="table-responsive">
                 <table class="table table-striped">
@@ -20,31 +71,118 @@
                         No
                       </th>
                       <th>
-                        Name
+                        CODE
                       </th>
                       <th>
-                        Code
+                        STATUS
                       </th>
                       <th>
                         Expiry Date
                       </th>
+                      <th>
+                        Action
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
+                    {%if coupon%}
+                    {%for i in coupon%}
                     <tr>
                       <td class="py-1">
-                        1
+                        {{forloop.counter}}
                       </td>
                       <td>
-                        coupname
+                        {{i.coupon_code}}
                       </td>
                       <td>
-                        CG13245
+                      {%if i.expired == True%}
+                      EXPIRED
+                      {%endif%}
+                      {%if i.expired == False%}
+                      ACTIVE
+                      {%endif%}
                       </td>
                       <td>
-                        May 15, 2015
+                      {{i.expiry_date}}
+                      </td>
+                      <td>
+                        
+                  <div class="d-flex">
+                    <!-- -----------------------------------------------------------------------------------------------Edit -------------------------------------------------------------------------------- -->
+                    
+                    <div>
+                    <div class="modal fade" id="exampleModalTogglebrandedit{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form action='/vendor/edit_coupon/{{i.id}}' name="brand" method="POST"  enctype="multipart/form-data" >
+                          {%csrf_token%}
+                          <div class="form-outline mb-4">
+                            <input type="text"  class="form-control" name="code" id="brand_name" value="{{i.coupon_code}}" placeholder="Name" fdprocessedid="dl50sd" required>
+                            <label for="floatingPassword">CouponCode</label>
+                          </div>
+    
+                          <div class="form-outline mb-4">
+                            <input type="date"  class="form-control" name="expiry" id="brand_name" value="{{i.expiry_date}}" placeholder="expiry" fdprocessedid="dl50sd" required>
+                            <label for="floatingPassword">Expiry Date</label>
+                          </div>
+                          <div class="form-outline mb-4">
+                            <input type="number"  class="form-control" name="discount_price" id="brand_nam" value = {{i.discount_price}} placeholder="Discount" fdprocessedid="dl50sd" required>
+                            <label for="floatingPassword">Discount</label>
+                          </div>
+                          <div class="form-outline mb-4">
+                            <input type="number"  class="form-control" name="minimum_amount" id="brand_name" value="{{i.minimum_amount}}" placeholder="Minimum Amount" fdprocessedid="dl50sd" required>
+                            <label for="floatingPassword">Minimum purchase</label>
+                          </div>
+            
+                    
+                      
+                              </div>
+                              <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                            </form>
+                      </div>
+                    </div>
+                    </div>
+                    
+                    <a class="btn btn-primary mr-2" data-bs-toggle="modal" href="#exampleModalTogglebrandedit{{i.id}}" role="button"><i class="fa-solid fa-pen-to-square"></i></a></i></a> 
+                    </div>
+                    
+                    
+                    <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+                    
+                    
+                    <!-- ------------------------------------------------------------------------------Delete -------------------------------------------------------------- -->
+                    
+                                    <div class="modal fade" id="branddelete{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                                      <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                    
+                                            <p> Are you sure about deleting the Brand. <br> You can't retrieve the brand details once deleted.</p>
+                                            <a href="/vendor/_brand/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+                    
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <button class="btn btn-danger ml-2" data-bs-target="#branddelete{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
+
+
+                                    <a href="" class="btn btn-primary ml-2">Deactivate</a>
+                                  </div>
+                    
                       </td>
                     </tr>
+                    {%endfor%}
+                    {%endif%}
 
                   </tbody>
                 </table>

@@ -3,6 +3,7 @@ from rest_framework.renderers import TemplateHTMLRenderer
 from .forms import AddressForm
 from.serializers import *
 from.models import *
+from cart.models import Coupon
 from vendor.models import*
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -96,7 +97,7 @@ class ManageCartView(View):
 
         action = self.kwargs.get('action')
         cart_item = Cart_items.objects.get(id = variant_id)
-        print( Variant.objects.get(id = variant_id),'////////////////////////////////////////////////////////////////////////////////')
+
         variant = Variant.objects.get(id = variant_id)
         cart = cart_item.cart
         cart.save()
@@ -206,4 +207,41 @@ def address_default(request,id,action):
         messages.success(request,'successfully delted the address')
         return redirect('add_address')
 
-    
+
+
+
+
+
+
+class Coupon_apply(View):
+
+    def post(self,request,**kwargs):
+        print('****************************************************************************************************')
+        coupon_code =request.POST['coupon']
+        print(coupon_code,'***************************************************************************************************\]')
+        coupon = Coupon.objects.filter(coupon_code__icontains =  coupon_code)
+        cart_id = self.request.session.get('cart_id')
+        cart = Cart.objects.get(id = cart_id)
+
+        if coupon:
+            coupon = Coupon.objects.get(coupon_code = coupon_code)
+            if coupon == cart.coupon:
+                messages.warning(request,'coupon already used')
+                return redirect('cart')
+            if cart.total < coupon.minimun_amount:
+                messages.warning(request,f'Coupon is only applicable for purchase over Rs.{coupon.minimun_amount} or more')
+                return redirect('cart')
+            if coupon.expired == True:
+                messages.warning(request,'Coupon Expired')
+                return redirect('cart')
+            
+            cart.coupon = Coupon.objects.get(id = coupon.pk)
+            cart.total -= coupon.discount_price
+            cart.save()
+            coupon.expired = True
+            coupon.save()
+            return redirect('cart')
+
+
+        
+

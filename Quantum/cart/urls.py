@@ -9,6 +9,8 @@ urlpatterns = [
     path('address/',addressform,name = 'address'),
     path('address_default/<str:id>/<str:action>',address_default,name = 'address_default'),
     path('add_address/',Manage_address_View.as_view(),name = 'add_address'), 
+    path('apply_coupon/',Coupon_apply.as_view(),name='apply_coupon'),
+   
    
 
 ]

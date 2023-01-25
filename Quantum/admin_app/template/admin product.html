@@ -1,0 +1,150 @@
+{%extends 'admin_base.html'%}
+
+{%block title%}Admin Products{%endblock%}
+
+{%block content%}
+  <!-- partial -->
+  <div class="main-panel">
+    <div class="content-wrapper">
+      <div class="row">
+        {%if messages%}
+{%for message in messages%}
+<div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+    <strong></strong> {{message}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{%endfor%}
+{%endif%}
+<!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
+        <div class="col-lg-12 grid-margin stretch-card">
+          <div class="card">
+            <div class="card-body">
+              <div class="row ">
+             <!-- <div class="col-sm-6"> -->
+               <h4 class="card-title">Product</h4>
+          </div>
+          <!-- <div class="col-sm-6">
+
+              <button style="float: right;" >Add</button>
+             </div>
+              </div> -->
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>
+                        No
+                      </th>
+                      <th>
+                        Product Name
+                      </th>
+                      <th>
+                       Stock
+                      </th>
+                      <th>
+                        Price
+                      </th>
+                      <th>
+                        Price
+                      </th>
+                      <th>
+                        Discount
+                      </th>
+                      <th>
+                        Join Date
+                      </th>
+                      <th style="text-align:center">
+                        Action
+                      </th>
+                    </tr>
+                  </thead>
+                  {%if product%}
+                  {%for i in product%}
+                  <tbody>
+                    <tr>
+                      <td class="py-1">
+                        {{forloop.counter}}
+                      </td>
+                      <td>
+                        <img src="logo" alt="image">
+                      </td>
+                      <td>
+                        {{i.product_name}}
+                      </td>
+                      <td>
+                        {{i.last_name}}
+                      </td>
+                      <td>
+                        {{i.email}}
+                      </td>
+                      <td>
+                        {{i.mobile}}
+                      </td>
+                      <td>
+                        {{i.date_joined}}
+                      </td>
+
+                      <td >
+
+
+  <div class="d-flex justify-content-between">
+
+<!-- -------------------------------------------------------------------------------------block user------------------------------------------------------------------------------------------------------- -->
+
+
+<a href="/admin/block/{{i.id}}"><button class="btn btn-danger">Block</button></a>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+
+<!-- -------------------------------------------------------------------------------------Unblock user------------------------------------------------------------------------------------------------------- -->
+
+
+<a href="/admin/unblock/{{i.id}}"><button class="btn btn-success">Unblock</button></a>
+
+
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+
+<!-- -------------------------------------------------------------------------------------Delete User--------------------------------------------------------------------------------------------------- -->
+
+                      <div class="modal fade" id="{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+
+                              <p> Are you sure about deleting the user. <br> You can't retrieve the user details once deleted.</p>
+                              <a href="/admin/user_delete/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <button class="btn btn-danger" data-bs-target="#{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
+<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+                    </div>
+
+                      </div>
+                      </td> 
+                    </tr>
+
+
+                  </tbody>
+                  {%endfor%}
+                  {%endif%}
+                </table>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+{%endblock%}

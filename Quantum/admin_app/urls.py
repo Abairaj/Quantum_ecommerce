@@ -35,6 +35,9 @@ urlpatterns = [
     path('add_banner/',views.add_banner,name = 'add_banner'),
     path('edit_banner/<str:id>',views.edit_banner,name = 'edit_banner'),
     path('delete_banner/<str:id>',views.delete_banner,name = 'delete_banner'),
+         
+
+    path('admin_product',views.Admin_product.as_view(),name='admin_product')
     
 
 
