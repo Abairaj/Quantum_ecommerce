@@ -1,37 +1,17 @@
 {%extends 'store_base.html'%}
 
-{%block title%}Shop{%endblock%}
+{%block title%}{{category.category_name}}{%endblock%}
 {%block 2%}active{%endblock%}
 {%block content%}
-
-<!-- icon -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		
 <aside id="colorlib-hero" class="breadcrumbs">
 	<div class="flexslider">
 		<ul class="slides">
 		   <li style="background-image: url(https://wallpaperaccess.com/full/1332135.jpg);">
-
-
-
-			<div class="col-md-4 mt-5 pt-5 ml-3" style="z-index: 1;">
-				<form action="{%url 'shop_searchbar'%}" class="d-flex" role="search" method = 'GET'>
-				  <input class="form-control me-2" name = 'search' type="search" placeholder="Search" aria-label="Search">
-				  <button class="" type="submit" style="padding-left: 2px important!;background-color: orange; color: white;border: none important!;"><i class="fa fa-search"></i></button>
-			
-				</form>
-			  </div>
-
-
-
-	
-				
-
-
 			   <div class="overlay"></div>
-			   <div class="container-fluid mr-5">
+			   <div class="container-fluid">
 				   <div class="row">
-					   <div class="col-md-5 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
+					   <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
 						   <div class="slider-text-inner text-center">
 							   <h1>Products</h1>
 							   <h2 class="bread"><span><a href="index.html">Home</a></span> <span>Shop</span></h2>
@@ -78,8 +58,6 @@
 						</div>
 					</div>
 
-
-
 					{%endfor%}
 				
 
@@ -108,9 +86,11 @@
 						<h2>Categories</h2>
 						<hr>
 
-							{%if category%}
+						<div class="categories">
 
-							{%for i in category%}
+							{%if all_category%}
+
+							{%for i in all_category%}
 	
 							<div class="sub-cat"><a href="{%url 'category_filter' i.id%}"><h5>{{i.category_name}}</h5></a></div>
 							<hr>
@@ -122,7 +102,6 @@
 
 					</div>
 					<div class="side">
-			
 						<h2>Price Range</h2>
 						<form method="post" class="colorlib-form-2">
 						  <div class="row">
@@ -164,7 +143,7 @@
 		</div>
 	</div>
 </div>
-
+	
 
 		
 		{%endblock%}

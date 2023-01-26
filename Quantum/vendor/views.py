@@ -58,13 +58,7 @@ def add_product(request):
 
 
 
-        
-      
-
-
-
-
-
+    # Creating new product and adding colours 
         product = Product(
          product_name = product_name,
         product_description = product_description,
@@ -138,7 +132,7 @@ def edit_product(request,id):
 
 
 
-
+# updating the products created earlier
 
         product = Product(
             id = id,
@@ -174,6 +168,8 @@ def edit_product(request,id):
     return render(request,'edit_product.html',context)
 
 
+
+# deleting the product
 @login_required(login_url='/vendor-signin')
 def delete_product(request,id):
     Product.objects.filter(id = id).delete()
@@ -181,6 +177,10 @@ def delete_product(request,id):
     return redirect('vendor_products')
 
 
+
+# ===============================================================Variants==========================================================
+
+#view product cards and go to variant of paricular product
 @login_required(login_url='/vendor-signin')
 def variant_view(request):
     product = {
@@ -189,7 +189,7 @@ def variant_view(request):
     return render(request,'variant_view.html',product)
 
 
-
+#variant view of a product 
 @login_required(login_url='/vendor-signin')
 def variant(request,id):
     product=Product.objects.get(id = id)
@@ -203,7 +203,7 @@ def variant(request,id):
 
 
 
-
+#   Add a new variant
 def add_variants(request,id):
     product = Product.objects.get(id = id)
     context = {
@@ -260,6 +260,8 @@ def add_variants(request,id):
 
     return render(request,'add_variant.html',context)
 
+
+#Edit a new variant
 
 def edit_variant(request,id):
     variants = Variant.objects.get(id = id)
@@ -332,6 +334,8 @@ def edit_variant(request,id):
 
 
 
+#delete a variant
+
 def delete_variants(request,id):
     variant = Variant.objects.get(id = id)
     variant.delete()
@@ -339,21 +343,11 @@ def delete_variants(request,id):
 
 
 
-def vendor_coupon(request):
-    context = {
-        'coupon':Coupon.objects.all
-    }
-    return render(request,'vendor_coupon.html',context)
-
-def vendor_offers(request):
-    return render(request,'vendor_offer.html')
-
-def vendor_salesreport(request):
-    return render(request,'salesreport.html')
 
 
 
 
+#=============================================================vendor authentication signin,signup==============================================
 def vendor_signin(request):
     if request.user.is_authenticated:
         return redirect('vendor_dashboard')
@@ -447,7 +441,7 @@ def vendor_signup(request):
 
 
 
-
+#===============================================================================OTP Login and verification==============================================================
 
 def vendor_otp_login(request):
     if request.method == "POST":
@@ -488,6 +482,13 @@ def vendor_verify_login(request,id):
 
 
 
+
+        
+
+
+
+#=======================================================Vendor Order management============================================================
+
 @method_decorator(login_required(login_url='signin'), name='dispatch')
 class Order_management(TemplateView):
     template_name = 'vendor_orders.html'
@@ -503,7 +504,7 @@ class Order_management(TemplateView):
                         context['order'] = order
                         return context
 
-        
+
 
 
 
@@ -521,7 +522,31 @@ class Update_order_status(View):
         return redirect('vendor_orders')
         
         
+#=========================================================vendor coupon management=============================================================
 
+#coupon main page
+def vendor_coupon(request):
+    context = {
+        'coupon':Coupon.objects.all()
+    }
+    return render(request,'vendor_coupon.html',context)
+
+
+
+def vendor_offers(request):
+    return render(request,'vendor_offer.html')
+
+def vendor_salesreport(request):
+    return render(request,'salesreport.html')
+
+
+
+
+
+
+
+
+# add coupon
 class add_coupon(View):
     def post(self,request):
         code = request.POST['code']
@@ -543,7 +568,7 @@ class add_coupon(View):
 
 
 
-
+# delete coupon
 def delete_coupon(request,id):
     coupon = Coupon.objects.get(id = id)
     coupon.delete()
@@ -551,7 +576,7 @@ def delete_coupon(request,id):
     return redirect('vendor_coupon')
 
 
-
+# edit coupon
 def edit_coupon(request,id):
     if request.method == 'POST':
 

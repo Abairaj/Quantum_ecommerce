@@ -10,6 +10,8 @@ urlpatterns = [
     path('logout/',views.logout,name='logout'),
     path('otp_login',views.otp_login,name='otp_login'),
     path('verify_login/<str:id>',views.verify_login,name='verify_login'),
+    path('category_filter/<str:id>',views.Category_filter.as_view(),name = 'category_filter'),
+    path('shop_searchbar/',views.search_bar,name = 'shop_searchbar')
 
 
 

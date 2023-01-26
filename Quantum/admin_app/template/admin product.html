@@ -38,22 +38,22 @@
                         No
                       </th>
                       <th>
-                        Product Name
+                        Product image
                       </th>
                       <th>
-                       Stock
-                      </th>
-                      <th>
-                        Price
+                       Product Name
                       </th>
                       <th>
                         Price
+                      </th>
+                      <th>
+                        Discounted Price
                       </th>
                       <th>
                         Discount
                       </th>
                       <th>
-                        Join Date
+                        Added On
                       </th>
                       <th style="text-align:center">
                         Action
@@ -68,71 +68,27 @@
                         {{forloop.counter}}
                       </td>
                       <td>
-                        <img src="logo" alt="image">
+                        <img src="{{i.product_image.url}}" alt="image">
                       </td>
                       <td>
                         {{i.product_name}}
                       </td>
                       <td>
-                        {{i.last_name}}
+                        {{i.max_price}}
                       </td>
                       <td>
-                        {{i.email}}
+                        {{i.final_price}}
                       </td>
                       <td>
-                        {{i.mobile}}
+                        {{i.max_discount}}
                       </td>
                       <td>
-                        {{i.date_joined}}
+                        {{i.time_added.date}}
                       </td>
 
                       <td >
+                        <a href="#" class="btn btn-primary">View More</a>
 
-
-  <div class="d-flex justify-content-between">
-
-<!-- -------------------------------------------------------------------------------------block user------------------------------------------------------------------------------------------------------- -->
-
-
-<a href="/admin/block/{{i.id}}"><button class="btn btn-danger">Block</button></a>
-
-
-<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-
-
-
-<!-- -------------------------------------------------------------------------------------Unblock user------------------------------------------------------------------------------------------------------- -->
-
-
-<a href="/admin/unblock/{{i.id}}"><button class="btn btn-success">Unblock</button></a>
-
-
-<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-
-
-<!-- -------------------------------------------------------------------------------------Delete User--------------------------------------------------------------------------------------------------- -->
-
-                      <div class="modal fade" id="{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-
-                              <p> Are you sure about deleting the user. <br> You can't retrieve the user details once deleted.</p>
-                              <a href="/admin/user_delete/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
-
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <button class="btn btn-danger" data-bs-target="#{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
-<!-- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-                    </div>
-
-                      </div>
                       </td> 
                     </tr>
 
