@@ -204,6 +204,74 @@ class success(View):
 
 
 
+
+
+
+class product_return(View):
+     def post(self,request,**kwargs):
+       return redirect('orders')
+     
+
+class cancel_order(View):
+     
+     def get(self,request,**kwargs):
+         order_id = kwargs["id"]
+         user = self.request.user.id
+         user_id = users.objects.get(id = user)
+         print('check1**********************************************************************')
+         order =  Order.objects.get(id = order_id)
+         print('check2*********************************************')
+         order.status = 'Cancelled'
+         order.save()
+         if order.payment_id.payment_method == 'Razorpay':
+             
+     
+                wallet = Wallet.objects.get(user_id = user_id)
+                wallet.balance +=  order.amount           
+                wallet.save()
+
+                messages.success(request,f'order cancelled and amount of Rs{order.amount} added to wallet.')
+                return redirect('order_tracking')
+         
+         else:
+              messages.success(request,'Order is cancelled successfully')
+              return redirect('order_tracking')
+
+
+class return_order(View):
+     
+     def get(self,request,**kwargs):
+         order_id = kwargs["id"]
+         user = self.request.user.id
+         user_id = users.objects.get(id = user)
+         print('check1**********************************************************************')
+         order =  Order.objects.get(id = order_id)
+         print('check2*********************************************')
+         order.status = 'Returned'
+         order.save()
+         if order.payment_id.payment_method == 'Razorpay':
+             
+     
+                wallet = Wallet.objects.get(user_id = user_id)
+                wallet.balance +=  order.amount           
+                wallet.save()
+
+                messages.success(request,f'order return accepted  and amount of Rs{order.amount} added to wallet after confirming the order return.')
+                return redirect('order_tracking')
+         else:
+              messages.success(request,'Order return accepted we will get the order from you soon.Payment will be refunded soon after return confirmation')
+              return redirect('order_tracking')
+         
+          
+         
+
+
+
+
+
+
+
+
    
 def thanku(request):
     user = request.user

@@ -12,6 +12,7 @@ Status_choices = (
         ('Shipped', 'Shipped'),
         ('Delivered', 'Delivered'),
         ('Cancelled', 'Cancelled'),
+         ('Returned', 'Returned'),
          
     )
 

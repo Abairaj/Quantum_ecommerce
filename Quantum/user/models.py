@@ -148,3 +148,11 @@ class Address(models.Model):
     
 
     
+
+class Wallet(models.Model):
+    user_id = models.ForeignKey(users,on_delete=models.CASCADE)
+    balance = models.PositiveIntegerField(default=0)
+
+
+    def __str__(self):
+        return self.user_id.first_name

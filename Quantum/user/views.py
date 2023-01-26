@@ -37,15 +37,17 @@ def shop(request):
 
 
 
-def product_detail(request,id):
+def product_detail(request,id,v_id):
     product = Product.objects.get(id = id)
+    variant = Variant.objects.get(id = v_id)
       
-    context ={'product':Product.objects.get(id=id),'variant':Variant.objects.filter(Product = product.pk),'image':Image.objects.filter(product = id)}
+    context ={'product':Product.objects.get(id=id),'variant':Variant.objects.filter(Product = product.pk),'image':Image.objects.filter(product = id),'main_variant':variant}
 
     varian = Variant.objects.filter(Product = product.pk)
 
-    for i in varian:
-         print(i,'//////////////////////////////////////////////////////////////////////////////////////')
+    
+
+  
 
     print(context)
 
@@ -147,6 +149,12 @@ def signup(request):
                 cart.save()
                 request.session['cart_id'] = str(cart)
                 print(request.session.get('cart_id'))
+
+                wallet = Wallet.objects.create(
+                     user_id = users.objects.get(id = user.id)
+                )
+
+                wallet.save()
             
 
                 messages.success(request,'Registered successfully. Login with your credentials')
@@ -271,6 +279,11 @@ class Category_filter(TemplateView):
 
 class Wallet_view(TemplateView):
      template_name = 'wallet.html'
+
+
+
+
+
           
                
 
