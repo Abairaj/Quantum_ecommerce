@@ -85,7 +85,7 @@ class users(AbstractBaseUser):
     email      = models.EmailField(max_length=100,unique=True) 
     mobile     = models.CharField(max_length=13,unique=True,null=True)
     gender     = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True,blank=False)
-    profile    = models.ImageField(upload_to='uploads/users_profile/',blank=True)
+    profile    = models.ImageField(upload_to='profile/',null = True,blank=True)
     GSTIN      = models.CharField(max_length=15,unique=True,null=True)
     otps       = models.CharField(max_length=10,blank=True,default=0)
 

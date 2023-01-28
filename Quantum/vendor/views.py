@@ -14,6 +14,9 @@ import random
 from sendotp import *
 from orders.models import Order
 from django.utils.decorators import method_decorator
+from django.db.models.functions import ExtractMonth
+from django.db.models import Count
+import calendar
 
 
 
@@ -21,7 +24,47 @@ from django.utils.decorators import method_decorator
 # Create your views here.
 @login_required(login_url='/vendor-signin')
 def vendor_dashboard(request):
-    return render(request,'vendor_dashboard.html')
+    orders = Order.objects.annotate(month =ExtractMonth('order_date') ).values('month').annotate(count= Count('id')).values('month','count')
+
+    monthNumber = []
+    totalOrder = []
+
+    for i in orders:
+        monthNumber.append(calendar.month_name[i['month']])
+        totalOrder.append(i['count'])
+
+
+    return render(request,'vendor_dashboard.html',{'monthNumber':monthNumber,'totalOrder':totalOrder})
+
+
+
+class Vendor_profile(TemplateView):
+    template_name = 'vendor_profile.html'
+    def get_context_data(self, **kwargs):
+        user = self.request.user.id
+        context =  super().get_context_data(**kwargs)
+        vendor = users.objects.get(id = user)
+        try:
+         address = Address.objects.get(user = user)
+         context["address"] = address
+        except Exception as e:
+         print(e)
+        context['vendor'] = vendor
+
+        return context
+    
+
+    
+class Vendor_profile_management(View):
+        
+        def post(self,request):
+
+            image = request.FILES['image']
+            users.objects.filter(id = self.request.user.id).update(profile = image) 
+            messages.success(request,'Successfully updated the profile image')
+            return redirect('vendor_profile')
+        
+
 
 
 @login_required(login_url='/vendor-signin')

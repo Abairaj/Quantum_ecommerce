@@ -31,6 +31,37 @@ def home(request):
     return render(request,'index.html',context)
 
 
+
+
+
+class user_profile(TemplateView):
+    template_name = 'user_profile.html'
+    def get_context_data(self, **kwargs):
+        user = self.request.user.id
+        context =  super().get_context_data(**kwargs)
+        user = users.objects.get(id = user)
+        try:
+         address = Address.objects.get(user = user)
+         context["address"] = address
+        except Exception as e:
+         print(e)
+        context['user'] = user
+
+        return context
+    
+
+    
+class user_profile_management(View):
+        
+        def post(self,request):
+
+            image = request.FILES['image']
+            users.objects.filter(id = self.request.user.id).update(profile = image) 
+            messages.success(request,'Successfully updated the profile image')
+            return redirect('user_profile')
+        
+
+
 def shop(request):
     context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all()}
     return render(request,'shop.html',context)

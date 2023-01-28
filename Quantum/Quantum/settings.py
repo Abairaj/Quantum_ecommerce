@@ -144,8 +144,8 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = BASE_DIR/'uploads'
-MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/media/'
 
 
 TWILIO_ACCOUNT_SID ='AC133a1c34281bdc064bd85af563df66cd'

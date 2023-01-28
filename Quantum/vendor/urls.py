@@ -4,6 +4,8 @@ urlpatterns = [
 
     # Vendor authentication and dasshboard
     path('',views.vendor_dashboard,name = 'vendor_dashboard'),
+    path('vendor_profile',views.Vendor_profile.as_view(),name = 'vendor_profile'),
+    path('Vendor_profile_management',views.Vendor_profile_management.as_view(),name = 'Vendor_profile_management'),
     path('vendor-signin/', views.vendor_signin, name = 'vendor-signin'),
     path('vendor-signup/',views.vendor_signup,name='vendor-signup'),
     path('vendor-logout/',views.logout,name = 'vendor-logout'),

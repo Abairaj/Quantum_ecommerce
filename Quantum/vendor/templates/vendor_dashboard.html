@@ -233,11 +233,20 @@
       <!-- partial -->
       <!-- partial:partials/_sidebar.html---------------------------------------------------------------------------------------------------------------------- -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
+       
         <ul class="nav">
+          <li class="text-center" style="border-radius: 32px;"><img src="" alt="image"></li>
             <li class="nav-item">
                 <a class="nav-link" href="{%url 'vendor_dashboard'%}">
                   <i class="icon-grid menu-icon"></i>
                   <span class="menu-title">Dashboard</span>
+                </a>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link"  href="{% url 'vendor_profile'%}">
+                  <h3><i class='ti-plus menu-icon'></i></h3>
+                  <span class="menu-title">Profile</span>
                 </a>
               </li>
     
@@ -289,31 +298,6 @@
                 </a>
               </li>
 
-
-          <li class="nav-item">
-            <a class="nav-link" href="#form-elements">
-              <i class="icon- menu-icon"></i>
-              <span class="menu-title">Form elements</span>
-            </a>
-          </li>
-
-
-
-
-          <li class="nav-item">
-            <a class="nav-link" href="#form-elements">
-              <i class="icon- menu-icon"></i>
-              <span class="menu-title">Form elements</span>
-            </a>
-          </li>
-
-
-          <li class="nav-item">
-            <a class="nav-link" href="#form-elements">
-              <i class="icon- menu-icon"></i>
-              <span class="menu-title">Form elements</span>
-            </a>
-          </li>
 
         </ul>
       </nav>
@@ -392,7 +376,7 @@
                 <div class="col-md-3 mb-4 mb-lg-0 stretch-card transparent">
                 <div class="card card-light-blue">
                     <div class="card-body">
-                      <p class="mb-4">Number of Meetings</p>
+                      <p class="mb-4">{{monthNumber}} and {{totalOrder}}</p>
                       <p class="fs-30 mb-2">34040</p>
                       <p>2.00% (30 days)</p>
                     </div>
@@ -450,7 +434,11 @@
                  </div>
                   <p class="font-weight-500">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
                   <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
-                  <canvas id="sales-chart"></canvas>
+                  <div>
+                    <!-- chartjs -->
+                    <canvas id="orderchart"></canvas>
+                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -501,8 +489,55 @@
   <!-- endinject -->
   <!-- Custom js for this page-->
   <script src="{% static '/vendor/js/dashboard.js'%}"></script>
-  <script src="{%static '/vendor/js/Chart.roundedBarCharts.js'%}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <!-- End custom js for this page-->
+
+
+
+  <!-- chartjs -->
+  <script>
+    const ctx = document.getElementById('orderchart');
+  
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: {{monthNumber|safe}},
+        datasets: [{
+          label: 'Orders by Month',
+          data: {{totalOrder}},
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+
+      
+    });
+
+
+
+
+    const config = {
+  type: 'doughnut',
+  data: {},
+  options: {},
+  plugins: []
+};
+
+var myChart = new Chart(
+  document.getElementById('orderchart'),
+  config
+  );
+ 
+ 
+  </script>
+   
 </body>
 
 </html>
