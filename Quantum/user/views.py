@@ -280,6 +280,14 @@ class Category_filter(TemplateView):
 class Wallet_view(TemplateView):
      template_name = 'wallet.html'
 
+     def get_context_data(self, **kwargs):
+          context = super().get_context_data(**kwargs)
+
+          wallet = Wallet.objects.all()
+          context['wallet'] = wallet
+
+          return context
+
 
 
 

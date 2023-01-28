@@ -71,6 +71,6 @@ class Variant(models.Model):
 
 
         def __str__(self):
-              return self.Product.product_name
+              return str(self.pk)
 
 

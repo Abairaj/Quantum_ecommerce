@@ -92,7 +92,7 @@
 										</div>
 										<div class="d-flex">
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}
-										<p><a href="/cart/add_to_cart/{{i.id}}" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
+										<p><a href="/cart/add_to_cart/{{main_variant.id}}" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
 										{%endif%}
 										<p><a href="#variants" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i>Variants</a></p>
 									</div>
@@ -117,7 +117,7 @@
 									<li><a data-toggle="tab" href="#review">Reviews</a></li>
 								</ul>
 								<div class="tab-content">
-									<div id="description" class="tab-pane fade in active">
+									<div id="description" class="tab-pane fade in active text-dark">
 										<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.</p>
 										<p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p>
 										<ul>
@@ -187,7 +187,7 @@
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
 							<div class="product-img" style="background-image: url({{i.image.image_1.url}});width: 250px;" >
-								<p class="tag"><span class="new">New</span></p>
+								<p class="tag"><span class="new" style="background-color:{{i.color.name}};">{{i.color.name}}</span></p>
 								<div class="cart">
 									<p>
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}

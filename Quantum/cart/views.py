@@ -1,20 +1,15 @@
 from django.shortcuts import render,redirect
-from rest_framework.renderers import TemplateHTMLRenderer
 from .forms import AddressForm
 from.serializers import *
 from.models import *
 from cart.models import Coupon
 from vendor.models import*
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.views.generic import View,TemplateView,CreateView
-from django.http import HttpResponse
+from django.views.generic import View,TemplateView
 from rest_framework import status
 from django.db.models import Q
-import requests
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.urls import reverse_lazy
+from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 
@@ -40,24 +35,25 @@ class  AddtocartAPIView (TemplateView):
         if cart_id:
             cart = Cart.objects.get(user_id = self.request.user.id)
             in_cart =Cart_items.objects.filter(variant = product.pk)
+            variant = Variant.objects.get(id =product.pk)
 
 #  if items already exist in cart increase quantity and subtotal
             if in_cart.exists():
                 cart_items = in_cart.last()
-                if cart_items.quantity == product.quantity:
+                if cart_items.quantity == variant.quantity:
                     messages.warning(request,"The item is currently out of stock")
                     return redirect('cart')
                 cart_items.quantity += 1
-                cart_items.sub_total += product.final_price
+                cart_items.sub_total += variant.final_price
                 cart_items.save()
-                cart.total += product.final_price
+                cart.total += variant.final_price
                 cart.save()
 
 # if new item addedd to cart ne cart product will be created
             else:
-                cart_item = Cart_items.objects.create(cart = cart,product =product_id, variant = product, price = product.final_price,quantity = 1,sub_total = product.final_price)
+                cart_item = Cart_items.objects.create(cart = cart,product =product_id, variant = variant , price = product.final_price,quantity = 1,sub_total = product.final_price)
                 cart_item.save()
-                cart.total += product.price
+                cart.total += variant.final_price
                 cart.save()
              
 
@@ -85,60 +81,127 @@ class CartView(TemplateView):
         context['cart'] = cart
         return context
 
-@method_decorator(login_required(login_url='signin'), name='dispatch')
-class ManageCartView(View):
+# @method_decorator(login_required(login_url='signin'), name='dispatch')
+# class ManageCartView(View):
 
    
 
 
-    def get(self,request,*args,**kwargs):
-        user = self.request.user
-        variant_id =self.kwargs['id']
+#     def get(self,request,*args,**kwargs):
+#         user = self.request.user
+#         variant_id =self.kwargs['id']
+#         variant = Variant.objects.get(id = variant_id)
 
-        action = self.kwargs.get('action')
-        cart_item = Cart_items.objects.get(id = variant_id)
+#         action = self.kwargs.get('action')
+#         cart_item = Cart_items.objects.get(variant = variant)
 
-        variant = Variant.objects.get(id = variant_id)
-        cart = cart_item.cart
-        cart.save()
+#         variant = Variant.objects.get(id = variant_id)
+#         cart = cart_item.cart
+#         cart.save()
   
    
-        if action == 'increase':
-          if variant.quantity < cart_item.quantity:
-            messages.warning(request,'The item is currently out of stock')
-            return redirect('cart')
-          else:
-            cart_item.quantity += 1
-            cart_item.sub_total += cart_item.price
-            cart_item.save()
-            cart.total += cart_item.price
-            cart.save()
+#         if action == 'increase':
+#           if variant.quantity < cart_item.quantity:
+#             messages.warning(request,'The item is currently out of stock')
+#             return redirect('cart')
+#           else:
+#             cart_item.quantity += 1
+#             cart_item.sub_total += cart_item.price
+#             cart_item.save()
+#             cart.total += cart_item.price
+#             cart.save()
 
 
 
-        if action == 'decrease':
-            if cart_item.quantity == 1:
-                cart_item.delete()
-                cart.total -= cart_item.price
-                cart.save()
-                return redirect('cart')
-            cart_item.quantity -= 1
-            cart_item.sub_total -= cart_item.price
-            cart_item.save()
-            cart.total -= cart_item.price
-            cart.save()
+#         if action == 'decrease':
+#             if cart_item.quantity == 1:
+#                 cart_item.delete()
+#                 cart.total -= cart_item.price
+#                 cart.save()
+#                 return redirect('cart')
+#             cart_item.quantity -= 1
+#             cart_item.sub_total -= cart_item.price
+#             cart_item.save()
+#             cart.total -= cart_item.price
+#             cart.save()
 
             
 
-        if action == 'delete':
-            cart.total -= cart_item.sub_total
-            cart.save()
-            cart_item.delete()
+#         if action == 'delete':
+#             cart.total -= cart_item.sub_total
+#             cart.save()
+#             cart_item.delete()
     
 
 
 
-        return redirect("cart")
+#         return redirect("cart")
+
+
+def update_cart_add(request):
+    if request.method == 'POST':
+
+        cart_item_id  =int(request.POST['product_id'])
+
+        print(cart_item_id)
+       
+
+        
+        cart = Cart.objects.get(user_id = request.user)
+        print(cart)
+        print(Cart_items.objects.filter(id = cart_item_id,cart = cart))
+        
+        if (Cart_items.objects.filter(cart = cart,id = cart_item_id)):
+            prod_qty = int(request.POST['product_qty'])
+            
+            cart_item = Cart_items.objects.get(id = cart_item_id,cart =cart)
+            print(cart_item.price)
+            print(prod_qty,'**************')
+            print(cart_item.quantity)
+            if cart_item.quantity <= 9:
+                cart_item.quantity = prod_qty
+                cart_item.sub_total = cart_item.price * cart_item.quantity
+                cart_item.save()
+                cart_item.cart.total += cart_item.price
+                cart_item.cart.save()
+                return JsonResponse({'status': 'updated successfully'})
+        return redirect('home')
+    
+
+def update_cart_subtract(request):
+    if request.method == 'POST':
+        cart_item_id  =int(request.POST['product_id'])
+
+        print(cart_item_id)
+       
+
+        cart = Cart.objects.get(user_id = request.user)
+        print(cart)
+        print(Cart_items.objects.filter(id = cart_item_id,cart = cart))
+        
+        if (Cart_items.objects.filter(cart = cart,id = cart_item_id)):
+            prod_qty = int(request.POST['product_qty'])
+            cart_item = Cart_items.objects.get(id = cart_item_id,cart =cart)
+            if cart_item.quantity >= 2:
+                cart_item.quantity = prod_qty
+                cart_item.sub_total = cart_item.price*cart_item.quantity
+                cart_item.save()
+                cart_item.cart.total -= cart_item.price
+                cart_item.cart.save()
+                return JsonResponse({'status': 'updated successfully'})
+        return redirect('home')
+
+
+def delete_cart_item(request,id):
+    cart_item = Cart_items.objects.get(id = id)
+    cart = Cart.objects.get(user_id = request.user.id)
+    cart_item.delete()
+    cart.total -= cart_item.price * cart_item.quantity
+    cart.save()
+
+    messages.success(request,'Successfully removed the cart item')
+    return redirect('cart')
+
         
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
@@ -228,7 +291,7 @@ class Coupon_apply(View):
             if coupon == cart.coupon:
                 messages.warning(request,'coupon already used')
                 return redirect('cart')
-            if cart.total < coupon.minimun_amount:
+            if cart.total < coupon.minimum_amount:
                 messages.warning(request,f'Coupon is only applicable for purchase over Rs.{coupon.minimun_amount} or more')
                 return redirect('cart')
             if coupon.expired == True:
@@ -240,6 +303,9 @@ class Coupon_apply(View):
             cart.save()
             coupon.expired = True
             coupon.save()
+            return redirect('cart')
+        else:
+            messages.warning(request,'Coupon Invalid')
             return redirect('cart')
 
 

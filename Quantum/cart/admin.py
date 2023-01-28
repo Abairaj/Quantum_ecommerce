@@ -20,7 +20,7 @@ admin.site.register(Cart,CartAdmin)
 
 class Cart_itemsAdmin(admin.ModelAdmin):
     model = Cart_items
-    list_display = ('cart','product','quantity','price') 
+    list_display = ('id','cart','product','quantity','price') 
     
 
 

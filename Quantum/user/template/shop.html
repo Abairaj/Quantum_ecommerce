@@ -58,7 +58,7 @@
 					<div class="col-md-4 text-center">
 						<div class="product-entry">
 							<div class="product-img" style="background-image: url({{i.image.image_1.url}});">
-								<p class="tag"><span class="new">New</span></p>
+								<p class="tag"><span class="new" style="background-color:{{i.color.name}};">{{i.color.name}}</span></p>
 								<div class="cart">
 									<p>
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}
@@ -164,6 +164,9 @@
 		</div>
 	</div>
 </div>
+
+
+
 
 
 		

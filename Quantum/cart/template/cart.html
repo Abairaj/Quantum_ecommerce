@@ -51,7 +51,7 @@
 					</div>
 				</div>
 				<div class="row row-pb-md">
-					<div class="col-md-10 col-md-offset-1">
+					<div class="col-md-10 col-md-offset-1 ">
 
 						<div class="product-name">
 							<div class="one-forth text-center">
@@ -73,7 +73,7 @@
 
 						{%if cart%}
 						{%for i in cart.cart_items_set.all%}
-						<div class="product-cart">
+						<div class="product-cart product_data">
 							<div class="one-forth">
 								<div class="product-img" style="background-image: url(images/item-6.jpg);">
 								</div>
@@ -83,25 +83,29 @@
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<span class="price">{{i.price}}</span>
+									<span class="product_price">{{i.price}}</span>
 								</div>
 							</div>
 							<div class="one-eight text-center">
 								<div class="d-flex pt-5">
+									<input type="hidden" class="prod_id" value = {{i.id}}>
+									{% csrf_token %}
 									
-									<a href="/cart/manage_cart/{{i.id}}/decrease"  class="btn btn-primary">-</a>
-									<input type="text" id="quantity" name="quantity" class="form-control input-number text-center ml-1 mr-1" value="{{i.quantity}}" min="1" max="100">
-									<a href="/cart/manage_cart/{{i.id}}/increase" class="btn btn-primary">+</a>
+									<button  class="btn btn-primary change_quantity- decrement-btn">-</button>
+									<input type="text" id="quantity" name="quantity" class="form-control input-number text-center ml-1 mr-1 qty-input" value="{{i.quantity}}" min="1" max="100">
+									<button class="btn btn-primary add_quantity increment-btn">+</button>
+									<!-- /cart/manage_cart/{{i.id}}/increase -->
+									<!-- /cart/manage_cart/{{i.id}}/decrease -->
 								</div>
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<span class="price">{{i.sub_total}}</span>
+									<span class="sub_total" >{{i.sub_total}}</span>
 								</div>
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<a href="/cart/manage_cart/{{i.id}}/delete" class="btn btn-danger">x</a>
+									<a href="/cart/delete_cart_item/{{i.id}}" class="btn btn-danger">x</a>
 								</div>
 							</div>
 						</div>
@@ -112,11 +116,12 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-md-10 col-md-offset-1">
+					<div class="col-md-10 col-md-offset-1 product_total">
 						<div class="total-wrap">
 							<div class="row">
 								<div class="col-md-8">
 									<form action="{% url 'apply_coupon'%}" method="POST">
+
 
 										{% csrf_token %}
 										<div class="row form-group">
@@ -144,9 +149,11 @@
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}			
 						{%if cart%}
 						
-										<div class="grand-total">
-											<p><span><strong>Total:</strong></span> <span>{{cart.total}}</span></p>
+										<div >
+											<p ><span><strong>Total:</strong></span> <span class="grand_total">{{cart.total}}</span></p>
+											{%if cart.cart_items_set.all%}
 											<a href="/order/checkout/"  class="btn btn-primary">Checkout</a>
+											{%endif%}
 										</div>
 									
 										{%endif%}
@@ -161,9 +168,117 @@
 		</div>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+		<script>
+			$(document).ready(function (){
+				$('.increment-btn').click(function (e){
+					e.preventDefault();
+		
+					var inc_value = $(this).closest('.product_data').find('.qty-input').val();
+					var value = parseInt(inc_value,10);
+					value = isNaN(value) ? 0 :value;
+					if(value < 11)
+					{
+						value ++;
+						$(this).closest('.product_data').find('.qty-input').val(value);
+					}
+				});
+		// Decrement
+		
+				$('.decrement-btn').click(function (e){
+					e.preventDefault();
+		
+					var dec_value = $(this).closest('.product_data').find('.qty-input').val();
+					var value = parseInt(dec_value,10);
+					value = isNaN(value) ? 0 :value;
+					if(value > 1)
+					{
+						value --;
+						$(this).closest('.product_data').find('.qty-input').val(value);
+					}
+				});
+
+
+			
+				$('.add_quantity').click(function (e){
+					e.preventDefault();
+		
+					var product_id = $(this).closest('.product_data').find('.prod_id').val();
+					var product_qty =$(this).closest('.product_data').find('.qty-input').val();
+					var subtotal = $(this).closest('.product_data').find('.sub_total').text();
+					var grand_total = $('.total').find('.grand_total').text();
+					var product_price = $(this).closest('.product_data').find('.product_price').text();
+					var token = $('input[name = csrfmiddlewaretoken]').val();
+					console.log(grand_total,'*************************************')
+
+					subtotal = product_qty * product_price
+					$(this).closest('.product_data').find('.sub_total').text(subtotal);
+					if (product_qty <= 10){
+					grand_total  = parseInt(grand_total) + parseInt(product_price)
+					$('.total').find('.grand_total').text(grand_total);
+					}
+					$.ajax({
+						method: 'POST',
+						url: '/cart/update_cart_add',
+						data:{
+							'product_id':product_id,
+							'product_qty':product_qty,
+							csrfmiddlewaretoken:token
+						},
+						success:function (response){
+						}
+					});
+					
+				});
+		// Decrement
+
+					
+		$('.change_quantity-').click(function (e){
+					e.preventDefault();
+		
+					var product_id = $(this).closest('.product_data').find('.prod_id').val();
+					var product_qty =$(this).closest('.product_data').find('.qty-input').val();
+					var subtotal = $(this).closest('.product_data').find('.sub_total').text();
+					var grand_total = $('.total').find('.grand_total').text();
+					var product_price = $(this).closest('.product_data').find('.product_price').text();
+					var token = $('input[name = csrfmiddlewaretoken]').val();
+					console.log(grand_total,'*************************************************************')
+					subtotal = product_qty * product_price
+					$(this).closest('.product_data').find('.sub_total').text(subtotal);
+					if (product_qty >= 2){
+					grand_total  =  grand_total - product_price
+					$('.total').find('.grand_total').text(grand_total);
+					}
+					$.ajax({
+						method: 'POST',
+						url: '/cart/update_cart_subtract',
+						data:{
+							'product_id':product_id,
+							'product_qty':product_qty,
+							csrfmiddlewaretoken:token
+						},
+						success:function (response){
+						}
+					});
+					
+				});
 
 
 
+
+
+			});
+
+
+
+
+// ---------------------------------------------------------------------------------------------------------------
+
+
+	
+			
+		</script>
 						
 
 
