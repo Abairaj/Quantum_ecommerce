@@ -8,8 +8,7 @@ from django.core.validators import validate_email
 from django.contrib import auth
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
-from rest_framework.renderers import TemplateHTMLRenderer
-from django.views.generic import View,TemplateView,CreateView
+from django.views.generic import View,TemplateView
 import random
 from sendotp import *
 from orders.models import Order
@@ -17,24 +16,56 @@ from django.utils.decorators import method_decorator
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 import calendar
-
+import io
+from django.http import FileResponse
+import openpyxl
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Table
+from reportlab.lib.styles import getSampleStyleSheet
+from io import BytesIO
+from django.db.models import Q
+from datetime import datetime
 
 
 
 # Create your views here.
 @login_required(login_url='/vendor-signin')
 def vendor_dashboard(request):
-    orders = Order.objects.annotate(month =ExtractMonth('order_date') ).values('month').annotate(count= Count('id')).values('month','count')
+        vendor_id = users.objects.get(id = request.user.id)
+        product = Product.objects.filter(vendor_name = vendor_id)
+        order = Order.objects.filter(is_active = 'True')
+        
+        for i in order:
+           if i.product_id.vendor_name == vendor_id:
+                if order:
+                   cancelled_orders = Order.objects.filter(status = 'Cancelled' ).annotate(month =ExtractMonth('order_date') ).values('month').annotate(count= Count('id')).values('month','count')
+                   orders = Order.objects.annotate(month =ExtractMonth('order_date') ).values('month').annotate(count= Count('id')).values('month','count')
 
-    monthNumber = []
-    totalOrder = []
 
-    for i in orders:
-        monthNumber.append(calendar.month_name[i['month']])
-        totalOrder.append(i['count'])
+                   monthNumber = []
+                   totalOrder = []
+
+                   cancelled_month = []
+                   cancelled_order = []
 
 
-    return render(request,'vendor_dashboard.html',{'monthNumber':monthNumber,'totalOrder':totalOrder})
+                   for i in orders:
+                         monthNumber.append(calendar.month_name[i['month']])
+                         totalOrder.append(i['count'])
+
+                    
+                    
+         
+                    
+                   for i in cancelled_orders:
+                         cancelled_month.append(calendar.month_name[i['month']])
+                         cancelled_order.append(i['count'])
+
+
+        return render(request,'vendor_dashboard.html',{'monthNumber':monthNumber,'totalOrder':totalOrder,'cancelled_month':cancelled_month,'cancelled_order':cancelled_order})
+
 
 
 
@@ -541,6 +572,7 @@ class Order_management(TemplateView):
         vendor_id = users.objects.get(id = self.request.user.id)
         product = Product.objects.filter(vendor_name = vendor_id)
         order = Order.objects.filter(is_active = 'True')
+        
         for i in order:
            if i.product_id.vendor_name == vendor_id:
                 if order:
@@ -578,12 +610,6 @@ def vendor_coupon(request):
 
 def vendor_offers(request):
     return render(request,'vendor_offer.html')
-
-def vendor_salesreport(request):
-    return render(request,'salesreport.html')
-
-
-
 
 
 
@@ -641,6 +667,171 @@ def edit_coupon(request,id):
         messages.success(request,'Coupon updated successfully')
         return redirect('vendor_coupon')
 
+
+# ===========================================================================================sales report===================================================================
+
+class Vendor_Salesreport_view(TemplateView):
+    template_name = 'vendor_salesreport.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        id = self.request.user
+
+        product = Product.objects.filter(vendor_name = id.id)
+
+        product_ids = [product for product in product]
+
+        order = Order.objects.all().filter(product_id__in = product_ids)
+
+        context['order'] = order
+
+        return context
+    
+
+
+
+
+class vendor_Salesreport_download(View):
+
+
+    def get(self,request):
+       id = self.request.user
+
+       product = Product.objects.filter(vendor_name = id.id)
+
+       product_ids = [product for product in product] 
+       try:
+        start = self.request.GET.get('start')
+        end = self.request.GET.get('end')
+        print(start,'//////////////////////////////////////',end)
+       except Exception as e:
+           print(e)
+
+       if start:
+
+          order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end)).filter(product_id__in = product_ids)
+       else:
+           order = Order.objects.all().filter(product_id__in = product_ids)
+
+       
+       #pdf
+       if 'excel' not in request.GET:
+
+
+        buffer = BytesIO()
+    
+        # Create the PDF object
+        pdf = SimpleDocTemplate(buffer, pagesize=letter)
+
+        # Define the data for the table
+        data = []
+        header = ["Order Date", "Order ID", "Category", "Brand", "Sales Amount"]
+        data.append(header)
+
+        for report in order:
+            data.append([str(report.order_date.date()), str(report.id), report.product_id.category.category_name, report.product_id.brand.brand_name, str(report.amount)])
+
+        # Create the table
+        table = Table(data, colWidths=[100, 100, 100, 100, 100], rowHeights=10*len(data))
+
+        table.setStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black)
+        ])
+
+
+        # Add a heading to the page
+        styles = getSampleStyleSheet()
+        heading = Paragraph("Sales Report", style=styles["Heading1"])
+
+        # Add the table and the heading to the PDF
+        pdf.build([heading, table])
+
+        # Close the PDF object
+        buffer.seek(0)
+        
+        # Get the value of the PDF file from the buffer
+        pdf = buffer.getvalue()
+
+        # Return the PDF file through Django's FileResponse
+        response = FileResponse(BytesIO(pdf), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
+        return response
+
+
+
+
+    # excel
+       else:
+
+        # Create a new Excel workbook
+            workbook = openpyxl.Workbook()
+
+            # Select the active worksheet
+            worksheet = workbook.active
+
+            # Write the headers to the worksheet
+            worksheet['A1'] = "Order Date"
+            worksheet['B1'] = "Order ID"
+            worksheet['D1'] = "Category"
+            worksheet['E1'] = "Brand"
+            worksheet['C1'] = "Sales Amount"
+
+
+            # Write the sales report data to the worksheet
+            for row, report in enumerate(order, start=2):
+                worksheet.cell(row=row, column=1, value= str(report.order_date.date()))
+                worksheet.cell(row=row, column=2, value= str(report.id))
+                worksheet.cell(row=row, column=4, value=report.product_id.category.category_name)
+                worksheet.cell(row=row, column=5, value=report.product_id.brand.brand_name)
+                worksheet.cell(row=row, column=3, value= str(report.amount))
+
+
+        # Create a file-like buffer to receive Excel workbook data
+            buffer = io.BytesIO()
+
+            # Save the workbook to the buffer
+            workbook.save(buffer)
+
+            # FileResponse sets the Content-Disposition header so that browsers
+            # present the option to save the file.
+            buffer.seek(0)
+            return FileResponse(buffer, as_attachment=True,filename='sales_report.xlsx')
+
+
+class salesreport_filter(View):
+
+    def post(self,request):
+
+        start_str = request.POST['from']
+        end_str = request.POST['to']
+
+        start =  datetime.strptime(start_str, '%Y-%m-%d').date()
+        end =  datetime.strptime(end_str, '%Y-%m-%d').date()
+        try:
+          order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end))
+          return render(request,'vendor_salesreport.html',{'order':order,'start':start,'end':end})
+        except Exception as e:
+            print(e)
+            messages.warning(request,'Try with proper values')
+            return redirect('vendor_sales_report')
+       
+    
+
+
+
+
+
+
+
+        
+        
 
 
 

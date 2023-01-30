@@ -36,7 +36,16 @@ urlpatterns = [
     path('edit_coupon/<str:id>',views.edit_coupon,name = 'edit_coupon'),
          
     path('vendor_offers/', views.vendor_offers,name = 'vendor_offers'),
-    path('vendor_salesreport/', views.vendor_salesreport,name = 'vendor_salesreport'),
+
+
+
+
+# vendor salesreport
+   path('vendor_sales_report/',views.Vendor_Salesreport_view.as_view(),name='vendor_sales_report'),
+   path('download_salesreport/',views.vendor_Salesreport_download.as_view(),name = 'download_salesreport'),
+   path('salesreport_filter/',views.salesreport_filter.as_view(),name = 'salesreport_filter'),
+
+
 
 #vendor otp 
     path('vendor_otp_login',views.vendor_otp_login,name='vendor_otp_login'),

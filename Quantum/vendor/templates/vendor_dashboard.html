@@ -268,7 +268,7 @@
 
               <li class="nav-item">
                 <a class="nav-link" href="{%url 'variant_view'%}">
-                  <i class="ti-widget-alt  menu-icon"></i>
+                  <i class="ti-credit-card menu-icon"></i>
                   <span class="menu-title">Variants</span>
                 </a>
               </li>
@@ -281,22 +281,18 @@
                   <span class="menu-title">Coupons</span>
                 </a>
               </li>
-    
-    
+
+
               <li class="nav-item">
-                <a class="nav-link" href="#form-elements">
-                  <i class="ti-widget-alt  menu-icon"></i>
-                  <span class="menu-title">Offers</span>
-                </a>
-              </li>
-    
-    
-              <li class="nav-item">
-                <a class="nav-link" href="#form-elements">
+                <a class="nav-link" href="{%url 'vendor_sales_report'%}">
                   <i class="ti-clipboard menu-icon"></i>
                   <span class="menu-title">Sales Report</span>
                 </a>
               </li>
+    
+    
+
+    
 
 
         </ul>
@@ -304,59 +300,22 @@
       <!-- partial -->
       <div class="main-panel">
         <div class="content-wrapper">
+
+
+
+    
+
+
+
           <div class="row">
-            <div class="col-md-12 grid-margin">
-              <div class="row">
-                {%for vendor in vendor%}
-                <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                  <h3 class="font-weight-bold">Welcome {{vendor.email}}}</h3>
-                  <h6 class="font-weight-normal mb-0">All systems are running smoothly! You have <span class="text-primary">3 unread alerts!</span></h6>
-                </div>
-                {%endfor%}
-                <div class="col-12 col-xl-4">
-                 <div class="justify-content-end d-flex">
-                  <div class="dropdown flex-md-grow-1 flex-xl-grow-0">
-                    <button class="btn btn-sm btn-light bg-white dropdown-toggle" type="button" id="dropdownMenuDate2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                     <i class="mdi mdi-calendar"></i> Today (10 Jan 2021)
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuDate2">
-                      <a class="dropdown-item" href="#">January - March</a>
-                      <a class="dropdown-item" href="#">March - June</a>
-                      <a class="dropdown-item" href="#">June - August</a>
-                      <a class="dropdown-item" href="#">August - November</a>
-                    </div>
-                  </div>
-                 </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <!-- <div class="col-md-6 grid-margin stretch-card">
-              <div class="card tale-bg">
-                <div class="card-people mt-auto">
-                  <img src="{%static '/images/dashboard/people.svg'%}" alt="people">
-                  <div class="weather-info">
-                    <div class="d-flex">
-                      <div>
-                        <h2 class="mb-0 font-weight-normal"><i class="icon-sun mr-2"></i>31<sup>C</sup></h2>
-                      </div>
-                      <div class="ml-2">
-                        <h4 class="location font-weight-normal">Bangalore</h4>
-                        <h6 class="font-weight-normal">India</h6>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
+     
             <div class="col-md-12 grid-margin transparent">
               <div class="row">
 
                 <div class="col-md-3 mb-4  stretch-card transparent">
                   <div class="card card-tale">
                     <div class="card-body">
-                      <p class="mb-4">Today’s Bookings</p>
+                      <p class="mb-4">Total Revenue</p>
                       <p class="fs-30 mb-2">4006</p>
                       <p>10.00% (30 days)</p>
                     </div>
@@ -366,9 +325,8 @@
                 <div class="col-md-3 mb-4 stretch-card transparent">
                   <div class="card card-dark-blue">
                     <div class="card-body">
-                      <p class="mb-4">Total Bookings</p>
-                      <p class="fs-30 mb-2">61344</p>
-                      <p>22.00% (30 days)</p>
+                      <p class="mb-4">Total orders</p>
+                      <p class="fs-30 mb-2">{%for i in totalOrder%}{{i}}{%endfor%}</p>
                     </div>
                   </div>
                   </div>
@@ -376,7 +334,7 @@
                 <div class="col-md-3 mb-4 mb-lg-0 stretch-card transparent">
                 <div class="card card-light-blue">
                     <div class="card-body">
-                      <p class="mb-4">{{monthNumber}} and {{totalOrder}}</p>
+                      <p class="mb-4">{{cancelled_month}} and {{cancelled_order}}</p>
                       <p class="fs-30 mb-2">34040</p>
                       <p>2.00% (30 days)</p>
                     </div>
@@ -404,24 +362,19 @@
                   <p class="card-title">Order Details</p>
                   <p class="font-weight-500">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
                   <div class="d-flex flex-wrap mb-5">
-                    <div class="mr-5 mt-3">
+                    <!-- <div class="mr-5 mt-3">
                       <p class="text-muted">Order value</p>
-                      <h3 class="text-primary fs-30 font-weight-medium">12.3k</h3>
+                      <h3 class="text-primary fs-30 font-weight-medium">{{toatalAmount}}</h3>
                     </div>
                     <div class="mr-5 mt-3">
                       <p class="text-muted">Orders</p>
-                      <h3 class="text-primary fs-30 font-weight-medium">14k</h3>
-                    </div>
-                    <div class="mr-5 mt-3">
-                      <p class="text-muted">Users</p>
-                      <h3 class="text-primary fs-30 font-weight-medium">71.56%</h3>
-                    </div>
-                    <div class="mt-3">
-                      <p class="text-muted">Downloads</p>
-                      <h3 class="text-primary fs-30 font-weight-medium">34040</h3>
-                    </div> 
+                      <h3 class="text-primary fs-30 font-weight-medium">{%for i in totalOrder%}{{i}} {%endfor%}</h3>
+                    </div> -->
+
                   </div>
-                  <canvas id="order-chart"></canvas>
+                  <!-- chartjs total orders -->
+                  <canvas id="orderchart"></canvas>
+
                 </div>
               </div>
             </div>
@@ -429,14 +382,14 @@
               <div class="card">
                 <div class="card-body">
                  <div class="d-flex justify-content-between">
-                  <p class="card-title">Sales Report</p>
+                  <p class="card-title">order cancelled</p>
                   <a href="#" class="text-info">View all</a>
                  </div>
                   <p class="font-weight-500">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
                   <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
                   <div>
                     <!-- chartjs -->
-                    <canvas id="orderchart"></canvas>
+                    <canvas id="cancelled"></canvas>
                   </div>
                   
                 </div>
@@ -497,7 +450,7 @@
 
   <!-- chartjs -->
   <script>
-    const ctx = document.getElementById('orderchart');
+   const ctx = document.getElementById('orderchart');
   
     new Chart(ctx, {
       type: 'bar',
@@ -516,27 +469,34 @@
           }
         }
       }
-
-      
     });
+</script>
+
+<!-- cancelled orders -->
+
+<script>
+ const ctx2 = document.getElementById('cancelled');
 
 
-
-
-    const config = {
-  type: 'doughnut',
-  data: {},
-  options: {},
-  plugins: []
-};
-
-var myChart = new Chart(
-  document.getElementById('orderchart'),
-  config
-  );
- 
- 
-  </script>
+  new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: {{cancelled_month|safe}},
+      datasets: [{
+        label: 'Cancelled Orders by Month',
+        data: {{cancelled_order}},
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
    
 </body>
 

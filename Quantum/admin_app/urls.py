@@ -4,7 +4,7 @@ urlpatterns = [
     path('', views.admin_signin, name = 'admin_signin'),
     path('admin_pannel/',views.admin_pannel,name='admin_pannel'),
     path('admin_logout/',views.logout,name = 'admin_logout'),
-    path('salesreport/',views.sales_report,name = 'admin_salesreport'),
+
  
 
 
@@ -35,6 +35,12 @@ urlpatterns = [
     path('add_banner/',views.add_banner,name = 'add_banner'),
     path('edit_banner/<str:id>',views.edit_banner,name = 'edit_banner'),
     path('delete_banner/<str:id>',views.delete_banner,name = 'delete_banner'),
+
+    #sales Report
+    path('admin_salesreport/',views.admin_Salesreport_view.as_view(),name = 'admin_salesreport'),
+    path('download_admin_salesreport/',views.Admin_Salesreport_download.as_view(),name = 'download_admin_salesreport'),
+
+
          
 
     path('admin_product',views.Admin_product.as_view(),name='admin_product')

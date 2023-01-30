@@ -81,61 +81,7 @@ class CartView(TemplateView):
         context['cart'] = cart
         return context
 
-# @method_decorator(login_required(login_url='signin'), name='dispatch')
-# class ManageCartView(View):
 
-   
-
-
-#     def get(self,request,*args,**kwargs):
-#         user = self.request.user
-#         variant_id =self.kwargs['id']
-#         variant = Variant.objects.get(id = variant_id)
-
-#         action = self.kwargs.get('action')
-#         cart_item = Cart_items.objects.get(variant = variant)
-
-#         variant = Variant.objects.get(id = variant_id)
-#         cart = cart_item.cart
-#         cart.save()
-  
-   
-#         if action == 'increase':
-#           if variant.quantity < cart_item.quantity:
-#             messages.warning(request,'The item is currently out of stock')
-#             return redirect('cart')
-#           else:
-#             cart_item.quantity += 1
-#             cart_item.sub_total += cart_item.price
-#             cart_item.save()
-#             cart.total += cart_item.price
-#             cart.save()
-
-
-
-#         if action == 'decrease':
-#             if cart_item.quantity == 1:
-#                 cart_item.delete()
-#                 cart.total -= cart_item.price
-#                 cart.save()
-#                 return redirect('cart')
-#             cart_item.quantity -= 1
-#             cart_item.sub_total -= cart_item.price
-#             cart_item.save()
-#             cart.total -= cart_item.price
-#             cart.save()
-
-            
-
-#         if action == 'delete':
-#             cart.total -= cart_item.sub_total
-#             cart.save()
-#             cart_item.delete()
-    
-
-
-
-#         return redirect("cart")
 
 
 def update_cart_add(request):

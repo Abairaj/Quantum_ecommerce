@@ -1,69 +1,101 @@
 {%extends 'admin_base.html'%}
 
-{%block title%}Categoy Sales Report{%endblock%}
+{%block title%}Sales Report{%endblock%}
+         
+              
+
 
 {%block content%}
 
+      <!-- partial -->
+      <div class="main-panel">
+        {%if messages%}
+        {%for message in messages%}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <strong></strong> {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {%endfor%}
+        {%endif%}
+        <div class="content-wrapper">
+          <a href="{%url 'download_salesreport'%}?pdf" class="btn btn-primary ml-5">Download PDF</a>
+          <a href="{%url 'download_salesreport'%}?excel" class="btn btn-primary mr-5">Download Excel</a>
+          <div class="row">
+            <div class="col-lg-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+
+                  <div class="row">
+
+                    <div class="col-sm-6">
+                      <h4 class="card-title">Sales Report</h4>
+                 </div>
+
+                </div>
 
 
- <!-- partial -->
- <div class="main-panel">
-    <div class="content-wrapper">
-      <div class="row">
-<!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
-        <div class="col-lg-12 grid-margin stretch-card">
-          <div class="card">
-            <div class="card-body">
-              <h4 class="card-title">Sales Report</h4>
-              <div class="table-responsive">
-                <table class="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>
-                        No
-                      </th>
-                      <th>
-                        Vendor
-                    </th>
-                      <th>
-                        Date
-                      </th>
-                      <th>
-                        Order number
-                      </th>
-                      <th>
-                        Total Amount
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td class="py-1">
-                        1
-                      </td>
-                      <td>
-                        Mark
-                      </td>
-                      <td>
-                        11/11/2023
-                      </td>
-                      <td>
-                        23
-                      </td>
-                      <td >
-                        35,000
-                      </td> 
-                    </tr>
 
-                  </tbody>
-                </table>
+                  <div class="table-responsive">
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <th>
+                            No
+                          </th>
+                          <th>
+                            Date
+                          </th>
+                          <th>
+                            Order id
+                          </th>
+                          <th>
+                            Category
+                          </th>
+                          <th>
+                            Brand
+                          </th>
+                          <th>
+                            Toal Amount
+                          </th>
+                        </tr>
+                      </thead>
+                      {%for i in order%}
+                      <tbody>
+                        <tr>
+                          <td class="py-1">
+                            {{forloop.counter}}
+                          </td>
+                          <td>
+                            {{i.order_date}}
+                          </td>
+                          <td>
+                            {{i.id}}
+                          </td>
+                          <td>
+                           {{i.product_id.category}}
+                          </td>
+                          <td>
+                            {{i.product_id.brand}}
+                          </td>
+                          <td>
+                            {{i.amount}}
+                          </td>
+                 
+                        </tr>
+
+                      </tbody>
+                      {%endfor%}
+                    </table>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+
+        
+        {%endblock%}
 
 
-
-{%endblock%}
