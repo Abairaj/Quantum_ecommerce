@@ -26,7 +26,7 @@ from django.http import JsonResponse
 
 # Create your views here.
 def home(request):
-    context = {'banner':Banner.objects.all,'product':Product.objects.all(),'variant':Variant.objects.all()}
+    context = {'banner':Banner.objects.all,'product':Product.objects.all(),'variant':Variant.objects.all().order_by('-created_on')[:4]}
 
     return render(request,'index.html',context)
 

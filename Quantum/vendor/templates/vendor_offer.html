@@ -6,13 +6,90 @@
 {%block table%}
       <!-- partial -->
       <div class="main-panel">
+        {%if messages%}
+        {%for message in messages%}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+            <strong></strong> {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {%endfor%}
+        {%endif%}
         <div class="content-wrapper">
           <div class="row">
 <!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <h4 class="card-title">Orders</h4>
+                  <div class="col-sm-6">
+                  <h4 class="card-title">OFFERS</h4>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <!-- -----------------------------------------------------------------------------------------------Add offer--------------------------------------------------------------------------------- -->
+                     
+                                                   <div>
+                                    <div class="modal fade" id="exampleModalToggleoffer" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                          <div class="modal-content">
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="exampleModalToggleLabel">ADD</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action='/offer/manage_offer/' name="category" method="POST" >
+                                                    {%csrf_token%}
+                                                    <div class="form-outline mb-4">
+                                                      <input type="text"  class="form-control" name="name" placeholder="Name" fdprocessedid="dl50sd">
+                                                      <label for="floatingPassword">Offer Name</label>
+                                                    </div>
+                                                    
+                                                    <div class="form-outline mb-4">
+                                                    <select class="form-select" name="brand" aria-label="Default select example">
+                                                      <option selected>Brand</option>
+                                                      {%for i in brand%}
+                                                      <option value="{{i}}">{{i}}</option>
+                                                      {%endfor%}
+                                                    </select>
+                                                  </div>
+
+                                                    <div class="form-outline mb-4">
+                                                      <input type="number"  class="form-control" name="percentage" id="category_name" placeholder="Offer" fdprocessedid="dl50sd">
+                                                      <label for="floatingPassword">Offer Percentage</label>
+                                                    </div>
+
+
+                                                    <div class="form-outline mb-4">
+                                                      <input type="date"  class="form-control" name="expiry" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                                                      <label for="floatingPassword">Expiry Date</label>
+                                                    </div>
+
+
+                                            
+                                                    </div>
+                                                    <button class="w-100 btn btn-lg btn-primary" type="submit" fdprocessedid="k6q0td">Add</button>
+                                                  </form>
+                                            </div>
+                                          </div>
+                                        </div>
+                    
+                                      <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalToggleoffer" role="button">ADD</i></a> 
+                                    </div>
+                    
+                    
+                    <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+                    
+                    
+                    
+                    <!-- ========================================================================================================Banner============================================================================================= -->
+                    
+                    
+                                  </div>
+
+
+
+
                   <div class="table-responsive">
                     <table class="table table-striped">
                       <thead>
@@ -21,36 +98,157 @@
                             Sl No
                           </th>
                           <th>
-                            Category Name
+                            Offer Name
+                          </th>
+                          <th>
+                            Product Name
                           </th>
                           <th>
                             Offer percentage
                           </th>
+                          <th>
+                            Expiry Date
+                          </th>
+                          <th>
+                            Status
+                          </th>
+
                           <th style="text-align:center">
                             Action
                           </th>
                         </tr>
                       </thead>
                       <tbody>
+                        {%for i in offer%}
                         <tr>
                           <td class="py-1">
-                            1
+                            {{forloop.counter}}
                           </td>
                           <td>
-                            Herman Beck
+                            {{i.offer_name}}
                           </td>
                           <td>
-                            Rolex legend
+                            {{i.brand.brand_name}}
+                          </td>
+                          <td>
+                            {{i.percent}}
+                          </td>
+                          <td>
+                            {{i.expiry_date}}
+                          </td>
+                          <td>
+                            {%if i.active == True%}
+                            ACTIVE
+                            {%else%}
+                            EXPIRED
+                            {%endif%}
                           </td>
                           <td >
                             <div style="justify-content: space-around;">
                               <div class="d-flex justify-content-around">
-                                <h4><a href="#"><i class="fa-solid fa-pen-to-square"></i></a></h4>
-                                <h4><a href="#"><i class="fa-solid fa-trash"></i></a></h4>
+
+                                <!------------------------------------ EDIT OFFER------------------------------- -->
+
+
+                                <div>
+                                  <div class="modal fade" id="exampleModalToggleofferedit{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                                  <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="exampleModalToggleLabel">Edit</h5>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <form action='/offer/manage_offer/?id={{i.id}}' name="editoffer" method="POST" >
+                                        {%csrf_token%}
+
+                                        <div class="form-outline mb-4">
+                                          <input type="text"  class="form-control" value="{{i.offer_name}}" name="name" placeholder="Name" fdprocessedid="dl50sd">
+                                          <label for="floatingPassword">Offer Name</label>
+                                        </div>
+                                        
+                                        <div class="form-outline mb-4">
+                                        <select class="form-select" name="brand" aria-label="Default select example">
+                                          <option selected>{{i.brand.brand_name}}</option>
+                                          {%for j in brand%}
+                                          <option value="{{j}}">{{j}}</option>
+                                          {%endfor%}
+                                        </select>
+                                      </div>
+                                
+                                        <div class="form-outline mb-4">
+                                          <input type="number"  class="form-control" name="percentage" value="{{i.percent}}" id="category_name" placeholder="Offer" fdprocessedid="dl50sd">
+                                          <label for="floatingPassword">Offer Percentage</label>
+                                        </div>
+                                
+                                
+                                        <div class="form-outline mb-4">
+                                          <input type="date"  class="form-control" name="expiry" value="{{i.expiry_date}}" id="category_name" placeholder="Name" fdprocessedid="dl50sd">
+                                          <label for="floatingPassword">Expiry Date</label>
+                                        </div>
+                                    </div>
+                                            <button class="w-100 btn btn-lg btn-primary" type="submit">Add</button>
+                                            
+                                          </form>
+                                    </div>
+                                  </div>
+                                  </div>
+                                  
+                                  <a class="btn btn-primary mr-2" data-bs-toggle="modal" href="#exampleModalToggleofferedit{{i.id}}" role="button"><i class="fa-solid fa-pen-to-square"></i></a></i></a> 
+                                  </div>
+                                  
+<!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+<!-- -----------------------------------------------------------------------Delete----------------------------------------------------------------- -->
+
+
+
+{%if i.active == False%}
+
+<div class="modal fade" id="{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Activate</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+  
+        <p> Are you sure about activating the Offer. <br></p>
+        <a href="/offer/offer_status/?id={{i.id}}&action=activate"> <button class="btn btn-success mt-4">Activate</button></a>
+  
+      </div>
+    </div>
+  </div>
+  </div>
+  <button class="btn btn-success" data-bs-target="#{{i.id}}" data-bs-toggle="modal">Activate</i></button>
+  </div>
+  {%else%}
+  <div class="modal fade" id="deac{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Deactivate</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+    
+          <p> Are you sure about deactivating the Offer. <br></p>
+          <a href="/offer/offer_status/?id={{i.id}}&action=deactivate"> <button class="btn btn-danger mt-4">Deactivate</button></a>
+    
+        </div>
+      </div>
+    </div>
+    </div>
+    <button class="btn btn-danger" data-bs-target="#deac{{i.id}}" data-bs-toggle="modal">Deactivate</i></button>
+    </div>
+    {%endif%}
+<!-- -------------------------------------------------------------------------------------------------------- -->
                               </div>
                           </div>
                           </td> 
                         </tr>
+                        {%endfor%}
 
                       </tbody>
                     </table>

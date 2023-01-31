@@ -6,7 +6,6 @@ from .models import Product,Color,Variant,Image
 from cart.models import Coupon
 from django.core.validators import validate_email
 from django.contrib import auth
-from django.views.decorators.cache import never_cache
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View,TemplateView
 import random
@@ -608,12 +607,6 @@ def vendor_coupon(request):
 
 
 
-def vendor_offers(request):
-    return render(request,'vendor_offer.html')
-
-
-
-
 
 # add coupon
 class add_coupon(View):
@@ -641,7 +634,7 @@ class add_coupon(View):
 def delete_coupon(request,id):
     coupon = Coupon.objects.get(id = id)
     coupon.delete()
-    messages.warning(request,'Coupon deleted successfully')
+    messages.success(request,'Coupon deleted successfully')
     return redirect('vendor_coupon')
 
 
@@ -828,18 +821,6 @@ class salesreport_filter(View):
             return redirect('vendor_sales_report')
        
     
-
-
-
-
-
-
-
-        
-        
-
-
-
 
 
 

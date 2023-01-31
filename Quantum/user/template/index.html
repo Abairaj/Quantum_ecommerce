@@ -67,6 +67,8 @@
 									</div>
 								</a>
 							</div>
+					
+
 							<div class="col-md-6">
 								<a href="" class="f-product-2" style="background-image: url(https://images.unsplash.com/photo-1629581688635-5d88654e5bdd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzF8fHdhdGNoZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60);">
 									<div class="desc">
@@ -81,6 +83,10 @@
 									</div>
 								</a>
 							</div>
+
+							
+
+
 						</div>
 					</div>
 				</div>
@@ -98,27 +104,31 @@
 					</div>
 				</div>
 				<div class="row">
+
+					{%for i in variant%}
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
-							<div class="product-img" style="background-image: url(https://content.rolex.com/dam/2022-11/upright-bba-with-shadow/m226659-0002.png?imwidth=420);">
-								<p class="tag"><span class="new">New</span></p>
+							<div class="product-img" style="background-image: url({{i.image.image_1.url}});">
+								<p class="tag"><span class="new"  style="background-color:{{i.color.name}};">{{i.color.name}}</span></p>
 								<div class="cart">
 									<p>
-										<span class="addtocart"><a href="cart.html"><i class="icon-shopping-cart"></i></a></span> 
-										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
+										<span class="addtocart"><a href="/cart/add_to_cart/{{i.id}}"><i class="icon-shopping-cart"></i></a></span> 
+										{%endif%}
+										<span><a href="/product_details/{{i.Product.id}}/{{i.id}}"><i class="icon-eye"></i></a></span> 
 										<span><a href="#"><i class="icon-heart3"></i></a></span>
 										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
 									</p>
 								</div>
 							</div>
 							<div class="desc">
-								<h3><a href="shop.html">Rolex</a></h3>
-								<p class="price"><span>MRP 30000.00</span></p>
+								<h3><a href="shop.html">{{i.Product.product_name}}</a></h3>
+								<p class="price"><span>{{i.final_price}}</span></p>
 							</div>
 						</div>
 					</div>
 
-
+{%endfor%}
 
 				</div>
 			</div>

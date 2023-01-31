@@ -67,6 +67,7 @@ class Variant(models.Model):
         discount_percentage = models.FloatField()
         final_price = models.FloatField()
         quantity = models.IntegerField()
+        created_on = models.DateTimeField(auto_now_add=True,null=True,blank=True)
 
 
 
