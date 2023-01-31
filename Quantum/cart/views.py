@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
+from offers.models import Offer
 
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
@@ -102,7 +103,6 @@ def update_cart_add(request):
             
             cart_item = Cart_items.objects.get(id = cart_item_id,cart =cart)
             print(cart_item.price)
-            print(prod_qty,'**************')
             print(cart_item.quantity)
             if cart_item.quantity <= 9:
                 cart_item.quantity = prod_qty
@@ -225,9 +225,7 @@ def address_default(request,id,action):
 class Coupon_apply(View):
 
     def post(self,request,**kwargs):
-        print('****************************************************************************************************')
         coupon_code =request.POST['coupon']
-        print(coupon_code,'***************************************************************************************************\]')
         coupon = Coupon.objects.filter(coupon_code__icontains =  coupon_code)
         cart_id = self.request.session.get('cart_id')
         cart = Cart.objects.get(id = cart_id)

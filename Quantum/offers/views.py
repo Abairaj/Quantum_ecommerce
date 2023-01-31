@@ -2,10 +2,11 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.views.generic import View,TemplateView
 from .models import Offer
-from vendor.models import Product
+from vendor.models import Product,Variant
 from user.models import users
 from admin_app.models import Brand
 from datetime import datetime
+
 
 # Create your views here.
 
@@ -51,7 +52,7 @@ class manage_offer(View):
            messages.warning(request,'Try again with proper values')
            return redirect('vendor_offers')
 
-        Offer.objects.create(
+        offer = Offer.objects.create(
             offer_name = offer_name,
             vendor_id = self.request.user,
             brand = brand,
@@ -59,6 +60,18 @@ class manage_offer(View):
             expiry_date = expiry
 
         )
+        
+        products = Product.objects.filter(brand = offer.brand)
+
+        product_ids = [product.id for product in products]
+
+        variant = Variant.objects.filter(Product__id__in=product_ids)
+
+        for i in variant:
+           i.final_price -= (float(i.final_price) * float(offer.percent))/100
+           i.save()
+
+        
 
         messages.success(request,'Offer added successfully')
 
@@ -94,6 +107,16 @@ class manage_offer(View):
          )
 
         offer.save()
+
+        products = Product.objects.filter(brand = offer.brand)
+
+        product_ids = [product.id for product in products]
+
+        variant = Variant.objects.filter(Product__id__in=product_ids)
+
+        for i in variant:
+           i.final_price += (float(i.final_price) * float(offer.percent))/100
+           i.save()
        
        
 
@@ -114,6 +137,15 @@ class Changeoffer_status(View):
             if action == 'activate':
                offer.active = True
                offer.save()
+               products = Product.objects.filter(brand = offer.brand)
+
+               product_ids = [product.id for product in products]
+
+               variant = Variant.objects.filter(Product__id__in=product_ids)
+
+               for i in variant:
+                  i.final_price -= (float(i.final_price) * float(offer.percent))/100
+                  i.save()
                
                messages.success(request,'Successfully activated the offer')
                return redirect('vendor_offers')
@@ -122,6 +154,19 @@ class Changeoffer_status(View):
                
                offer.active = False
                offer.save()
+
+               products = Product.objects.filter(brand = offer.brand)
+
+               product_ids = [product.id for product in products]
+
+               variant = Variant.objects.filter(Product__id__in=product_ids)
+
+               for i in variant:
+                  i.final_price += (float(i.final_price) * float(offer.percent))/100
+                  i.save()
+       
+
+
 
                messages.success(request,'Successfully deactivated the offer')
                return redirect('vendor_offers')

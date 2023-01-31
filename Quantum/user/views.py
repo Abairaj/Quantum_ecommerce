@@ -13,6 +13,7 @@ from django.views.generic import TemplateView,View
 from sendotp import *
 from cart.models import *
 from django.http import JsonResponse
+from offers.models import Offer
 
 # from serializers import ChangepasswordSerializers
 # from rest_framework.permissions import IsAuthenticated

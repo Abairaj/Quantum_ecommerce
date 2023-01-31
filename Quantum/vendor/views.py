@@ -353,7 +353,7 @@ def edit_variant(request,id):
         image_2 = request.FILES['image-2']
         image_3 = request.FILES['image-3']
         colour = Color.objects.filter(product = variants.Product.pk).get(name = color)
-        img = Image.objects.get(id = variants.Product.pk)
+        img = Image.objects.get(id = variants.image.pk)
     
 
         
