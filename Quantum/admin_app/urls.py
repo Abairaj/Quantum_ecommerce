@@ -39,6 +39,7 @@ urlpatterns = [
     #sales Report
     path('admin_salesreport/',views.admin_Salesreport_view.as_view(),name = 'admin_salesreport'),
     path('download_admin_salesreport/',views.Admin_Salesreport_download.as_view(),name = 'download_admin_salesreport'),
+    path('admin_salesreport_filter/',views.admin_salesreport_filter.as_view(),name = 'admin_salesreport_filter'),
 
 
          

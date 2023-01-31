@@ -709,7 +709,6 @@ class vendor_Salesreport_download(View):
        except Exception as e:
           print(e)
           start = None
-          print('kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
           
        if start:
 
@@ -729,7 +728,7 @@ class vendor_Salesreport_download(View):
                 # Create the PDF object
                 pdf = SimpleDocTemplate(buffer, pagesize=letter)
 
-                # Define the data for the table
+                #  data for the table
                 data = []
                 header = ["Order Date", "Order ID", "Category", "Brand", "Sales Amount"]
                 data.append(header)
@@ -737,7 +736,7 @@ class vendor_Salesreport_download(View):
                 for report in order:
                     data.append([str(report.order_date.date()), str(report.id), report.product_id.category.category_name, report.product_id.brand.brand_name, str(report.amount)])
 
-                # Create the table
+                # Creating  the table
                 table = Table(data, colWidths=[100, 100, 100, 100, 100], rowHeights=10*len(data))
 
                 table.setStyle([
@@ -751,11 +750,11 @@ class vendor_Salesreport_download(View):
                 ])
 
 
-                # Add a heading to the page
+                # page heading
                 styles = getSampleStyleSheet()
                 heading = Paragraph("Sales Report", style=styles["Heading1"])
 
-                # Add the table and the heading to the PDF
+                # writing the table in the pdf
                 pdf.build([heading, table])
 
                 # Close the PDF object
@@ -775,13 +774,13 @@ class vendor_Salesreport_download(View):
             # excel
        else:
 
-                # Create a new Excel workbook
+                # Creating a new Excel workbook
                     workbook = openpyxl.Workbook()
 
-                    # Select the active worksheet
+                    # Selecting the active worksheet
                     worksheet = workbook.active
 
-                    # Write the headers to the worksheet
+                    # the headers to the worksheet
                     worksheet['A1'] = "Order Date"
                     worksheet['B1'] = "Order ID"
                     worksheet['D1'] = "Category"
@@ -789,7 +788,7 @@ class vendor_Salesreport_download(View):
                     worksheet['C1'] = "Sales Amount"
 
 
-                    # Write the sales report data to the worksheet
+                    #  sales report data to the worksheet
                     for row, report in enumerate(order, start=2):
                         worksheet.cell(row=row, column=1, value= str(report.order_date.date()))
                         worksheet.cell(row=row, column=2, value= str(report.id))
@@ -808,6 +807,7 @@ class vendor_Salesreport_download(View):
                     # present the option to save the file.
                     buffer.seek(0)
                     return FileResponse(buffer, as_attachment=True,filename='sales_report.xlsx')
+
 
 
 class salesreport_filter(View):

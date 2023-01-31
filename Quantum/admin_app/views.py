@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.generic import TemplateView,View
 from.models import *
-import datetime
 from orders.models import Order
 from vendor.models import Product
 import io
@@ -19,6 +18,8 @@ from reportlab.platypus import SimpleDocTemplate, Table
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
+from datetime import datetime
+
 # Create your views here.
 @never_cache
 @login_required(login_url='/admin')
@@ -370,104 +371,137 @@ class admin_Salesreport_view(TemplateView):
 
 class Admin_Salesreport_download(View):
 
-
     def get(self,request):
-       id = self.request.user
+     
+       try:
+        start_str = self.request.GET.get('start')
+        end_str = self.request.GET.get('end')
+        start = datetime.strptime(start_str, '%Y-%m-%d').date()
+        end = datetime.strptime(end_str, '%Y-%m-%d').date()
+       except Exception as e:
+          print(e)
+          start = None
+          
+       if start:
+           
 
-       order = Order.objects.all()
+           order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end))
+
+           
+       else:
+           order = Order.objects.all()
+
 
        
        #pdf
-       if 'pdf' in request.GET:
+       if 'excel' not in request.GET:
 
 
-        buffer = BytesIO()
-    
-        # Create the PDF object
-        pdf = SimpleDocTemplate(buffer, pagesize=letter)
+                buffer = BytesIO()
+            
+                # Create the PDF object
+                pdf = SimpleDocTemplate(buffer, pagesize=letter)
 
-        # Define the data for the table
-        data = []
-        header = ["Order Date", "Order ID", "Category", "Brand", "Sales Amount"]
-        data.append(header)
+                #  data for the table
+                data = []
+                header = ["Order Date", "Order ID", "Category", "Brand", "Sales Amount"]
+                data.append(header)
 
-        for report in order:
-            data.append([str(report.order_date.date()), str(report.id), report.product_id.category.category_name, report.product_id.brand.brand_name, str(report.amount)])
+                for report in order:
+                    data.append([str(report.order_date.date()), str(report.id), report.product_id.category.category_name, report.product_id.brand.brand_name, str(report.amount)])
 
-        # Create the table
-        table = Table(data, colWidths=[100, 100, 100, 100, 100], rowHeights=10*len(data))
+                # Creating  the table
+                table = Table(data, colWidths=[100, 100, 100, 100, 100], rowHeights=10*len(data))
 
-        table.setStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black)
-        ])
-
-
-        # Add a heading to the page
-        styles = getSampleStyleSheet()
-        heading = Paragraph("Sales Report", style=styles["Heading1"])
-
-        # Add the table and the heading to the PDF
-        pdf.build([heading, table])
-
-        # Close the PDF object
-        buffer.seek(0)
-        
-        # Get the value of the PDF file from the buffer
-        pdf = buffer.getvalue()
-
-        # Return the PDF file through Django's FileResponse
-        response = FileResponse(BytesIO(pdf), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
-        return response
+                table.setStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black)
+                ])
 
 
+                # page heading
+                styles = getSampleStyleSheet()
+                heading = Paragraph("Sales Report", style=styles["Heading1"])
+
+                # writing the table in the pdf
+                pdf.build([heading, table])
+
+                # Close the PDF object
+                buffer.seek(0)
+                
+                # Get the value of the PDF file from the buffer
+                pdf = buffer.getvalue()
+
+                # Return the PDF file through Django's FileResponse
+                response = FileResponse(BytesIO(pdf), content_type='application/pdf')
+                response['Content-Disposition'] = 'attachment; filename="sales_report.pdf"'
+                return response
 
 
-    # excel
+
+
+            # excel
        else:
 
-        # Create a new Excel workbook
-            workbook = openpyxl.Workbook()
+                # Creating a new Excel workbook
+                    workbook = openpyxl.Workbook()
 
-            # Select the active worksheet
-            worksheet = workbook.active
+                    # Selecting the active worksheet
+                    worksheet = workbook.active
 
-            # Write the headers to the worksheet
-            worksheet['A1'] = "Order Date"
-            worksheet['B1'] = "Order ID"
-            worksheet['D1'] = "Category"
-            worksheet['E1'] = "Brand"
-            worksheet['C1'] = "Sales Amount"
-
-
-            # Write the sales report data to the worksheet
-            for row, report in enumerate(order, start=2):
-                worksheet.cell(row=row, column=1, value= str(report.order_date.date()))
-                worksheet.cell(row=row, column=2, value= str(report.id))
-                worksheet.cell(row=row, column=4, value=report.product_id.category.category_name)
-                worksheet.cell(row=row, column=5, value=report.product_id.brand.brand_name)
-                worksheet.cell(row=row, column=3, value= str(report.amount))
+                    # the headers to the worksheet
+                    worksheet['A1'] = "Order Date"
+                    worksheet['B1'] = "Order ID"
+                    worksheet['D1'] = "Category"
+                    worksheet['E1'] = "Brand"
+                    worksheet['C1'] = "Sales Amount"
 
 
-        # Create a file-like buffer to receive Excel workbook data
-            buffer = io.BytesIO()
-
-            # Save the workbook to the buffer
-            workbook.save(buffer)
-
-            # FileResponse sets the Content-Disposition header so that browsers
-            # present the option to save the file.
-            buffer.seek(0)
-            return FileResponse(buffer, as_attachment=True,filename='sales_report.xlsx')
+                    #  sales report data to the worksheet
+                    for row, report in enumerate(order, start=2):
+                        worksheet.cell(row=row, column=1, value= str(report.order_date.date()))
+                        worksheet.cell(row=row, column=2, value= str(report.id))
+                        worksheet.cell(row=row, column=4, value=report.product_id.category.category_name)
+                        worksheet.cell(row=row, column=5, value=report.product_id.brand.brand_name)
+                        worksheet.cell(row=row, column=3, value= str(report.amount))
 
 
+                # Create a file-like buffer to receive Excel workbook data
+                    buffer = io.BytesIO()
 
+                    # Save the workbook to the buffer
+                    workbook.save(buffer)
+
+                    # FileResponse sets the Content-Disposition header so that browsers
+                    # present the option to save the file.
+                    buffer.seek(0)
+                    return FileResponse(buffer, as_attachment=True,filename='sales_report.xlsx')
+
+
+
+class admin_salesreport_filter(View):
+
+    def post(self,request):
+
+        start_str = request.POST['from']
+        end_str = request.POST['to']
+
+        start =  datetime.strptime(start_str, '%Y-%m-%d').date()
+        end =  datetime.strptime(end_str, '%Y-%m-%d').date()
+        try:
+          order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end))
+          return render(request,'salesreport.html',{'order':order,'start':start_str,'end':end_str})
+        except Exception as e:
+            print(e)
+            messages.warning(request,'Try with proper values')
+            return redirect('admin_salesreport')
+       
+    
 
 
 

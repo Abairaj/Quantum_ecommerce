@@ -20,8 +20,41 @@
         {%endfor%}
         {%endif%}
         <div class="content-wrapper">
-          <a href="{%url 'download_salesreport'%}?pdf" class="btn btn-primary ml-5">Download PDF</a>
-          <a href="{%url 'download_salesreport'%}?excel" class="btn btn-primary mr-5">Download Excel</a>
+
+
+          
+      <div class="d-flex row col-12">
+        <div class="d-flex col-md-2 col-12">
+            <a href="{%url 'download_admin_salesreport'%}?start={{start}}&end={{end}}" ><img src="https://cdn-icons-png.flaticon.com/128/5558/5558275.png" alt="" style="height: 45px;" class="image-fluid"></a>
+    
+
+            
+            <a href="{%url 'download_admin_salesreport'%}?excel&start={{start}}&end={{end}}"><img src="https://cdn-icons-png.flaticon.com/128/4726/4726040.png" alt="" style="height: 45px;" class="image-fluid"></a>
+          </div>
+
+            <div class=" ml-5 col-md-9 col-12">
+              <form action="{%url 'admin_salesreport_filter'%}" class="form-inline d-flex" method="POST">
+                {% csrf_token %}
+                <div class="d-flex col-12 col-md-3">
+              <p class="mr-2 ml-2 pt-3">from</p>
+              <input type="date" name="from" class="form-control mr-3 pb-1" required>
+            </div>
+              <div class="d-flex col-12 col-md-3">
+              <p class="mr-2 ml-2 pt-3">to</p>
+              <input type="date" name="to" class="form-control ml-3 pb-1" required>
+            </div>
+              <button type="submit" class=" ml-5-3 btn btn-primary col-5 col-md-2 " style="padding: 10px;">search</button>
+            </form>
+            </div>
+
+          
+
+          
+  
+          </div>
+
+  
+
           <div class="row">
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
