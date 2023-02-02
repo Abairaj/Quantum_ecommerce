@@ -8,6 +8,7 @@ from django.db.models.fields import UUIDField
 GENDER_CHOICES = (
         ('Male', 'Male'),
         ('Female', 'Female'),
+         ('Trans', 'Trans'),
     )
 
 
@@ -85,7 +86,7 @@ class users(AbstractBaseUser):
     email      = models.EmailField(max_length=100,unique=True) 
     mobile     = models.CharField(max_length=13,unique=True,null=True)
     gender     = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True,blank=False)
-    profile    = models.ImageField(upload_to='profile/',null = True,blank=True)
+    profile    = models.ImageField(upload_to='user_profile/',blank=True,null=True)
     GSTIN      = models.CharField(max_length=15,unique=True,null=True)
     otps       = models.CharField(max_length=10,blank=True,default=0)
 

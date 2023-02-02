@@ -1,3 +1,4 @@
+from datetime import date
 from django.shortcuts import render,redirect
 from django.contrib import auth
 from django.contrib.auth import login
@@ -14,6 +15,7 @@ from sendotp import *
 from cart.models import *
 from django.http import JsonResponse
 from offers.models import Offer
+import datetime
 
 # from serializers import ChangepasswordSerializers
 # from rest_framework.permissions import IsAuthenticated
@@ -27,7 +29,7 @@ from offers.models import Offer
 
 # Create your views here.
 def home(request):
-    context = {'banner':Banner.objects.all,'product':Product.objects.all(),'variant':Variant.objects.all().order_by('-created_on')[:4]}
+    context = {'banner':Banner.objects.all,'product':Product.objects.all(),'variant':Variant.objects.all().order_by('-created_on')[:4],'offer':Offer.objects.all().order_by('-percent')}
 
     return render(request,'index.html',context)
 
@@ -51,15 +53,103 @@ class user_profile(TemplateView):
         return context
     
 
+class user_profile_edit(TemplateView):
+     template_name = 'user_edit.html'
+
+     def get_context_data(self, **kwargs):
+          context = super().get_context_data(**kwargs)
+
+          user = users.objects.get(id = self.request.user.id)
+
+          context['user'] = user
+
+          return context
+
+    
+
     
 class user_profile_management(View):
         
         def post(self,request):
+          
+          if self.request.GET['action'] != 'fullchange':
 
             image = request.FILES['image']
-            users.objects.filter(id = self.request.user.id).update(profile = image) 
+            # users.objects.filter(id = self.request.user.id).update(profile = image) 
+            user = users.objects.get(id = self.request.user.id)
+            user.profile = image
+            user.save()
+            
             messages.success(request,'Successfully updated the profile image')
             return redirect('user_profile')
+          else:
+               
+               first_name = request.POST['first_name']
+               last_name = request.POST['last_name']
+               gender = request.POST['gender']
+               email = request.POST['email']
+               mobile = request.POST['mobile']
+
+
+
+               if first_name != first_name.capitalize():
+                    messages.warning(request,'First name should start with capital letter.')
+                    return redirect('user_pro_edit')
+
+               elif len(users.objects.filter(email = email)) > 1:
+                    messages.warning(request,'Email is already taken')
+                    return redirect('user_pro_edit')
+            
+               elif email:
+                    try:
+                        validate_email(email)
+                    except:
+                        messages.warning(request,'Enter valid email address.')
+                        return redirect('user_pro_edit')
+
+
+               if len(users.objects.filter(mobile = mobile)) > 1:
+                    messages.warning(request,'The phone number is already registered')
+                    return redirect('user_pro_edit')
+                    
+               elif len(mobile) < 10:
+                        messages.warning(request,'Enter valid mobile number')
+                        return redirect('user_pro_edit')
+               
+               user = users.objects.get(id = self.request.user.id)
+               useremail = user.email
+
+               user.first_name  = first_name
+               user.last_name = last_name
+               user.mobile = mobile
+               user.gender = gender
+               user.email = email
+
+               user.save()
+
+               if useremail == user.email:
+                           messages.success(request,'User informations updated successfully login with new email')
+                           return redirect('user_profile')
+                
+               else:  
+                    auth.logout(request)
+                    messages.success(request,'User informations updated successfully login with new email')
+                    return redirect('signin')
+
+
+               
+        
+def product_list_ajax(request):
+     products = Product.objects.all().values_list('product_name',flat=True)
+     product_list = list(products)
+     category = Category.objects.all().values_list('category_name',flat=True) 
+
+     category = list(category)         
+           
+     product_list.extend(category)
+     print(product_list)
+
+     return JsonResponse(product_list,safe=False)
         
 
 

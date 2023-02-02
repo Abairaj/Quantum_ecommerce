@@ -4,7 +4,9 @@
 {%block 2%}active{%endblock%}
 {%block content%}
 
-<!-- icon -->
+
+
+<!-- icon --> 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 		
 <aside id="colorlib-hero" class="breadcrumbs">
@@ -16,7 +18,7 @@
 
 			<div class="col-md-4 mt-5 pt-5 ml-3" style="z-index: 1;">
 				<form action="{%url 'shop_searchbar'%}" class="d-flex" role="search" method = 'GET'>
-				  <input class="form-control me-2" name = 'search' type="search" placeholder="Search" aria-label="Search">
+				  <input class="form-control me-2" id="searchbar" name = 'search' type="search" placeholder="Search" aria-label="Search">
 				  <button class="" type="submit" style="padding-left: 2px important!;background-color: orange; color: white;border: none important!;"><i class="fa fa-search"></i></button>
 			
 				</form>
@@ -169,5 +171,7 @@
 
 
 
-		
+
+
+
 		{%endblock%}

@@ -29,7 +29,6 @@
                   <img src="{{vendor.profile.url}}" alt="avatar"
                     class="rounded-circle img-fluid" style="width: 150px;">
                   <h5 class="my-3">{{vendor.first_name}} {{vendor.last_name}}</h5>
-                  <p class="text-muted mb-1">Full Stack Developer</p>
                   {%if address%}
                   <p class="text-muted mb-4">{{address.city}},{{address.state}}, {{address.country}}, CA</p>
                   {%endif%}
@@ -44,7 +43,7 @@
                                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <form action="{%url 'Vendor_profile_management'%}" name="category" method="POST"  enctype="multipart/form-data" >
+                                    <form action="{%url 'Vendor_profile_management'%}?action=image" name="category" method="POST"  enctype="multipart/form-data" >
                                         {%csrf_token%}
                                         <div class="form-outline mb-5">
                                           <input type="file" name="image"  required>
@@ -62,10 +61,12 @@
                           <a class="btn btn-primary" data-bs-toggle="modal" href="#exampleModalTogglevendorprofile" role="button">Add Image</i></a> 
                         </div>
 
-                    <button type="button" class="btn btn-outline-primary ms-1">Edit Proflle</button>
+                        <a href="{%url 'vendor_pro_edit'%}"><button type="button" class="btn btn-outline-primary ms-1">Edit Proflle</button></a>
                   </div>
                 </div>
               </div>
+
+
               <div class="card mb-4 mb-lg-0">
                 <div class="card-body p-0">
                   <ul class="list-group list-group-flush rounded-3">
@@ -93,6 +94,8 @@
                 </div>
               </div>
             </div>
+
+            
             <div class="col-lg-8">
               <div class="card mb-4">
                 <div class="card-body">
@@ -153,74 +156,14 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="card mb-4 mb-md-0">
-                    <div class="card-body">
-                      <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                      </p>
-                      <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                      <div class="progress rounded mb-2" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="card mb-4 mb-md-0">
-                    <div class="card-body">
-                      <p class="mb-4"><span class="text-primary font-italic me-1">assigment</span> Project Status
-                      </p>
-                      <p class="mb-1" style="font-size: .77rem;">Web Design</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">Website Markup</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 72%" aria-valuenow="72"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">One Page</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 89%" aria-valuenow="89"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">Mobile Template</p>
-                      <div class="progress rounded" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 55%" aria-valuenow="55"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                      <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
-                      <div class="progress rounded mb-2" style="height: 5px;">
-                        <div class="progress-bar" role="progressbar" style="width: 66%" aria-valuenow="66"
-                          aria-valuemin="0" aria-valuemax="100"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+
+
+
+         
+
+
+
+
             </div>
           </div>
        

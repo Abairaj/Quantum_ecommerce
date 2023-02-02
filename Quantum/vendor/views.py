@@ -24,7 +24,7 @@ from reportlab.platypus import SimpleDocTemplate, Table
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
-from django.db.models import Q
+from django.db.models import Q,F
 from datetime import datetime
 
 
@@ -39,31 +39,55 @@ def vendor_dashboard(request):
         for i in order:
            if i.product_id.vendor_name == vendor_id:
                 if order:
-                   cancelled_orders = Order.objects.filter(status = 'Cancelled' ).annotate(month =ExtractMonth('order_date') ).values('month').annotate(count= Count('id')).values('month','count')
-                   orders = Order.objects.annotate(month =ExtractMonth('order_date') ).values('month').annotate(count= Count('id')).values('month','count')
+                                    
 
-
-                   monthNumber = []
-                   totalOrder = []
-
-                   cancelled_month = []
-                   cancelled_order = []
-
-
-                   for i in orders:
-                         monthNumber.append(calendar.month_name[i['month']])
-                         totalOrder.append(i['count'])
-
+                # Get all orders and group them by date and count
+                    print(Order.objects.filter(product_id__vendor_name=vendor_id).values('order_date'),'fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
                     
-                    
-         
-                    
-                   for i in cancelled_orders:
-                         cancelled_month.append(calendar.month_name[i['month']])
-                         cancelled_order.append(i['count'])
+
+                    from datetime import datetime
+
+                    from django.utils import timezone
+
+                    orders = Order.objects.filter(product_id__vendor_name=vendor_id)
+                    annotated_orders = orders.annotate(date=timezone.localtime((orders.values('order_date'))).date())
+                    final_orders = annotated_orders.annotate(count=Count('id')).values('date', 'count')
 
 
-        return render(request,'vendor_dashboard.html',{'monthNumber':monthNumber,'totalOrder':totalOrder,'cancelled_month':cancelled_month,'cancelled_order':cancelled_order})
+
+
+
+
+
+
+                    # Get all cancelled orders and group them by date and count
+                    cancelled_orders = Order.objects.filter(status='Cancelled', product_id__vendor_name=vendor_id).annotate(date=F('order_date').date()).annotate(count=Count('id')).values('date','count')
+
+                    monthNumber = []
+                    totalOrder = []
+                    cancelled_month = []
+                    cancelled_order = []
+
+                    # Extract data for orders
+                    for i in orders:
+                        monthNumber.append(i['date'].date())
+                        totalOrder.append(i['count'])
+
+                    # Extract data for cancelled orders
+                    for i in cancelled_orders:
+                        cancelled_month.append(i['date'].date())
+                        cancelled_order.append(i['count'])
+
+                    return render(request, 'vendor_dashboard.html', {
+                        'monthNumber': monthNumber,
+                        'totalOrder': totalOrder,
+                        'cancelled_month': cancelled_month,
+                        'cancelled_order': cancelled_order
+                    })
+
+           
+        return render(request,'vendor_dashboard.html',{'monthNumber':[0],'totalOrder':[0],'cancelled_month':[0],'cancelled_order':[0]})
+
 
 
 
@@ -84,16 +108,91 @@ class Vendor_profile(TemplateView):
         return context
     
 
+
+
+class vendor_profile_edit(TemplateView):
+     template_name = 'vendor_profile_edit.html'
+
+     def get_context_data(self, **kwargs):
+          context = super().get_context_data(**kwargs)
+
+          user = users.objects.get(id = self.request.user.id)
+
+          context['user'] = user
+
+          return context
+
+    
+    
+
     
 class Vendor_profile_management(View):
         
         def post(self,request):
+          
+                if self.request.GET['action'] != 'fullchange':
 
-            image = request.FILES['image']
-            users.objects.filter(id = self.request.user.id).update(profile = image) 
-            messages.success(request,'Successfully updated the profile image')
-            return redirect('vendor_profile')
-        
+                    image = request.FILES['image']
+                    # users.objects.filter(id = self.request.user.id).update(profile = image) 
+                    user = users.objects.get(id = self.request.user.id)
+                    user.profile = image
+                    user.save()
+                    
+                    messages.success(request,'Successfully updated the profile image')
+                    return redirect('vendor_profile')
+                else:
+                    
+                    first_name = request.POST['first_name']
+                    last_name = request.POST['last_name']
+                    gender = request.POST['gender']
+                    email = request.POST['email']
+                    mobile = request.POST['mobile']
+
+
+
+                    if first_name != first_name.capitalize():
+                            messages.warning(request,'First name should start with capital letter.')
+                            return redirect('vendor_pro_edit')
+
+                    elif len(users.objects.filter(email = email)) > 1:
+                            messages.warning(request,'Email is already taken')
+                            return redirect('vendor_pro_edit')
+                    
+                    elif email:
+                            try:
+                                validate_email(email)
+                            except:
+                                messages.warning(request,'Enter valid email address.')
+                                return redirect('vendor_pro_edit')
+
+
+                    if len(users.objects.filter(mobile = mobile)) > 1:
+                            messages.warning(request,'The phone number is already registered')
+                            return redirect('vendor_pro_edit')
+                            
+                    elif len(mobile) < 10:
+                                messages.warning(request,'Enter valid mobile number')
+                                return redirect('vendor_pro_edit')
+                
+                    user = users.objects.get(id = self.request.user.id)
+                    useremail = user.email
+
+                    user.first_name  = first_name
+                    user.last_name = last_name
+                    user.mobile = mobile
+                    user.gender = gender
+                    user.email = email
+
+                    user.save()
+
+                    if useremail == user.email:
+                                messages.success(request,'User informations updated successfully login with new email')
+                                return redirect('vendor_profile')
+                        
+                    else:  
+                            auth.logout(request)
+                            messages.success(request,'User informations updated successfully login with new email')
+                            return redirect('vendor-signin')
 
 
 
@@ -328,7 +427,7 @@ def add_variants(request,id):
         )
 
 
-
+        messages.success(request,'Product added successfully')
         return redirect('add_variant',id)
 
     return render(request,'add_variant.html',context)
@@ -365,7 +464,6 @@ def edit_variant(request,id):
             messages.warning(request,f'Discount more than {product.max_discount} is not possible.Make changes in product and try again')
             return redirect('add_variant',id)
 
-        print(colour,'////////////////////////////////////////////////////////////////////////////////////////////////////////////')
 
         
 
@@ -374,7 +472,7 @@ def edit_variant(request,id):
         # imageid = Image.objects.get(product =  variants.Product.pk)
         print(Image.objects.get(pk = id).id)
         img_id = Image.objects.get(id = variants.image.id)
-        print('==========================================================================')
+
 
         images = Image.objects.filter(pk =variants.image.id)        
         images.update( 
@@ -401,6 +499,8 @@ def edit_variant(request,id):
 
         variant.save()
 
+        messages.success(request,'Variant updated successfully')
+
         return redirect('edit_variant',variants.pk)
 
     return render(request,'edit_variant.html',context)
@@ -412,6 +512,8 @@ def edit_variant(request,id):
 def delete_variants(request,id):
     variant = Variant.objects.get(id = id)
     variant.delete()
+
+    messages.success(request,'Variant deleted successfully')
     return redirect('vendor_variant',variant.Product.pk)
 
 

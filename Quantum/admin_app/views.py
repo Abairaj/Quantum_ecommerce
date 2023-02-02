@@ -156,8 +156,8 @@ def edit_category(request,id):
                 category_image = category_logo,
                 category_name = category_name,
                 commission = commission,
-                date_added = datetime.datetime.now(),
-                last_update = datetime.datetime.now()
+                date_added = datetime.now(),
+                last_update = datetime.now()
             )
 
          category.save()
@@ -165,7 +165,8 @@ def edit_category(request,id):
 
          messages.success(request,'Category Updated successfully')
          return redirect('admin_category')
-        except:
+        except Exception as e:
+            print(e)
             messages.warning(request,'check your credentials and try again')
             return redirect('admin_category')
 

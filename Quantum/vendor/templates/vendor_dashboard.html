@@ -326,6 +326,8 @@
                     <div class="card-body">
                       <p class="mb-4">Total Revenue</p>
                       <p class="fs-30 mb-2">4006</p>
+                      <h1>{{cancelled_month}}</h1>
+                      <h1>{{cancelled_order}}</h1>
                       <p>10.00% (30 days)</p>
                     </div>
                   </div>
@@ -382,7 +384,8 @@
 
                   </div>
                   <!-- chartjs total orders -->
-                  <canvas id="orderchart"></canvas>
+                  <canvas id="ordersChart"></canvas>
+                  <input type="month" onchange="filterchart(this)" />
 
                 </div>
               </div>
@@ -398,7 +401,7 @@
                   <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
                   <div>
                     <!-- chartjs -->
-                    <canvas id="cancelled"></canvas>
+                    <canvas id="cancelledOrdersChart"></canvas>
                   </div>
                   
                 </div>
@@ -459,54 +462,55 @@
 
   <!-- chartjs -->
   <script>
-   const ctx = document.getElementById('orderchart');
-  
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: {{monthNumber|safe}},
-        datasets: [{
-          label: 'Orders by Month',
-          data: {{totalOrder}},
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
-    });
-</script>
-
-<!-- cancelled orders -->
-
-<script>
- const ctx2 = document.getElementById('cancelled');
-
-
-  new Chart(ctx2, {
-    type: 'line',
+    var ctx1 = document.getElementById('ordersChart').getContext('2d');
+var ordersChart = new Chart(ctx1, {
+    type: 'bar',
     data: {
-      labels: {{cancelled_month|safe}},
-      datasets: [{
-        label: 'Cancelled Orders by Month',
-        data: {{cancelled_order}},
-        borderWidth: 1
-      }]
+        labels: {{ monthNumber|safe }},
+        datasets: [{
+            label: 'Total Orders',
+            data: {{ totalOrder|safe }},
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
     },
     options: {
-      scales: {
-        y: {
-          beginAtZero: true
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
         }
-      }
     }
-  });
-</script>
-   
+});
+
+var ctx2 = document.getElementById('cancelledOrdersChart').getContext('2d');
+var cancelledOrdersChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+        labels: {{ cancelled_month|safe }},
+        datasets: [{
+            label: 'Cancelled Orders',
+            data: {{ cancelled_order|safe }},
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+});
+
+  </script>
 </body>
 
 </html>

@@ -10,13 +10,14 @@
 	<meta name="description" content="" />
 	<meta name="keywords" content="" />
 	<meta name="author" content="" />
+
+	<!-- jquery autosearch -->
 	
-<!-- 	
-autocomplete -->
-<link
-  rel="stylesheet"
-  href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css"
-/>
+	<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+	
+<!-- fontawesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 <!-- bootstrap4 -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <!-- Facebook and Twitter integration -->
@@ -32,9 +33,7 @@ autocomplete -->
 
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700" rel="stylesheet">
 	
-	<script src="path/to/zoom.js"></script>
-	<!-- lightbox -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css"></script>
+	
 	<!-- Animate.css -->
 	<link rel="stylesheet" href="{% static '/store/css/animate.css'%}">
 	<!-- Icomoon Icon Fonts-->
@@ -60,12 +59,7 @@ autocomplete -->
 	<!-- Theme style  -->
 	<link rel="stylesheet" href="{%static '/store/css/style.css'%}">
 
-	<!-- Modernizr JS -->
-	<script src="{%static '/store/js/modernizr-2.6.2.min.js'%}"></script>
-	<!-- FOR IE9 below -->
-	<!--[if lt IE 9]>
-	<script src="js/respond.min.js"></script>
-	<![endif]-->
+
 
 	</head>
 	<body>
@@ -98,17 +92,28 @@ autocomplete -->
 								<li class="has-dropdown">
 									<a href="{%url 'shop'%}">Shop</a>
 								</li>
-								{%if request.user.is_staff == False or request.user.is_superuser == False%}
-								<li class="has-dropdown">
-									<a href="{%url 'order_tracking'%}">Orders</a>
-								</li>
-								{%endif%}
-								<li><a href="{%url 'signin'%}">Login/Register</a></li>
+
+
+		
                                 <li><a href="{%url 'vendor-signup'%}">Become a Seller</a></li>
-								{%if request.user.is_staff == False or request.user.is_superuser == False%}
-								<li><a href="{%url 'logout'%}">Logout</a></li>
-								{%endif%}
-							
+
+								<li class="has-dropdown">
+									<a href="#"><i class="fa-solid fa-user"></i></a>
+									<ul class="dropdown">
+										<li><a href="{%url 'signin'%}">Login/Register</a></li>
+										<li><a href="{% url 'user_profile'%}">Profile</a></li>
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
+										<li class="has-dropdown">
+											<a href="{%url 'order_tracking'%}">Orders</a>
+										</li>
+										{%endif%}
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
+										<li><a href="{%url 'logout'%}">Logout</a></li>
+										{%endif%}
+									
+									</ul>
+								</li>
+
 								{%if request.user.is_staff == False or request.user.is_superuser == False%}
 							<li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
 							{%endif%}
@@ -211,7 +216,41 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</div>
 	
 	<!-- jQuery -->
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script
+	src="https://code.jquery.com/jquery-3.6.3.js"
+	integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+	crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.js" type="text/javascript"></script>
+	<!-- jquery uijs -->
+	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+<!-- autosearch -->
+	<script>
+		var availableTags = [];
+
+		$.ajax({
+			method: 'GET',
+			url:'/autolist/',
+			success:function(response){
+				
+				startautocomplete(response)
+				
+			}
+			
+		});
+
+
+
+	    function startautocomplete(availableTags){
+		$( "#searchbar" ).autocomplete({
+		  source: availableTags
+		});
+	}
+	  
+	  </script>
+		
+		
+
 	<!-- jQuery Easing -->
 	<script src="{%static '/store/js/jquery.easing.1.3.js'%}"></script>
 	<!-- Bootstrap -->
@@ -230,10 +269,16 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<!-- Stellar Parallax -->
 	<script src="{%static '/store/js/jquery.stellar.min.js'%}"></script>
 
+		<!-- Modernizr JS -->
+	<script src="{%static '/store/js/modernizr-2.6.2.min.js'%}"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
 	<!-- Main -->
 	<script src="{%static '/store/js/main.js'%}"></script>
-	<!-- ajax -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery.ajaxy.min.js"></script>
+
 
 
 
@@ -243,7 +288,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script>
 
 
-	<script>
+	<!-- <script>
 		function change_image(image){
 	
 	var container = document.getElementById("main-image");
@@ -267,7 +312,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     // new ImageZoom(document.getElementById("image-container"), options);
  
 
-	</script>
+	</script> -->
 
 	</body>
 </html>
