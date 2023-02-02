@@ -16,6 +16,7 @@ from cart.models import *
 from django.http import JsonResponse
 from offers.models import Offer
 import datetime
+from django.contrib.auth.hashers import make_password
 
 # from serializers import ChangepasswordSerializers
 # from rest_framework.permissions import IsAuthenticated
@@ -139,17 +140,7 @@ class user_profile_management(View):
 
                
         
-def product_list_ajax(request):
-     products = Product.objects.all().values_list('product_name',flat=True)
-     product_list = list(products)
-     category = Category.objects.all().values_list('category_name',flat=True) 
 
-     category = list(category)         
-           
-     product_list.extend(category)
-     print(product_list)
-
-     return JsonResponse(product_list,safe=False)
         
 
 
@@ -289,6 +280,81 @@ def signup(request):
 
 
 
+def forgot_password(request):
+     
+     if request.method == 'POST':
+          
+          mobile = request.POST['mobile']
+
+          if len(mobile) == 10 and users.objects.filter(mobile = mobile).exists():
+               user = users.objects.filter(mobile = mobile)
+               id = user[0].id
+               request.session['user_id'] = id
+               otp = str(random.randint(1000,9999))
+
+               user.update(otps = otp)
+          
+               send_otp(mobile,otp)
+               return redirect('forgot_otp_verify')
+          else:
+               messages.warning(request,'The mobile number entered by you is not valid')
+               return redirect('forgetpass')
+          
+          
+     
+     return render(request,'forgotpass.html')
+
+
+def forgot_password_verify(request):
+     
+     id = request.session.get('user_id')
+    
+
+     user = users.objects.get(id = id)
+     otp_saved = user.otps
+
+     if request.method == 'POST':
+          otp = request.POST['otp']
+
+          if otp == otp_saved:
+               messages.success(request,'Change your password Here')
+               return redirect('reset_password')
+          else:
+               messages.warning(request,'The otp entered is incorrect try again')
+               return redirect('forgot_otp_verify')
+
+     return render(request,'forgotpassword_verify.html')
+
+
+
+
+def reset_password(request):
+     if request.method == 'POST':
+          
+          id = request.session.get('user_id')
+          user = users.objects.filter(id = id)
+          del request.session['user_id']
+
+          pass1 = request.POST['pass1']
+          pass2 = request.POST['pass2']
+
+          if pass1 != pass2:
+               messages.warning(request,'Password not matches with each other')
+               return redirect('reset_password')
+          
+          else:
+               user.update(password = make_password(pass1))
+
+               messages.success(request,'password changed successfully. .Sign in with the new password')
+               return redirect('signin')
+          
+     return render(request,'resetpassword.html')
+          
+     
+
+
+
+
 
 
 def otp_login(request):
@@ -308,7 +374,7 @@ def otp_login(request):
         print(user[0].otps,'******************')
         user[0].save() 
         id = user[0].id
-        # send_otp(mobile,user[0].otps)
+        send_otp(mobile,user[0].otps)
         return redirect('verify_login',id)
         
             
@@ -334,6 +400,23 @@ def verify_login(request,id):
 
 
 # ====================================================================Searchbar ===============================================
+
+
+
+def product_list_ajax(request):
+     products = Product.objects.all().values_list('product_name',flat=True)
+     product_list = list(products)
+     category = Category.objects.all().values_list('category_name',flat=True) 
+
+     category = list(category)         
+           
+     product_list.extend(category)
+     print(product_list)
+
+     return JsonResponse(product_list,safe=False)
+
+
+
 
 def search_bar(request):
           categories = Category.objects.all()
