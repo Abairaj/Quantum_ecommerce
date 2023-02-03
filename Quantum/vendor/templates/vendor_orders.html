@@ -12,7 +12,7 @@
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="row">
-<!-- ------------------------------------------------------------------------------------------------Tablee-------------------------------------------------------------------------------------------------- -->
+<!-- ------------------------------------------------------------------------------------------------Table-------------------------------------------------------------------------------------------------- -->
             <div class="col-lg-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
@@ -86,8 +86,36 @@
                           </td>
                           <td >
                             <div class="d-flex justify-content-center">
-                              <h4><button class="btn btn-primary">Submit</button></h4>
-                            </form>
+
+
+
+                              <div class="modal fade" id="statuschange{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Change status</h1>
+                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+              
+                                      <p> Are you sure about Changing the status of the order. <br></p>
+                                      <h4><button class="btn btn-primary">Yes</button></h4>
+                                    </form>
+              
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <button class="btn btn-primary ml-2" data-bs-target="#statuschange{{i.id}}" data-bs-toggle="modal">Submit</button>
+                            </div>
+
+
+
+
+
+
+                              
+                           
                             </div>
                             {%endfor%}
                             {%endif%}

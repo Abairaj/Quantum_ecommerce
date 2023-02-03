@@ -24,6 +24,7 @@ urlpatterns = [
     path('add_variant/<str:id>',views.add_variants,name = 'add_variant'),
     path('edit_variant/<str:id>',views.edit_variant,name = 'edit_variant'),
     path('delete_variant/<str:id>',views.delete_variants,name = 'delete_variant'),
+    path('vendor_wallet',views.Vendor_wallet.as_view(),name = 'vendor_wallet'),
     
 
 #vendor order management    

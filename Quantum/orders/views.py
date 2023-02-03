@@ -135,11 +135,20 @@ class success(View):
          cart = Cart.objects.get(id = cart)
          user_id = users.objects.get(id = self.request.user.id)
          cart_items = Cart_items.objects.filter(cart = cart)
-         total_perc = 0 
+         total_perc = 0
          for i in cart_items:
-                admin_per = i.product.category.commission * i.quantity
-                total_perc += admin_per
+            admin_per = i.product.category.commission * i.quantity
+            total_perc += admin_per
+
+         for i in cart_items:
+            vendor_earnings = i.product.final_price - (i.product.final_price * total_perc / 100)
+            wallet, created = Wallet.objects.get_or_create(user_id=i.product.vendor_name)
+            wallet.balance += vendor_earnings
+            wallet.save()
+
+                
          print(total_perc,'************************************************************')
+           
          if Address.objects.exists():
                 address =Address.objects.filter(default = True).get(user_id = user_id)
          else:
@@ -182,11 +191,13 @@ class success(View):
          cart_items = Cart_items.objects.filter(cart = cart)
          address =Address.objects.filter(default = True).get(user_id = user_id)
          print(address)
+         order_ids = []
 
 
          for i in cart_items:
+            id = random.randint(100000,999999)
             order =Order.objects.create(
-            id = random.randint(100000,999999),
+            id = id,
             cart = cart,
             payment_id = Payment.objects.get(id = payment.id),
             product_id = i.product,
@@ -196,13 +207,21 @@ class success(View):
             amount = i.price * i.quantity,
             quantity = i.quantity
                     )
+            
+            print(id,'///////////////////////////////////////////////////')
+                    
+            
+            order_ids.append(int(id))
+            print(order_ids,'9999999999999999999999999999999999999999999999999999999999999999999999999')
+            
+            
 
             i.delete()
             cart_items.delete()
             cart.total = 0
             cart.save()
 
-            return redirect('thanku')
+         return redirect('invoice',order_ids)
 
 
 
@@ -240,6 +259,8 @@ class cancel_order(View):
               return redirect('order_tracking')
 
 
+
+
 class return_order(View):
      
      def get(self,request,**kwargs):
@@ -247,7 +268,7 @@ class return_order(View):
          user = self.request.user.id
          user_id = users.objects.get(id = user)
          print('check1**********************************************************************')
-         order =  Order.objects.get(id = order_id)
+         order =  Order.objects.filter(id__in = order_id)
          print('check2*********************************************')
          order.status = 'Returned'
          order.save()
@@ -268,6 +289,16 @@ class return_order(View):
          
 
 
+def download_invoice(request,order):
+     print(order)
+     
+     order = Order.objects.all().filter(id__in = order)
+     
+   
+
+     print(order,'lllllllllllllllllllllll')
+     
+     return render(request,'invoice.html',{'order':order})
 
 
 

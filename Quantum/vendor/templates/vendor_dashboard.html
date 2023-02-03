@@ -249,6 +249,18 @@
                   <span class="menu-title">Profile</span>
                 </a>
               </li>
+
+
+
+              
+
+          <li class="nav-item">
+            <a class="nav-link"  href="{% url 'vendor_wallet'%}">
+              <h3><i class='ti-plus menu-icon'></i></h3>
+              <span class="menu-title">Wallet</span>
+            </a>
+          </li>
+
     
               <li class="nav-item">
                 <a class="nav-link"  href="{% url 'vendor_products'%}">
@@ -384,8 +396,12 @@
 
                   </div>
                   <!-- chartjs total orders -->
+                 
+                  <input type="date" id="selected_date">
                   <canvas id="ordersChart"></canvas>
-                  <input type="month" onchange="filterchart(this)" />
+                  
+
+                  
 
                 </div>
               </div>
@@ -435,8 +451,77 @@
   </div>
   <!-- container-scroller -->
 
+
+  	<!-- jQuery -->
+	<script
+	src="https://code.jquery.com/jquery-3.6.3.js"
+	integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
+	crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.js" type="text/javascript"></script>
+
+  
+    <script>
+document.getElementById("selected_date").addEventListener("change", function() {
+  let selectedDate = this.value;
+
+  // AJAX call to get data from backend based on selected date
+  $.ajax({
+    url: '{%url "vendor_dashboard"%}',
+    type: 'POST',
+    data: {
+      'selected_date': selectedDate
+    },
+    success: function(data) {
+      // The data returned from the backend should be in JSON format
+      let totalOrder = data.total_order;
+      let dateOfOrder = data.date_of_order;
+
+      let ctx = document.getElementById('ordersChart').getContext('2d');
+      let myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: dateOfOrder,
+          datasets: [{
+            label: '# of Orders',
+            data: totalOrder,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.2)',
+              'rgba(54, 162, 235, 0.2)',
+              'rgba(255, 206, 86, 0.2)',
+              'rgba(75, 192, 192, 0.2)',
+              'rgba(153, 102, 255, 0.2)',
+              'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(153, 102, 255, 1)',
+              'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            yAxes: [{
+              ticks: {
+                beginAtZero: true
+              }
+            }]
+          }
+        }
+      });
+    }
+  });
+});
+
+    
+</script>
+
   <!-- plugins:js -->
-  <script src="{%static '/vendor/vendors/js/vendor.bundle.base.js'%}"></script>
+  <!-- <script src="{%static '/vendor/vendors/js/vendor.bundle.base.js'%}"></script> -->
   <!-- endinject -->
   <!-- Plugin js for this page -->
   <script src="{%static '/vendor/vendors/chart.js/Chart.min.js'%}"></script>
@@ -462,55 +547,67 @@
 
   <!-- chartjs -->
   <script>
-    var ctx1 = document.getElementById('ordersChart').getContext('2d');
-var ordersChart = new Chart(ctx1, {
-    type: 'bar',
-    data: {
-        labels: {{ monthNumber|safe }},
-        datasets: [{
-            label: 'Total Orders',
-            data: {{ totalOrder|safe }},
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
-    }
-});
 
-var ctx2 = document.getElementById('cancelledOrdersChart').getContext('2d');
-var cancelledOrdersChart = new Chart(ctx2, {
-    type: 'bar',
-    data: {
-        labels: {{ cancelled_month|safe }},
-        datasets: [{
-            label: 'Cancelled Orders',
-            data: {{ cancelled_order|safe }},
-            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
-    }
-});
+
+// var ctx = document.getElementById('ordersChart').getContext('2d');
+//       var myChart = new Chart(ctx, {
+//         type: 'bar',
+//         data: {
+//           labels:{{date_of_order|safe}},
+//           datasets: [{
+//             label: 'Orders',
+//             data: {{ total_order|safe }},
+//             backgroundColor: 'rgba(54, 162, 235, 0.2)',
+//             borderColor: 'rgba(54, 162, 235, 1)',
+//             borderWidth: 1
+//           }]
+//         },
+//         options: {
+//           scales: {
+//             yAxes: [{
+//               ticks: {
+//                 beginAtZero: true
+//               }
+//             }]
+//           }
+//         }
+//       });
+      
+
+
+
+
+
+
+
+// var ctx2 = document.getElementById('cancelledOrdersChart').getContext('2d');
+// var cancelledOrdersChart = new Chart(ctx2, {
+//     type: 'bar',
+//     data: {
+//         labels: {{ cancelled_month|safe }},
+//         datasets: [{
+//             label: 'Cancelled Orders',
+//             data: {{ cancelled_order|safe }},
+//             backgroundColor: 'rgba(54, 162, 235, 0.2)',
+//             borderColor: 'rgba(54, 162, 235, 1)',
+//             borderWidth: 1
+//         }]
+//     },
+//     options: {
+//         scales: {
+//             yAxes: [{
+//                 ticks: {
+//                     beginAtZero: true
+//                 }
+//             }]
+//         }
+//     }
+// });
 
   </script>
+
+
+
 </body>
 
 </html>

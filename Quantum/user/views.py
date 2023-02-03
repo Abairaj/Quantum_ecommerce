@@ -364,14 +364,14 @@ def otp_login(request):
         if not user.exists():
             return redirect('signup')
         
-        print(user[0],'-----------------------------')
-        print(user[0].otps,'##########################')
+        print(user[0])
+        print(user[0].otps)
         otp_r = str(random.randint(1000,9999))
-        print(otp_r,'..................................')
+        print(otp_r)
         # user[0].otps = otp_r
         user.update(otps = otp_r)
 
-        print(user[0].otps,'******************')
+        print(user[0].otps)
         user[0].save() 
         id = user[0].id
         send_otp(mobile,user[0].otps)
@@ -379,6 +379,7 @@ def otp_login(request):
         
             
     return render(request,'otp_login.html')
+
 
 
 
@@ -488,7 +489,7 @@ class Wallet_view(TemplateView):
      def get_context_data(self, **kwargs):
           context = super().get_context_data(**kwargs)
 
-          wallet = Wallet.objects.all()
+          wallet = Wallet.objects.get(user_id = self.request.user.id)
           context['wallet'] = wallet
 
           return context

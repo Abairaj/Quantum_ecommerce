@@ -8,6 +8,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>{%block title%}{%endblock%}</title>
+	
 
 
   <!-- bootstrap 5.3 -->
@@ -272,6 +273,14 @@
             </a>
           </li>
 
+
+          <li class="nav-item">
+            <a class="nav-link"  href="{% url 'vendor_wallet'%}">
+              <h3><i class='ti-plus menu-icon'></i></h3>
+              <span class="menu-title">Wallet</span>
+            </a>
+          </li>
+
           <li class="nav-item">
             <a class="nav-link"  href="{% url 'vendor_products'%}">
               <h3><i class='ti-plus menu-icon'></i></h3>
@@ -355,7 +364,7 @@
   </div>
   <!-- container-scroller -->
   <!-- plugins:js -->
-  <script src="{% static '/vendor/vendors/js/vendor.bundle.base.js'%}"></script>
+  <!-- <script src="{% static '/vendor/vendors/js/vendor.bundle.base.js'%}"></script> -->
   <!-- endinject -->
   <!-- Plugin js for this page -->
   <!-- End plugin js for this page -->

@@ -12,9 +12,6 @@ import random
 from sendotp import *
 from orders.models import Order
 from django.utils.decorators import method_decorator
-from django.db.models.functions import ExtractMonth
-from django.db.models import Count
-import calendar
 import io
 from django.http import FileResponse
 import openpyxl
@@ -26,67 +23,49 @@ from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 from django.db.models import Q,F
 from datetime import datetime
+from django.http import JsonResponse
+from django.views.decorators.cache import never_cache
+
 
 
 
 # Create your views here.
+@never_cache
 @login_required(login_url='/vendor-signin')
 def vendor_dashboard(request):
-        vendor_id = users.objects.get(id = request.user.id)
-        product = Product.objects.filter(vendor_name = vendor_id)
-        order = Order.objects.filter(is_active = 'True')
-        
-        for i in order:
-           if i.product_id.vendor_name == vendor_id:
-                if order:
-                                    
+  vendor_id = users.objects.get(id = request.user.id)
+  product = Product.objects.filter(vendor_name = vendor_id)
+  order = Order.objects.filter(is_active = 'True')
+  
+  selected_date = request.POST.get('selected_date', None)
+  
+  if selected_date:
+    order = order.filter(order_date__date=selected_date)
+  
+  if order:
+    total_order = []
+    date_of_order = []
 
-                # Get all orders and group them by date and count
-                    print(Order.objects.filter(product_id__vendor_name=vendor_id).values('order_date'),'fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')
-                    
+    from django.db.models import Count, DateTimeField
+    from django.db.models.functions import Trunc
 
-                    from datetime import datetime
+    orders = order.filter(product_id__vendor_name=vendor_id)
+    annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
+    final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
 
-                    from django.utils import timezone
+    for i in final_orders:
+      total_order.append(i['count'])
+      date_of_order.append(i['date'].strftime("%Y-%m-%d"))
 
-                    orders = Order.objects.filter(product_id__vendor_name=vendor_id)
-                    annotated_orders = orders.annotate(date=timezone.localtime((orders.values('order_date'))).date())
-                    final_orders = annotated_orders.annotate(count=Count('id')).values('date', 'count')
+    return render( request,'vendor_dashboard.html',{'total_order':total_order,'date_of_order':date_of_order})
+  else:
 
-
-
-
-
-
+    return render(request, 'vendor_dashboard.html', {})
 
 
-                    # Get all cancelled orders and group them by date and count
-                    cancelled_orders = Order.objects.filter(status='Cancelled', product_id__vendor_name=vendor_id).annotate(date=F('order_date').date()).annotate(count=Count('id')).values('date','count')
-
-                    monthNumber = []
-                    totalOrder = []
-                    cancelled_month = []
-                    cancelled_order = []
-
-                    # Extract data for orders
-                    for i in orders:
-                        monthNumber.append(i['date'].date())
-                        totalOrder.append(i['count'])
-
-                    # Extract data for cancelled orders
-                    for i in cancelled_orders:
-                        cancelled_month.append(i['date'].date())
-                        cancelled_order.append(i['count'])
-
-                    return render(request, 'vendor_dashboard.html', {
-                        'monthNumber': monthNumber,
-                        'totalOrder': totalOrder,
-                        'cancelled_month': cancelled_month,
-                        'cancelled_order': cancelled_order
-                    })
 
            
-        return render(request,'vendor_dashboard.html',{'monthNumber':[0],'totalOrder':[0],'cancelled_month':[0],'cancelled_order':[0]})
+        # return render(request,'vendor_dashboard.html',{'monthNumber':date_of_order,'totalOrder':total_order,'cancelled_month':[0],'cancelled_order':[0]})
 
 
 
@@ -193,6 +172,33 @@ class Vendor_profile_management(View):
                             auth.logout(request)
                             messages.success(request,'User informations updated successfully login with new email')
                             return redirect('vendor-signin')
+
+
+
+
+
+class Vendor_wallet(TemplateView):
+    template_name = 'vendor_wallet.html'
+
+    def get_context_data(self, **kwargs):
+       context =  super().get_context_data(**kwargs)
+
+       wallet = Wallet.objects.get(user_id = self.request.user.id)
+       context['wallet'] = wallet
+       return context
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
