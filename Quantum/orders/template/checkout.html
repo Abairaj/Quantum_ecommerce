@@ -107,7 +107,7 @@
 						<div class="contact-wrap">
 							<a href="{% url 'add_address'%}" class="mr-3"><button class="btn btn-primary">Manage Address</button></a>
 							<h3>Billing Address</h3>
-							<form method="post" action="{%url 'address'%}" >
+							<form method="post" action="{%url 'address'%}?action=checkout" >
 
 								{%csrf_token%}
 
@@ -239,6 +239,28 @@
 
 					<div class="col-md-4">
 						<div class="cart-detail">
+						
+									<div class="row">
+										<div class="col-md-12">
+											<form action="{% url 'apply_coupon'%}" method="POST">
+		
+		
+												{% csrf_token %}
+												<div class="row form-group">
+		
+													<div class="col-md-8">
+														<input type="text" name="coupon" class="form-control input-number" placeholder="Your Coupon Number...">
+													</div>
+													<div class="col-md-1">
+														<input type="submit" value="Apply" class="btn btn-primary btn-sm">
+													</div>
+													</form>
+											
+												</div>
+				
+										</div>
+						<div>
+					
 							<h2>Cart Total</h2>
 							<ul>
 								<li>
@@ -250,12 +272,15 @@
 										{%endfor%}
 										{%endif%}
 									</ul>
+
 								</li>
+								
 								<!-- <li><span>Shipping</span> <span>$0.00</span></li> -->
 								<li><span>Order Total</span> <span>Rs. {{cart.total}}</span></li>
 							</ul>
+						</div>
 							<div class="row d-flex justify-content-center">
-							<div class="col-md-7">
+							<div >
 
 
 

@@ -33,8 +33,10 @@
             <div class="col-lg-4">
               <div class="card mb-4">
                 <div class="card-body text-center">
+                  {%if user.profile%}
                   <img src="{{user.profile.url}}" alt="avatar"
                     class="rounded-circle img-fluid" style="width: 150px;">
+                    {%endif%}
                   <h5 class="my-3">{{user.first_name}} {{user.last_name}}</h5>
                   {%if address%}
                   <p class="text-muted mb-4">{{address.city}},{{address.state}}, {{address.country}}, CA</p>
@@ -84,7 +86,7 @@
                       <a href="{% url 'cart'%}"><p  class="w-100 btn btn-primary ps-5 pe-5" style="padding-left:60px !important;padding-right: 60px !important;">My Cart</p></a>
                     </li>
                     <li>
-                      <a href="#"><p  class="w-100 btn btn-primary ps-5 pe-5">Add Address</p></a>
+                      <a href="{%url 'user_add_address'%}"><p  class="w-100 btn btn-primary ps-5 pe-5">Add Address</p></a>
                     </li>
 
                   </ul>

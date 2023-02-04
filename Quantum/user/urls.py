@@ -5,6 +5,7 @@ urlpatterns = [
     path('user_profile',views.user_profile.as_view(),name = 'user_profile'),
     path('user_profile_management/',views.user_profile_management.as_view(),name = 'user_profile_management'),
     path('user_profile_edit',views.user_profile_edit.as_view(),name = 'user_pro_edit'),
+    path('user_add_address',views.User_add_address_view.as_view(),name = 'user_add_address'),
     path('shop/',views.shop,name='shop'),
     path('signin/',views.signin, name = 'signin'),
     path('signup', views.signup, name = 'signup'),
@@ -19,6 +20,7 @@ urlpatterns = [
     path('shop_searchbar/',views.search_bar,name = 'shop_searchbar'),
     path('autolist/',views.product_list_ajax,name='autolist'),
     path('wallet/',views.Wallet_view.as_view(),name = 'wallet'),
+    path('filter/',views.filter,name = 'filter'),
     
 
 

@@ -715,7 +715,7 @@ def vendor_coupon(request):
 
 
 
-
+from datetime import datetime
 # add coupon
 class add_coupon(View):
     def post(self,request):
@@ -723,6 +723,8 @@ class add_coupon(View):
         expiry = request.POST['expiry']
         minimum_amount = request.POST['minimum_amount']
         discount_price = request.POST['discount_price']
+        expiry =  datetime.strptime(expiry, "%m/%d/%Y")
+        expiry.strftime("%Y-%m-%d")
 
         coupon = Coupon(
             coupon_code = code,
@@ -754,13 +756,15 @@ def edit_coupon(request,id):
         expiry = request.POST['expiry']
         minimum_amount = request.POST['minimum_amount']
         discount_price = request.POST['discount_price']
-
+        expiry =  datetime.strptime(expiry, "%Y-%m-%d")
+        expiry.strftime("%Y-%m-%d")
         coupon = Coupon(
             id = id,
             coupon_code = code,
             expiry_date = expiry,
             minimum_amount = minimum_amount,
             discount_price = discount_price
+
 
         )
         coupon.save()

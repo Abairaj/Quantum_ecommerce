@@ -255,7 +255,26 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 		
 		
 
+		<!-- price filter -->
+		<script>
 
+			$('#maxprice').on('blur' , function(){
+				var _min=$(this).attr('min');
+				var _max=$(this).attr('max');
+				var _value=$(this).val();
+		
+				console.log(_value,_min,_max);
+				if(_value < parseInt(_min) || _value > parseInt(_max)){
+					alert('values should be '+_min+'-'+_max);
+					$(this).val(_min);
+					$(this).focus();
+					$("#rangeInput").val(_min);
+					return false;
+				}
+			})
+		</script>
+		
+		
 
 	<!-- jQuery Easing -->
 	<script src="{%static '/store/js/jquery.easing.1.3.js'%}"></script>

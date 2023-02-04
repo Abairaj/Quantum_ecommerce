@@ -156,7 +156,7 @@ class Manage_address_View(TemplateView):
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)
-        address = Address.objects.all()
+        address = Address.objects.filter(user_id = self.request.user.id)
 
         context['address'] = address
         return context
@@ -190,7 +190,12 @@ def addressform(request):
             
             form.instance.user = users.objects.get(id = request.user.id)
             form.save()
-            return redirect('checkout')
+            if request.GET.get('action') == 'checkout':
+              messages.success(request,'Address added successfully')
+              return redirect('checkout')
+            else:
+                messages.success(request,'Address added successfully')
+                return redirect('user_profile')
         else:
             messages.warning(request,' Please submit the form with proper values')
             return redirect('checkout')
@@ -234,23 +239,23 @@ class Coupon_apply(View):
             coupon = Coupon.objects.get(coupon_code = coupon_code)
             if coupon == cart.coupon:
                 messages.warning(request,'coupon already used')
-                return redirect('cart')
+                return redirect('checkout')
             if cart.total < coupon.minimum_amount:
                 messages.warning(request,f'Coupon is only applicable for purchase over Rs.{coupon.minimun_amount} or more')
-                return redirect('cart')
+                return redirect('checkout')
             if coupon.expired == True:
                 messages.warning(request,'Coupon Expired')
-                return redirect('cart')
+                return redirect('checkout')
             
             cart.coupon = Coupon.objects.get(id = coupon.pk)
             cart.total -= coupon.discount_price
             cart.save()
             coupon.expired = True
             coupon.save()
-            return redirect('cart')
+            return redirect('checkout')
         else:
             messages.warning(request,'Coupon Invalid')
-            return redirect('cart')
+            return redirect('checkout')
 
 
         

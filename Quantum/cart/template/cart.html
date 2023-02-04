@@ -118,7 +118,7 @@
 				<div class="row">
 					<div class="col-md-10 col-md-offset-1 product_total">
 						<div class="total-wrap">
-							<div class="row">
+							<!-- <div class="row">
 								<div class="col-md-8">
 									<form action="{% url 'apply_coupon'%}" method="POST">
 
@@ -136,7 +136,7 @@
 									
 										</div>
 		
-								</div>
+								</div> -->
 								<div class="col-md-3 col-md-push-1 text-center">
 									<div class="total">
 										
@@ -150,7 +150,7 @@
 						{%if cart%}
 						
 										<div >
-											<p ><span><strong>Total:</strong></span> <span class="grand_total">{{cart.total}}</span></p>
+											<p ><span style="color:black !important"><strong>Total:</strong></span> <span class="grand_total" style="color:black !important">{{cart.total}}</span></p>
 											{%if cart.cart_items_set.all%}
 											<a href="/order/checkout/"  class="btn btn-primary">Checkout</a>
 											{%endif%}

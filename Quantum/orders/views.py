@@ -149,7 +149,7 @@ class success(View):
                 
          print(total_perc,'************************************************************')
            
-         if Address.objects.exists():
+         if Address.objects.filter(user_id = id).exists():
                 address =Address.objects.filter(default = True).get(user_id = user_id)
          else:
              messages.warning(self.request,'Set a default address and continue order')
@@ -166,12 +166,6 @@ class success(View):
                 
 
 
-
-                # generated_signature = hmac.new(raz_details.razorpay_order_id + "|" + raz_details.razorpay_payment_id, secret);
-
-                # if not (generated_signature == raz_details.razorpay_payment_signature):
-                #         messages.warning(request,'Payment is not successfull try again')
-                #         return redirect('checkout')
   
 
                 payment =Payment.objects.create(
@@ -239,9 +233,7 @@ class cancel_order(View):
          order_id = kwargs["id"]
          user = self.request.user.id
          user_id = users.objects.get(id = user)
-         print('check1**********************************************************************')
          order =  Order.objects.get(id = order_id)
-         print('check2*********************************************')
          order.status = 'Cancelled'
          order.save()
          if order.payment_id.payment_method == 'Razorpay':
@@ -267,9 +259,7 @@ class return_order(View):
          order_id = kwargs["id"]
          user = self.request.user.id
          user_id = users.objects.get(id = user)
-         print('check1**********************************************************************')
          order =  Order.objects.filter(id__in = order_id)
-         print('check2*********************************************')
          order.status = 'Returned'
          order.save()
          if order.payment_id.payment_method == 'Razorpay':
@@ -293,6 +283,7 @@ def download_invoice(request,order):
      print(order)
      
      order = Order.objects.all().filter(id__in = order)
+    
      
    
 

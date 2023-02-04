@@ -57,7 +57,7 @@
 					{%for i in variant%}
 
 
-					<div class="col-md-4 text-center">
+					<div class="col-md-3 text-center">
 						<div class="product-entry">
 							<div class="product-img" style="background-image: url({{i.image.image_1.url}});">
 								<p class="tag"><span class="new" style="background-color:{{i.color.name}};">{{i.color.name}}</span></p>
@@ -77,21 +77,18 @@
 								<p class="price"><span>{{i.final_price}}</span></p>
 								<del><span>{{i.price}}</span></del>
 							</div>
-						</div>
+						</div>				
 					</div>
 
 
 
+
+					
 					{%endfor%}
-				
-
-
-
-
 
 	
 				</div>
-				<div class="row">
+				<!-- <div class="row">
 					<div class="col-md-12">
 						<ul class="pagination">
 							<li class="disabled"><a href="#">&laquo;</a></li>
@@ -102,10 +99,23 @@
 							<li><a href="#">&raquo;</a></li>
 						</ul>
 					</div>
-				</div>
+				</div> -->
 			</div>
+
+
 			<div class="col-md-2 col-md-pull-10">
 				<div class="sidebar">
+
+					<h2>Filters</h2>
+
+					<hr>
+                    <div class="side text-center">
+					<a href="{%url 'filter'%}?action=popularity"><h2>Popularity</h2></a>
+				</div>
+
+				<hr>
+			
+		
 					<div class="side text-center">
 						<h2>Categories</h2>
 						<hr>
@@ -124,26 +134,30 @@
 
 					</div>
 					<div class="side">
-			
-						<h2>Price Range</h2>
-						<form method="post" class="colorlib-form-2">
-						  <div class="row">
-						<div class="col-md-12">
-						  <div class="form-group">
-							<label for="guests">Price from:</label>
-							<div class="form-field">
-							  <i class="icon icon-arrow-down3"></i>
-							  <select name="people" id="people" class="form-control">
-								<option value="#">1</option>
-								<option value="#">200</option>
-								<option value="#">300</option>
-								<option value="#">400</option>
-								<option value="#">1000</option>
-							  </select>
-							</div>
+						<h3>Price filter</h3>
+						<form action="{%url 'filter'%}" method="POST">
+							{% csrf_token %}
+						<div class="form-group">
+							<label for="rangeInput">Price range:</label>
+							<input type="range" value="{{ min_max_price.final_price__min }}" min="{{ min_max_price.final_price__min }}" max="{{ min_max_price.final_price__max }}"  class="form-control" oninput="maxprice.value=this.value" step="1"/>
+							<p style="color:black !important;">{{ min_max_price.final_price__min }} - {{ min_max_price.final_price__max }}</p>
 						  </div>
-						</div>
-						<div class="col-md-12">
+
+						  <div class="form-group">
+							<label for="maxprice">Max:</label>
+							<input type="number" placeholder="max" name="max_price" class="form-control" min="{{ min_max_price.final_price__min }}" max="{{ min_max_price.final_price__max }}"  id="maxprice" onkeyup="rangeInput.value=this.value" required>
+						  </div>
+						  <div class="form-group">
+							<label for="minprice">Min:</label>
+							<input type="number" name="min_price" value="{{ min_max_price.final_price__min }}" placeholder="min"  class="form-control" id="minprice" required>
+						  </div>
+						  <button class="btn btn-info btn-sm mt-1" type="submit" formmethod="POST">Filter</button>
+						</form>
+
+			
+						<!-- <h2>Price Range</h2> -->
+		
+						<!-- <div class="col-md-12">
 						  <div class="form-group">
 							<label for="guests">Price to:</label>
 							<div class="form-field">
@@ -157,7 +171,7 @@
 							  </select>
 							</div>
 						  </div>
-						</div>
+						</div> -->
 					  </div>
 					</form>
 					</div>
@@ -166,7 +180,6 @@
 		</div>
 	</div>
 </div>
-
 
 
 

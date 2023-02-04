@@ -17,7 +17,9 @@ from django.http import JsonResponse
 from offers.models import Offer
 import datetime
 from django.contrib.auth.hashers import make_password
-
+from cart.forms import AddressForm
+from django.db.models import Max,Min
+from django.db.models import Q
 # from serializers import ChangepasswordSerializers
 # from rest_framework.permissions import IsAuthenticated
 # from verifyotp import verify_otp
@@ -66,7 +68,6 @@ class user_profile_edit(TemplateView):
 
           return context
 
-    
 
     
 class user_profile_management(View):
@@ -138,6 +139,15 @@ class user_profile_management(View):
                     return redirect('signin')
 
 
+
+class User_add_address_view(TemplateView):
+     template_name = 'user_add_address.html'
+     form_class = AddressForm
+
+     def get_context_data(self, **kwargs):
+          
+          context = super().get_context_data(**kwargs)and {'form':self.form_class}
+          return context
                
         
 
@@ -145,7 +155,9 @@ class user_profile_management(View):
 
 
 def shop(request):
-    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all()}
+    min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
+    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all(),'min_max_price':min_max_price}
+
     return render(request,'shop.html',context)
 
 
@@ -412,7 +424,7 @@ def product_list_ajax(request):
      category = list(category)         
            
      product_list.extend(category)
-     print(product_list)
+
 
      return JsonResponse(product_list,safe=False)
 
@@ -458,9 +470,17 @@ def search_bar(request):
 
 
 class Category_filter(TemplateView):
-     template_name = 'Category _filter.html'
+     template_name = 'shop.html'
 
      def get_context_data(self, **kwargs):
+          
+        try:
+          action = self.request.GET.get('price')
+        except Exception as e:
+          print(e)
+          action= None
+
+        if action == None:
           id = kwargs.get('id')
           context =  super().get_context_data(**kwargs)
           #found product id using category id
@@ -472,12 +492,43 @@ class Category_filter(TemplateView):
 
           all_categories = Category.objects.all()
 
+          min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
+
          
           context['variant'] = variant
           context['product'] = product
-          context["all_category"] = all_categories
+          context["category"] = all_categories
+          context['min_max_price'] = min_max_price
+
 
           return context
+        
+
+from orders.models import Order
+from django.db.models import Count
+def filter(request):
+    print('entered****************************************************')
+    action = request.GET.get('action')
+    if action == 'popularity':
+        item = Order.objects.annotate(times=Count('Variant')).values('Variant', 'times').order_by('-times')
+        variant_ids = [item['Variant'] for item in item]
+        variants = Variant.objects.filter(id__in=variant_ids)
+        all_categories = Category.objects.all()
+        min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
+        context = {'variant': variants,'category':all_categories,'min_max_price':min_max_price}
+        return render(request, 'shop.html', context)
+
+
+    elif request.method == 'POST':
+          max_price = request.POST['max_price']
+          min_price = request.POST['min_price']
+
+          variant = Variant.objects.filter(Q(final_price__gte = min_price) and Q(final_price__lte = max_price))
+          all_categories = Category.objects.all()
+          context = {'variant':variant,'category':all_categories}
+          return render(request,'shop.html',context)
+    else:
+         return render(request,'shop.html')
                        
          
           
