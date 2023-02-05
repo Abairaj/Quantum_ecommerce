@@ -149,7 +149,7 @@ class success(View):
                 
          print(total_perc,'************************************************************')
            
-         if Address.objects.filter(user_id = id).exists():
+         if Address.objects.filter(user_id = self.request.user.id).exists():
                 address =Address.objects.filter(default = True).get(user_id = user_id)
          else:
              messages.warning(self.request,'Set a default address and continue order')
@@ -281,15 +281,16 @@ class return_order(View):
 
 def download_invoice(request,order):
      print(order)
+
      
-     order = Order.objects.all().filter(id__in = order)
+     orders = Order.objects.filter(id__in = order)
     
      
    
 
-     print(order,'lllllllllllllllllllllll')
+     print(orders,'lllllllllllllllllllllll')
      
-     return render(request,'invoice.html',{'order':order})
+     return render(request,'invoice.html',{'order':orders})
 
 
 
