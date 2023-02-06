@@ -42,7 +42,11 @@
         <div class="page-header">
             <h1>Invoice</h1>
         </div>
-        
+        <div class="row">
+            <div class="d-flex justify-content-end">
+                <a href="{%url 'invoice' order_id%}?action=download"><button class="btn btn-primary">Download</button></a>
+            </div>
+        </div>
         
         <div class="container">
             <div class="row">
@@ -53,8 +57,8 @@
                                 <img class="img" alt="Invoce Template" src="http://pngimg.com/uploads/shopping_cart/shopping_cart_PNG59.png" />
                             </div>
                             <div class="col-md-8 text-right">
-                                <h4 style="color: #F81D2D;"><strong>BBBootstrap</strong></h4>
-                                <p>221 ,Baker Street</p>
+                                <h4 style="color: #F81D2D;"><strong>Quantum Times</strong></h4>
+                                <p>221 ,Quantum Times</p>
                                 <p>1800-234-124</p>
                                 <p>example@gmail.com</p>
                             </div>
@@ -63,7 +67,7 @@
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <h2>INVOICE</h2>
-                                <h5>04854654101</h5>
+                                <!-- <h5>04854654101</h5> -->
                             </div>
                         </div>
                         <br />
@@ -75,18 +79,17 @@
                                         <th><h5>Amount</h5></th>
                                     </tr>
                                 </thead>
-                                {{order}}
                                 <tbody>
                                     {%for i in order%}
                                     <tr>
-                                        <td class="col-md-9">{{i}}</td>
+                                        <td class="col-md-9">{{i.product_id.product_name}} ({{i.Variant.color.name}})</td>
                                         <td class="col-md-3"><i class="fas fa-rupee-sign" area-hidden="true"></i>{{i.Variant.final_price}} </td>
                                     </tr>
                                     {%endfor%}
                                     
                                     <tr>
                                         <td class="text-right">
-                                        <p>
+                                        <!-- <p>
                                             <strong>Shipment and Taxes:</strong>
                                         </p>
                                         <p>
@@ -94,8 +97,8 @@
                                         </p>
                                         <p>
                                             <strong>Discount: </strong>
-                                        </p>
-                                        <p>
+                                        </p> -->
+                                        <!-- <p>
                                             <strong>Payable Amount: </strong>
                                         </p>
                                         </td>
@@ -112,11 +115,11 @@
                                         <p>
                                             <strong><i class="fas fa-rupee-sign" area-hidden="true"></i> 79,900</strong>
                                         </p>
-                                        </td>
+                                        </td> -->
                                     </tr>
                                     <tr style="color: #F81D2D;">
                                         <td class="text-right"><h4><strong>Total:</strong></h4></td>
-                                        <td class="text-left"><h4><strong><i class="fas fa-rupee-sign" area-hidden="true"></i> 79,900 </strong></h4></td>
+                                        <td class="text-left"><h4><strong><i class="fas fa-rupee-sign" area-hidden="true"></i> {{order_total}}</strong></h4></td>
                                     </tr>
                                     
                                 </tbody>
@@ -125,9 +128,16 @@
                         </div>
                         <div>
                             <div class="col-md-12">
-                                <p><b>Date :</b> 6 June 2019</p>
+                                <p><b>Date :</b> {{date.date}}</p>
                                 <br />
-                                <p><b>Signature</b></p>
+                               
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6  d-flex justify-content-end">
+                                <p><b> <a href="{%url 'invoice' order_id%}?action=download"><button class="btn btn-primary">Download</button></a></b><b> <a href="{%url 'order_tracking'%}?action=download"><button class="btn btn-primary">Skip</button></a></b></p>
+                      
+                            </div>
                             </div>
                         </div>
                     </div>

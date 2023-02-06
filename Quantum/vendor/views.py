@@ -21,46 +21,107 @@ from reportlab.platypus import SimpleDocTemplate, Table
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
-from django.db.models import Q,F
+from django.db.models import Q
 from datetime import datetime
-from django.http import JsonResponse
+from django.db.models import Count, DateTimeField
+from django.db.models.functions import Trunc,TruncYear
 from django.views.decorators.cache import never_cache
 
 
 
 
-# Create your views here.
+# # Create your views here.
+
+# def vendor_dashboard(request):
+#   vendor_id = users.objects.get(id = request.user.id)
+#   order = Order.objects.filter(is_active = 'True')
+  
+#   selected_date = request.GET.get('selected_date', None)
+  
+#   if selected_date:
+#     order = order.filter(order_date__date=selected_date)
+  
+#   if order:
+#     date_to_total_orders = []
+#     date_of_order = []
+
+#     from django.db.models import Count, DateTimeField
+#     from django.db.models.functions import Trunc
+
+#     orders = order.filter(product_id__vendor_name=vendor_id)
+#     annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
+#     final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
+
+#     for i in final_orders:
+#       date_to_total_orders.append(i['count'])
+#       date_of_order.append(i['date'].strftime("%Y-%m-%d"))
+
+#     return render( request,'vendor_dashboard.html',{'date_to_total_orders':date_to_total_orders,'date_of_order':date_of_order})
+#   else:
+
+#     return render(request, 'vendor_dashboard.html', {})
+
+
+
+
+
 @never_cache
 @login_required(login_url='/vendor-signin')
 def vendor_dashboard(request):
   vendor_id = users.objects.get(id = request.user.id)
   product = Product.objects.filter(vendor_name = vendor_id)
   order = Order.objects.filter(is_active = 'True')
-  
-  selected_date = request.POST.get('selected_date', None)
-  
-  if selected_date:
-    order = order.filter(order_date__date=selected_date)
+  cancelled_order = Order.objects.filter(status = 'Cancelled')
+
   
   if order:
-    total_order = []
+    # total orders
+    date_to_total_orders = {}
     date_of_order = []
 
-    from django.db.models import Count, DateTimeField
-    from django.db.models.functions import Trunc
+    
+
 
     orders = order.filter(product_id__vendor_name=vendor_id)
     annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
     final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
 
     for i in final_orders:
-      total_order.append(i['count'])
-      date_of_order.append(i['date'].strftime("%Y-%m-%d"))
+      date = i['date'].strftime("%Y-%m-%d")
+      if date in date_to_total_orders:
+        date_to_total_orders[date] += i['count']
+      else:
+        date_to_total_orders[date] = i['count']
+        date_of_order.append(date)
 
-    return render( request,'vendor_dashboard.html',{'total_order':total_order,'date_of_order':date_of_order})
+
+    
+    #cancelled orders
+
+    date_to_cancelled_orders = {}
+    date_of_cancelled_order = []
+
+    
+
+
+    orders = cancelled_order.filter(product_id__vendor_name=vendor_id)
+    annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
+    final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
+
+    for i in final_orders:
+      date = i['date'].strftime("%Y-%m-%d")
+      if date in date_to_cancelled_orders:
+        date_to_cancelled_orders[date] += i['count']
+      else:
+        date_to_cancelled_orders[date] = i['count']
+        date_of_cancelled_order.append(date)
+
+
+    current_year =  datetime.now().year
+    return render( request,'vendor_dashboard.html',{'date_to_total_orders':date_to_total_orders,'date_of_order':date_of_order,'current_year':current_year,'date_of_cancelled_order':date_of_cancelled_order,'date_to_cancelled_orders':date_to_cancelled_orders})
   else:
-
     return render(request, 'vendor_dashboard.html', {})
+
 
 
 

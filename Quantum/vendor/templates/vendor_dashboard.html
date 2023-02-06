@@ -397,11 +397,10 @@
                   </div>
                   <!-- chartjs total orders -->
                  
-                  <input type="date" id="selected_date">
-                  <canvas id="ordersChart"></canvas>
+                  <input type="date" class="date">
+                  <canvas id="orderChart"></canvas>
                   
 
-                  
 
                 </div>
               </div>
@@ -413,11 +412,13 @@
                   <p class="card-title">order cancelled</p>
                   <a href="#" class="text-info">View all</a>
                  </div>
-                  <p class="font-weight-500">The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
+                  <p class="font-weight-500">
+                    The total number of sessions within the date range. It is the period time a user is actively engaged with your website, page or app, etc</p>
                   <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
                   <div>
                     <!-- chartjs -->
-                    <canvas id="cancelledOrdersChart"></canvas>
+                    <input type="date" class="cancelleddate">
+                    <canvas id="cancelledorderChart"></canvas>
                   </div>
                   
                 </div>
@@ -453,72 +454,206 @@
 
 
   	<!-- jQuery -->
-	<script
-	src="https://code.jquery.com/jquery-3.6.3.js"
-	integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM="
-	crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.js" type="text/javascript"></script>
-
+	
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    
   
-    <script>
-document.getElementById("selected_date").addEventListener("change", function() {
-  let selectedDate = this.value;
 
-  // AJAX call to get data from backend based on selected date
-  $.ajax({
-    url: '{%url "vendor_dashboard"%}',
-    type: 'POST',
-    data: {
-      'selected_date': selectedDate
-    },
-    success: function(data) {
-      // The data returned from the backend should be in JSON format
-      let totalOrder = data.total_order;
-      let dateOfOrder = data.date_of_order;
+<!-- Include Chart.js library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
-      let ctx = document.getElementById('ordersChart').getContext('2d');
-      let myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: dateOfOrder,
-          datasets: [{
-            label: '# of Orders',
-            data: totalOrder,
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-              'rgba(255, 99, 132, 1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-          }]
-        },
-        options: {
-          scales: {
-            yAxes: [{
-              ticks: {
-                beginAtZero: true
-              }
-            }]
-          }
-        }
-      });
+
+
+<script>
+  // Get the data from the context
+  var dateToTotalOrders = {{ date_to_total_orders|safe }};
+  var dateOfOrder = {{ date_of_order|safe }};
+
+   // Specify the target year
+   var targetYear = {{current_year}};
+
+// Calculate the total number of orders for the target year
+var totalOrdersForTargetYear = 0;
+for (var i = 0; i < dateOfOrder.length; i++) {
+  var date = dateOfOrder[i];
+  var year = date.substring(0, 4);
+  if (year == targetYear) {
+    totalOrdersForTargetYear += dateToTotalOrders[date];
+  }
+}
+
+console.log("Total number of orders for " + targetYear + ": " + totalOrdersForTargetYear);
+
+  // Get the date input field
+  var dateInput1 = document.querySelector('.date');
+
+  // Update the target date and chart when the date input value changes
+  dateInput1.addEventListener('change', function() {
+    var targetDate1 = this.value;
+
+    // Check if the target date exists in the data
+    var targetDateExists = false;
+    for (var i = 0; i < dateOfOrder.length; i++) {
+      var date = dateOfOrder[i];
+      if (date == targetDate1) {
+        targetDateExists = true;
+        break;
+      }
+    }
+
+    // Calculate the total number of orders for the target date
+    if (targetDateExists) {
+      var totalOrdersForTargetDate1 = dateToTotalOrders[targetDate1];
+      console.log("Total number of orders for " + targetDate1 + ": " + totalOrdersForTargetDate1);
+
+      // Update the chart data
+      orderChart.data.labels = [targetDate1];
+      orderChart.data.datasets[0].data = [totalOrdersForTargetDate1];
+      orderChart.update();
+    } else {
+      orderChart.data.labels = [targetDate1];
+      orderChart.data.datasets[0].data = [0];
+      orderChart.update();
+      
     }
   });
-});
 
+  // Extract the total orders and convert them to an array
+  var totalOrders = [];
+  for (var date in dateToTotalOrders) {
+    totalOrders.push(dateToTotalOrders[date]);
+  }
+
+  // Create the chart
+  var ctx = document.getElementById('orderChart').getContext('2d');
+  var orderChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: [targetYear],
+      datasets: [{
+        label: 'Total Orders',
+        data: [totalOrdersForTargetYear],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+   
+    }
+  });
+
+
+  
+
+
+
+// cancelled_order
+  // Get the data from the context
+  var dateToTotalOrders = {{ date_to_cancelled_orders|safe }};
+  var dateOfOrder = {{ date_of_cancelled_order|safe }};
+
+   // Specify the target year
+   var targetYear = {{current_year}};
+
+// Calculate the total number of orders for the target year
+var totalOrdersForTargetYear = 0;
+for (var i = 0; i < dateOfOrder.length; i++) {
+  var date = dateOfOrder[i];
+  var year = date.substring(0, 4);
+  if (year == targetYear) {
+    totalOrdersForTargetYear += dateToTotalOrders[date];
+  }
+}
+
+console.log("Total number of orders for " + targetYear + ": " + totalOrdersForTargetYear);
+
+  // Get the date input field
+  var dateInput = document.querySelector('.cancelleddate');
+
+  // Update the target date and chart when the date input value changes
+  dateInput.addEventListener('change', function() {
+    var targetDate = this.value;
+
+    // Check if the target date exists in the data
+    var targetDateExists = false;
+    for (var i = 0; i < dateOfOrder.length; i++) {
+      var date = dateOfOrder[i];
+      if (date == targetDate) {
+        targetDateExists = true;
+        break;
+      }
+    }
+
+    // Calculate the total number of orders for the target date
+    if (targetDateExists) {
+      var totalOrdersForTargetDate = dateToTotalOrders[targetDate];
+      console.log("Total number of orders for " + targetDate + ": " + totalOrdersForTargetDate);
+
+      // Update the chart data
+      orderChart.data.labels = [targetDate];
+      orderChart.data.datasets[0].data = [totalOrdersForTargetDate];
+      orderChart.update();
+    } else {
+      orderChart.data.labels = [targetDate];
+      orderChart.data.datasets[0].data = [0];
+      orderChart.update();
+      
+    }
+  });
+
+  // Extract the total orders and convert them to an array
+  var totalOrders = [];
+  for (var date in dateToTotalOrders) {
+    totalOrders.push(dateToTotalOrders[date]);
+  }
+
+  // Create the chart
+  var ctx2 = document.getElementById('cancelledorderChart').getContext('2d');
+  var orderChart = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: [targetYear],
+      datasets: [{
+        label: 'Cancelled Orders',
+      data: [totalOrdersForTargetYear],
+      backgroundColor: 'rgba(255, 0, 0, 1)',
+      borderColor: 'rgba(255, 0, 0, 1)',
+      borderWidth: 1
+      }]
+    },
     
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
 </script>
+
+
+
+
+
+
+
+
+
+
+
 
   <!-- plugins:js -->
   <!-- <script src="{%static '/vendor/vendors/js/vendor.bundle.base.js'%}"></script> -->

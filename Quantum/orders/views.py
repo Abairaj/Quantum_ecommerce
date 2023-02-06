@@ -17,6 +17,7 @@ from django.contrib.auth.decorators import login_required
 import hmac
 import random
 import razorpay
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from django.conf import settings
 # Create your views here.
 
@@ -55,8 +56,6 @@ class CheckoutAPIView(TemplateView):
             cart = None
         
         payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
-        cart.razorpay_order_id = payment['id']
-        cart.save()
         context['payment'] = payment
         print(payment)
         context['cart'] = cart
@@ -278,23 +277,79 @@ class return_order(View):
           
          
 
+def invoice(request, order_id):
+    # print(type(order_ids))
+ 
+ #order_id is in str convert to list
+    order_ids = order_id.strip('[]').split(',')
+    order_ids = [int(id) for id in order_ids]
+    orders = Order.objects.filter(id__in=order_ids)
+    date = datetime.today()
+    order_total = 0
 
-def download_invoice(request,order):
-     print(order)
-
-     
-     orders = Order.objects.filter(id__in = order)
+    for i in orders:
+         order_total += i.Variant.final_price
     
+    try:
+        action = request.GET.get('action')
+    except:
+         action =None
      
-   
+    if request.GET.get('action') == 'download':
+        # Create a file-like buffer to receive PDF data.
+     # Create the HttpResponse object with the appropriate PDF headers.
+       response = HttpResponse(content_type='application/pdf')
+       response['Content-Disposition'] = 'attachment; filename="invoice.pdf"'
 
-     print(orders,'lllllllllllllllllllllll')
+    # Create the PDF object, using the response object as its "file."
+       doc = SimpleDocTemplate(response,title ='Quantum Times Invoice')
+
+    # Container for the 'Flowable' objects
+       elements = []
+
+    # Table header
+       data = [["Item", "Variant", "Quantity", "Price"]]
+
+    # Table rows
+       for order in orders:
+            data.append([order.product_id.product_name, order.Variant.color.name, order.quantity, order.amount])
+       data.append(["","" ,"Order Total", order_total])
+
+       
+       
+       table = Table(data)
+       table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), (0.75, 0.75, 0.75)),
+            ('TEXTCOLOR', (0, 0), (-1, 0), (1, 1, 1)),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), (0.93, 0.93, 0.93)),
+            ('GRID', (0, 0), (-1, -1), 1, (0.75, 0.75, 0.75,0.75))
+        ]))
+
+    # Add table to the PDF
+       elements = []
+       elements.append(table)
+       doc.build(elements)
+
+       
+
+       return response
+    
+    
+
+         
+    return render(request,'invoice.html',{'order':orders,'order_total':order_total,'date':date,'order_id':order_id})
+
+
+
+def download_invoice(request,id):
      
-     return render(request,'invoice.html',{'order':orders})
 
-
-
-
+     
+     messages.success('invoice downloaded successfully.Track your order here')
+     return redirect('order_tracking')
 
 
    
