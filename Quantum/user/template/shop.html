@@ -139,17 +139,17 @@
 							{% csrf_token %}
 						<div class="form-group">
 							<label for="rangeInput">Price range:</label>
-							<input type="range" value="{{ min_max_price.final_price__min }}" min="{{ min_max_price.final_price__min }}" max="{{ min_max_price.final_price__max }}"  class="form-control" oninput="maxprice.value=this.value" step="1"/>
-							<p style="color:black !important;">{{ min_max_price.final_price__min }} - {{ min_max_price.final_price__max }}</p>
+							<input type="range" value="{{ min_max_price.final_price__min|floatformat:0  }}" min="{{ min_max_price.final_price__min|floatformat:0  }}" max="{{ min_max_price.final_price__max|floatformat:0  }}"  class="form-control" oninput="maxprice.value=this.value" step="1"/>
+							<p style="color:black !important;">{{ min_max_price.final_price__min|floatformat:0 }} - {{ min_max_price.final_price__max|floatformat:0  }}</p>
 						  </div>
 
 						  <div class="form-group">
 							<label for="maxprice">Max:</label>
-							<input type="number" placeholder="max" name="max_price" class="form-control" min="{{ min_max_price.final_price__min }}" max="{{ min_max_price.final_price__max }}"  id="maxprice" onkeyup="rangeInput.value=this.value" required>
+							<input type="number" placeholder="max" name="max_price" class="form-control" min="{{ min_max_price.final_price__min|floatformat:0  }}" max="{{ min_max_price.final_price__max|floatformat:0  }}"  id="maxprice" onkeyup="rangeInput.value=this.value" required>
 						  </div>
 						  <div class="form-group">
 							<label for="minprice">Min:</label>
-							<input type="number" name="min_price" value="{{ min_max_price.final_price__min }}" placeholder="min"  class="form-control" id="minprice" required>
+							<input type="number" name="min_price" value="{{ min_max_price.final_price__min|floatformat:0  }}" placeholder="min"  class="form-control" id="minprice" required>
 						  </div>
 						  <button class="btn btn-info btn-sm mt-1" type="submit" formmethod="POST">Filter</button>
 						</form>

@@ -38,7 +38,7 @@ class Cart_items(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     variant = models.ForeignKey(Variant,on_delete=models.CASCADE,null=True,blank=True)
     quantity = models.IntegerField(default=0)
-    price = models.DecimalField(max_digits=15,decimal_places=2)
+    price = models.PositiveIntegerField()
     sub_total = models.PositiveIntegerField()
 
 

@@ -24,43 +24,8 @@ from io import BytesIO
 from django.db.models import Q
 from datetime import datetime
 from django.db.models import Count, DateTimeField
-from django.db.models.functions import Trunc,TruncYear
+from django.db.models.functions import Trunc
 from django.views.decorators.cache import never_cache
-
-
-
-
-# # Create your views here.
-
-# def vendor_dashboard(request):
-#   vendor_id = users.objects.get(id = request.user.id)
-#   order = Order.objects.filter(is_active = 'True')
-  
-#   selected_date = request.GET.get('selected_date', None)
-  
-#   if selected_date:
-#     order = order.filter(order_date__date=selected_date)
-  
-#   if order:
-#     date_to_total_orders = []
-#     date_of_order = []
-
-#     from django.db.models import Count, DateTimeField
-#     from django.db.models.functions import Trunc
-
-#     orders = order.filter(product_id__vendor_name=vendor_id)
-#     annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
-#     final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
-
-#     for i in final_orders:
-#       date_to_total_orders.append(i['count'])
-#       date_of_order.append(i['date'].strftime("%Y-%m-%d"))
-
-#     return render( request,'vendor_dashboard.html',{'date_to_total_orders':date_to_total_orders,'date_of_order':date_of_order})
-#   else:
-
-#     return render(request, 'vendor_dashboard.html', {})
-
 
 
 
@@ -73,8 +38,21 @@ def vendor_dashboard(request):
   order = Order.objects.filter(is_active = 'True')
   cancelled_order = Order.objects.filter(status = 'Cancelled')
 
+
+
   
   if order:
+
+    total_amount = 0
+    count = 0
+    for i in order:
+        total_amount += i.amount
+        count += 1
+
+    total_cancelled_orders = 0
+
+    for i in cancelled_order:
+        total_cancelled_orders+=1
     # total orders
     date_to_total_orders = {}
     date_of_order = []
@@ -116,9 +94,9 @@ def vendor_dashboard(request):
         date_to_cancelled_orders[date] = i['count']
         date_of_cancelled_order.append(date)
 
-
+    print(date_of_cancelled_order)
     current_year =  datetime.now().year
-    return render( request,'vendor_dashboard.html',{'date_to_total_orders':date_to_total_orders,'date_of_order':date_of_order,'current_year':current_year,'date_of_cancelled_order':date_of_cancelled_order,'date_to_cancelled_orders':date_to_cancelled_orders})
+    return render( request,'vendor_dashboard.html',{'date_to_total_orders':date_to_total_orders,'date_of_order':date_of_order,'current_year':current_year,'date_of_cancelled_order':date_of_cancelled_order,'date_to_cancelled_orders':date_to_cancelled_orders,'total_revenue':total_amount,'total_order':count,'total_cancelled_orders':total_cancelled_orders})
   else:
     return render(request, 'vendor_dashboard.html', {})
 
@@ -126,7 +104,7 @@ def vendor_dashboard(request):
 
 
            
-        # return render(request,'vendor_dashboard.html',{'monthNumber':date_of_order,'totalOrder':total_order,'cancelled_month':[0],'cancelled_order':[0]})
+        
 
 
 

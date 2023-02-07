@@ -83,7 +83,7 @@
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<span class="product_price">{{i.price}}</span>
+									<span class="product_price">{{i.price|floatformat:0}}</span>
 								</div>
 							</div>
 							<div class="one-eight text-center">
@@ -100,7 +100,7 @@
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<span class="sub_total" >{{i.sub_total}}</span>
+									<span class="sub_total" >{{i.sub_total|floatformat:0}}</span>
 								</div>
 							</div>
 							<div class="one-eight text-center">
@@ -178,9 +178,10 @@
 					var inc_value = $(this).closest('.product_data').find('.qty-input').val();
 					var value = parseInt(inc_value,10);
 					value = isNaN(value) ? 0 :value;
-					if(value < 11)
+					if(value < 10)
 					{
 						value ++;
+						// value = Math.round(value)
 						$(this).closest('.product_data').find('.qty-input').val(value);
 					}
 				});
@@ -195,6 +196,7 @@
 					if(value > 1)
 					{
 						value --;
+						// value = Math.round(value)
 						$(this).closest('.product_data').find('.qty-input').val(value);
 					}
 				});
@@ -214,9 +216,13 @@
 
 					subtotal = product_qty * product_price
 					$(this).closest('.product_data').find('.sub_total').text(subtotal);
-					if (product_qty <= 10){
+					if (product_qty < 10){
 					grand_total  = parseInt(grand_total) + parseInt(product_price)
 					$('.total').find('.grand_total').text(grand_total);
+					}
+					if (product_qty == 10){
+						grand_total =  parseInt(product_price) * 10
+						$('.total').find('.grand_total').text(grand_total);
 					}
 					$.ajax({
 						method: 'POST',
@@ -246,9 +252,13 @@
 					console.log(grand_total,'*************************************************************')
 					subtotal = product_qty * product_price
 					$(this).closest('.product_data').find('.sub_total').text(subtotal);
-					if (product_qty >= 2){
+					if (product_qty >=2){
 					grand_total  =  grand_total - product_price
 					$('.total').find('.grand_total').text(grand_total);
+					}
+					if (product_qty == 1){
+						grand_total = product_price
+						$('.total').find('.grand_total').text(grand_total);
 					}
 					$.ajax({
 						method: 'POST',

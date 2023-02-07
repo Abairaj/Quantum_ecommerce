@@ -169,33 +169,37 @@
 			<div class="container">
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3 text-center colorlib-heading">
-						<h2><span>Our Products</span></h2>
-						{{offer}}
-						<p>We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+						<h2><span>Our Offers</span></h2>
+						<!-- <p>We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p> -->
 					</div>
 				</div>
 				<div class="row">
+					{%for i in offer%}
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
-							<div class="product-img" style="background-image: url(https://cdn1.ethoswatches.com/media/catalog/product/cache/06b0325fe0d1ea074c67035fe5935845/u/r/urwerk-ur-satellite-ur-105-ct_1.jpg);">
-								<p class="tag"><span class="sale">Sale</span></p>
-								<div class="cart">
-									<p>
-										<span class="addtocart"><a href="cart.html"><i class="icon-shopping-cart"></i></a></span> 
+							<div class="product-img" style="background-image: url({{i.brand.brand_logo.url}});">
+								<p class="tag""><span class="sale"  style="background-color: green;">Offer</span></p>
+								<!-- <div class="cart">
+									<p> -->
+
+										<div>
+											<strong>Offer</strong>
+										</div>
+										<!-- <span class="addtocart"><a href="cart.html"><i class="icon-shopping-cart"></i></a></span> 
 										<span><a href="product-detail.html"><i class="icon-eye"></i></a></span> 
 										<span><a href="#"><i class="icon-heart3"></i></a></span>
-										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
-									</p>
-								</div>
+										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span> -->
+									<!-- </p>
+								</div> -->
 							</div>
 							<div class="desc">
-								<h3><a href="shop.html">URWERK</a></h3>
-								<p class="price"><span>₹ 55,50,000</span> <span class="sale">$300.00</span> </p>
+								<h3><a href="shop.html">{{i.brand.brand_name}}</a></h3>
+								<h4 style="color:green !important">{{i.percent}}% Off</h4>
 							</div>
 						</div>
 					</div>
 
-
+					{%endfor%}
 
 
 

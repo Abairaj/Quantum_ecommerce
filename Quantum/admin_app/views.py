@@ -19,13 +19,84 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Table
 from reportlab.lib.styles import getSampleStyleSheet
 from io import BytesIO
 from datetime import datetime
+from django.db.models import Count, DateTimeField
+from django.db.models.functions import Trunc
 
 # Create your views here.
 @never_cache
 @login_required(login_url='/admin')
 def admin_pannel(request):
-    return render(request,'admin_pannel.html')
+   
+  order = Order.objects.all()
+  cancelled_order = Order.objects.filter(status = 'Cancelled')
 
+
+
+  
+  if order:
+
+    total_amount = 0
+    count = 0
+    for i in order:
+        total_amount += i.amount
+        count += 1
+
+    total_cancelled_orders = 0
+
+    for i in cancelled_order:
+        total_cancelled_orders+=1
+    # total orders
+    date_to_total_orders = {}
+    date_of_order = []
+
+    
+
+
+    orders = order
+    annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
+    final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
+
+    for i in final_orders:
+      date = i['date'].strftime("%Y-%m-%d")
+      if date in date_to_total_orders:
+        date_to_total_orders[date] += i['count']
+      else:
+        date_to_total_orders[date] = i['count']
+        date_of_order.append(date)
+
+
+    
+    #cancelled orders
+
+    date_to_cancelled_orders = {}
+    date_of_cancelled_order = []
+
+    
+
+
+    orders = cancelled_order.all()
+    annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
+    final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
+
+    for i in final_orders:
+      date = i['date'].strftime("%Y-%m-%d")
+      if date in date_to_cancelled_orders:
+        date_to_cancelled_orders[date] += i['count']
+      else:
+        date_to_cancelled_orders[date] = i['count']
+        date_of_cancelled_order.append(date)
+
+    print(date_of_cancelled_order)
+    current_year =  datetime.now().year
+    return render( request,'admin_pannel.html',{'date_to_total_orders':date_to_total_orders,'date_of_order':date_of_order,'current_year':current_year,'date_of_cancelled_order':date_of_cancelled_order,'date_to_cancelled_orders':date_to_cancelled_orders,'total_revenue':total_amount,'total_order':count,'total_cancelled_orders':total_cancelled_orders})
+  else:
+    return render(request, 'admin_pannel.html', {})
+
+
+
+
+
+  
 
 #----------------------------------------------------------------- user management------------------------------------------------------------------------------------------------------
 @login_required(login_url='/admin')
@@ -547,3 +618,7 @@ class Admin_product(TemplateView):
        context['product'] = product
 
        return context
+    
+
+class Admin_product_details(TemplateView):
+    template_name= 'admin_product_details'

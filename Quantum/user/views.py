@@ -507,6 +507,7 @@ class Category_filter(TemplateView):
 from orders.models import Order
 from django.db.models import Count
 def filter(request):
+    min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
     print('entered****************************************************')
     action = request.GET.get('action')
     if action == 'popularity':
@@ -514,7 +515,6 @@ def filter(request):
         variant_ids = [item['Variant'] for item in item]
         variants = Variant.objects.filter(id__in=variant_ids)
         all_categories = Category.objects.all()
-        min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
         context = {'variant': variants,'category':all_categories,'min_max_price':min_max_price}
         return render(request, 'shop.html', context)
 
@@ -525,7 +525,7 @@ def filter(request):
 
           variant = Variant.objects.filter(Q(final_price__gte = min_price) and Q(final_price__lte = max_price))
           all_categories = Category.objects.all()
-          context = {'variant':variant,'category':all_categories}
+          context = {'variant':variant,'category':all_categories,'min_max_price':min_max_price}
           return render(request,'shop.html',context)
     else:
          return render(request,'shop.html')

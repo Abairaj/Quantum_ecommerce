@@ -52,7 +52,7 @@ class  AddtocartAPIView (TemplateView):
 
 # if new item addedd to cart ne cart product will be created
             else:
-                cart_item = Cart_items.objects.create(cart = cart,product =product_id, variant = variant , price = product.final_price,quantity = 1,sub_total = product.final_price)
+                cart_item = Cart_items.objects.create(cart = cart,product =product_id, variant = variant , price = variant.final_price,quantity = 1,sub_total = variant.final_price)
                 cart_item.save()
                 cart.total += variant.final_price
                 cart.save()
