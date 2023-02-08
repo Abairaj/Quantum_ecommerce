@@ -26,6 +26,15 @@ from datetime import datetime
 from django.db.models import Count, DateTimeField
 from django.db.models.functions import Trunc
 from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import user_passes_test
+
+
+
+
+def vendorcheck(request):
+    return not request.user.is_superadmin and request.user.is_staff     
+
 
 
 
@@ -33,83 +42,94 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @login_required(login_url='/vendor-signin')
 def vendor_dashboard(request):
-  vendor_id = users.objects.get(id = request.user.id)
-  product = Product.objects.filter(vendor_name = vendor_id)
-  order = Order.objects.filter(is_active = 'True')
-  cancelled_order = Order.objects.filter(status = 'Cancelled')
-
-
-
   
-  if order:
+  if not request.user.is_superadmin and request.user.is_staff:
+    vendor_id = users.objects.get(id = request.user.id)
+    product = Product.objects.filter(vendor_name = vendor_id)
+    order = Order.objects.filter(is_active = 'True')
+    cancelled_order = Order.objects.filter(status = 'Cancelled')
 
-    total_amount = 0
-    count = 0
-    for i in order:
-        total_amount += i.amount
-        count += 1
-
-    total_cancelled_orders = 0
-
-    for i in cancelled_order:
-        total_cancelled_orders+=1
-    # total orders
-    date_to_total_orders = {}
-    date_of_order = []
-
-    
-
-
-    orders = order.filter(product_id__vendor_name=vendor_id)
-    annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
-    final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
-
-    for i in final_orders:
-      date = i['date'].strftime("%Y-%m-%d")
-      if date in date_to_total_orders:
-        date_to_total_orders[date] += i['count']
-      else:
-        date_to_total_orders[date] = i['count']
-        date_of_order.append(date)
 
 
     
-    #cancelled orders
+    if order:
 
-    date_to_cancelled_orders = {}
-    date_of_cancelled_order = []
+        total_amount = 0
+        count = 0
+        for i in order:
+            total_amount += i.amount
+            count += 1
 
-    
+        total_cancelled_orders = 0
+
+        for i in cancelled_order:
+            total_cancelled_orders+=1
+        # total orders
+        date_to_total_orders = {}
+        date_of_order = []
+
+        
 
 
-    orders = cancelled_order.filter(product_id__vendor_name=vendor_id)
-    annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
-    final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
+        orders = order.filter(product_id__vendor_name=vendor_id)
+        annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
+        final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
 
-    for i in final_orders:
-      date = i['date'].strftime("%Y-%m-%d")
-      if date in date_to_cancelled_orders:
-        date_to_cancelled_orders[date] += i['count']
-      else:
-        date_to_cancelled_orders[date] = i['count']
-        date_of_cancelled_order.append(date)
+        for i in final_orders:
+            date = i['date'].strftime("%Y-%m-%d")
+            if date in date_to_total_orders:
+                date_to_total_orders[date] += i['count']
+            else:
+                date_to_total_orders[date] = i['count']
+                date_of_order.append(date)
 
-    print(date_of_cancelled_order)
-    current_year =  datetime.now().year
-    return render( request,'vendor_dashboard.html',{'date_to_total_orders':date_to_total_orders,'date_of_order':date_of_order,'current_year':current_year,'date_of_cancelled_order':date_of_cancelled_order,'date_to_cancelled_orders':date_to_cancelled_orders,'total_revenue':total_amount,'total_order':count,'total_cancelled_orders':total_cancelled_orders})
+
+        
+        #cancelled orders
+
+        date_to_cancelled_orders = {}
+        date_of_cancelled_order = []
+
+        
+
+
+        orders = cancelled_order.filter(product_id__vendor_name=vendor_id)
+        annotated_orders = orders.annotate(date=Trunc('order_date', 'day', output_field=DateTimeField()))
+        final_orders = annotated_orders.annotate(count=Count('id')).values('date','count')
+
+        for i in final_orders:
+            date = i['date'].strftime("%Y-%m-%d")
+            if date in date_to_cancelled_orders:
+                date_to_cancelled_orders[date] += i['count']
+            else:
+                date_to_cancelled_orders[date] = i['count']
+                date_of_cancelled_order.append(date)
+
+        print(date_of_cancelled_order)
+        current_year =  datetime.now().year
+
+        context = {'date_to_total_orders':date_to_total_orders,
+                'date_of_order':date_of_order,
+                'current_year':current_year,
+                'date_of_cancelled_order':date_of_cancelled_order,
+                'date_to_cancelled_orders':date_to_cancelled_orders,
+                'total_revenue':total_amount,
+                'total_order':count,
+                'total_cancelled_orders':total_cancelled_orders}
+        
+
+        return render( request,'vendor_dashboard.html',context)
+    else:
+         return render(request, 'vendor_dashboard.html', {})
   else:
-    return render(request, 'vendor_dashboard.html', {})
-
+    return render(request,'vendor_login.html')
 
 
 
            
-        
 
-
-
-
-
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Vendor_profile(TemplateView):
     template_name = 'vendor_profile.html'
     def get_context_data(self, **kwargs):
@@ -128,6 +148,8 @@ class Vendor_profile(TemplateView):
 
 
 
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class vendor_profile_edit(TemplateView):
      template_name = 'vendor_profile_edit.html'
 
@@ -143,7 +165,9 @@ class vendor_profile_edit(TemplateView):
     
     
 
-    
+
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')  
 class Vendor_profile_management(View):
         
         def post(self,request):
@@ -216,6 +240,8 @@ class Vendor_profile_management(View):
 
 
 
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Vendor_wallet(TemplateView):
     template_name = 'vendor_wallet.html'
 
@@ -229,19 +255,8 @@ class Vendor_wallet(TemplateView):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 @login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def vendor_products(request):
     vendor = request.user
     id = vendor.id
@@ -250,7 +265,11 @@ def vendor_products(request):
     }
     return render(request,'vendor_product.html',product)
 
+
+
+
 @login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def add_product(request):
 
     context ={'brand':Brand.objects.all(),'categorys':Category.objects.all()}
@@ -310,6 +329,7 @@ def add_product(request):
 
 
 @login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def edit_product(request,id):
 
     colors = []
@@ -388,6 +408,7 @@ def edit_product(request,id):
 
 # deleting the product
 @login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def delete_product(request,id):
     Product.objects.filter(id = id).delete()
     messages.success(request,'Product deleted succcessfully')
@@ -399,6 +420,7 @@ def delete_product(request,id):
 
 #view product cards and go to variant of paricular product
 @login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def variant_view(request):
     product = {
         'product':Product.objects.all().filter(vendor_name = request.user.id)
@@ -408,6 +430,7 @@ def variant_view(request):
 
 #variant view of a product 
 @login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def variant(request,id):
     product=Product.objects.get(id = id)
     variant =Variant.objects.filter(Product = id)
@@ -421,6 +444,8 @@ def variant(request,id):
 
 
 #   Add a new variant
+@login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def add_variants(request,id):
     product = Product.objects.get(id = id)
     context = {
@@ -480,6 +505,8 @@ def add_variants(request,id):
 
 #Edit a new variant
 
+@login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def edit_variant(request,id):
     variants = Variant.objects.get(id = id)
     product = variants.Product
@@ -553,7 +580,8 @@ def edit_variant(request,id):
 
 
 #delete a variant
-
+@login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def delete_variants(request,id):
     variant = Variant.objects.get(id = id)
     variant.delete()
@@ -568,6 +596,7 @@ def delete_variants(request,id):
 
 
 #=============================================================vendor authentication signin,signup==============================================
+@never_cache
 def vendor_signin(request):
     if request.user.is_authenticated:
         return redirect('vendor_dashboard')
@@ -591,7 +620,7 @@ def vendor_signin(request):
     return render(request,'vendor_login.html')
 
 
-
+@never_cache
 def vendor_signup(request):
     if request.method == 'POST':
         first_name = request.POST['firstname']
@@ -662,7 +691,7 @@ def vendor_signup(request):
 
 
 #===============================================================================OTP Login and verification==============================================================
-
+@never_cache
 def vendor_otp_login(request):
     if request.method == "POST":
         mobile = request.POST['mobile']
@@ -685,7 +714,7 @@ def vendor_otp_login(request):
 
 
 
-
+@never_cache
 def vendor_verify_login(request,id):
     type(id)
     
@@ -709,7 +738,9 @@ def vendor_verify_login(request,id):
 
 #=======================================================Vendor Order management============================================================
 
-@method_decorator(login_required(login_url='signin'), name='dispatch')
+
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Order_management(TemplateView):
     template_name = 'vendor_orders.html'
 
@@ -729,6 +760,8 @@ class Order_management(TemplateView):
 
 
 
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Update_order_status(View):
     
     def post(self,request,**kwargs):
@@ -746,6 +779,8 @@ class Update_order_status(View):
 #=========================================================vendor coupon management=============================================================
 
 #coupon main page
+@login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def vendor_coupon(request):
     context = {
         'coupon':Coupon.objects.all()
@@ -754,8 +789,10 @@ def vendor_coupon(request):
 
 
 
-from datetime import datetime
 # add coupon
+
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class add_coupon(View):
     def post(self,request):
         code = request.POST['code']
@@ -780,14 +817,29 @@ class add_coupon(View):
 
 
 # delete coupon
-def delete_coupon(request,id):
+@login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
+def activate_coupon(request,id):
     coupon = Coupon.objects.get(id = id)
-    coupon.delete()
-    messages.success(request,'Coupon deleted successfully')
+    coupon.expired = False
+    coupon.save()
+    messages.success(request,'Coupon Activated successfully')
+    return redirect('vendor_coupon')
+
+
+@login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
+def deactivate_coupon(request,id):
+    coupon = Coupon.objects.get(id = id)
+    coupon.expired = True
+    coupon.save()
+    messages.success(request,'Coupon Deactivated successfully')
     return redirect('vendor_coupon')
 
 
 # edit coupon
+@login_required(login_url='/vendor-signin')
+@user_passes_test(vendorcheck)
 def edit_coupon(request,id):
     if request.method == 'POST':
 
@@ -814,6 +866,8 @@ def edit_coupon(request,id):
 
 # ===========================================================================================sales report===================================================================
 
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Vendor_Salesreport_view(TemplateView):
     template_name = 'vendor_salesreport.html'
     
@@ -836,6 +890,8 @@ class Vendor_Salesreport_view(TemplateView):
 
 
 
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class vendor_Salesreport_download(View):
 
 
@@ -870,7 +926,7 @@ class vendor_Salesreport_download(View):
                 buffer = BytesIO()
             
                 # Create the PDF object
-                pdf = SimpleDocTemplate(buffer, pagesize=letter)
+                pdf = SimpleDocTemplate(buffer, title = 'Sales report')
 
                 #  data for the table
                 data = []
@@ -881,7 +937,7 @@ class vendor_Salesreport_download(View):
                     data.append([str(report.order_date.date()), str(report.id), report.product_id.category.category_name, report.product_id.brand.brand_name, str(report.amount)])
 
                 # Creating  the table
-                table = Table(data, colWidths=[100, 100, 100, 100, 100], rowHeights=10*len(data))
+                table = Table(data, colWidths=[100, 100, 100, 100, 100], rowHeights=30)
 
                 table.setStyle([
                     ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
@@ -954,6 +1010,8 @@ class vendor_Salesreport_download(View):
 
 
 
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class salesreport_filter(View):
 
     def post(self,request):

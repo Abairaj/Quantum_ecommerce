@@ -15,18 +15,23 @@ from sendotp import *
 from cart.models import *
 from django.http import JsonResponse
 from offers.models import Offer
-import datetime
+from orders.models import Order
+from django.db.models import Count
 from django.contrib.auth.hashers import make_password
 from cart.forms import AddressForm
 from django.db.models import Max,Min
 from django.db.models import Q
-# from serializers import ChangepasswordSerializers
-# from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
 # from verifyotp import verify_otp
 
 
 
-            
+
+
+def user_check(user):
+    return not user.is_superadmin and not user.is_staff         
+
 
 
 
@@ -39,7 +44,8 @@ def home(request):
 
 
 
-
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class user_profile(TemplateView):
     template_name = 'user_profile.html'
     def get_context_data(self, **kwargs):
@@ -56,6 +62,8 @@ class user_profile(TemplateView):
         return context
     
 
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class user_profile_edit(TemplateView):
      template_name = 'user_edit.html'
 
@@ -69,7 +77,10 @@ class user_profile_edit(TemplateView):
           return context
 
 
-    
+
+
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class user_profile_management(View):
         
         def post(self,request):
@@ -140,6 +151,9 @@ class user_profile_management(View):
 
 
 
+
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class User_add_address_view(TemplateView):
      template_name = 'user_add_address.html'
      form_class = AddressForm
@@ -170,9 +184,6 @@ def product_detail(request,id,v_id):
 
     varian = Variant.objects.filter(Product = product.pk)
 
-    
-
-  
 
     print(context)
 
@@ -210,6 +221,7 @@ def signin(request):
             return redirect('signin')
     else:
         return render(request,'login.html')
+
 
 
 @never_cache
@@ -292,6 +304,7 @@ def signup(request):
 
 
 
+@never_cache
 def forgot_password(request):
      
      if request.method == 'POST':
@@ -301,7 +314,7 @@ def forgot_password(request):
           if len(mobile) == 10 and users.objects.filter(mobile = mobile).exists():
                user = users.objects.filter(mobile = mobile)
                id = user[0].id
-               request.session['user_id'] = id
+               request.session['user_id'] = mobile
                otp = str(random.randint(1000,9999))
 
                user.update(otps = otp)
@@ -317,12 +330,15 @@ def forgot_password(request):
      return render(request,'forgotpass.html')
 
 
+
+
+@never_cache
 def forgot_password_verify(request):
      
      id = request.session.get('user_id')
     
 
-     user = users.objects.get(id = id)
+     user = users.objects.get(mobile = id)
      otp_saved = user.otps
 
      if request.method == 'POST':
@@ -340,11 +356,13 @@ def forgot_password_verify(request):
 
 
 
+@never_cache
 def reset_password(request):
      if request.method == 'POST':
           
           id = request.session.get('user_id')
-          user = users.objects.filter(id = id)
+          user = users.objects.filter(mobile = id)
+          user1 = users.objects.get(mobile =id)
           del request.session['user_id']
 
           pass1 = request.POST['pass1']
@@ -356,9 +374,12 @@ def reset_password(request):
           
           else:
                user.update(password = make_password(pass1))
-
-               messages.success(request,'password changed successfully. .Sign in with the new password')
-               return redirect('signin')
+               if user1.is_staff == True:
+                    messages.success(request,'password changed successfully. .Sign in with the new password')
+                    return redirect('vendor-signin')
+               else:  
+                  messages.success(request,'password changed successfully. .Sign in with the new password')
+                  return redirect('signin')
           
      return render(request,'resetpassword.html')
           
@@ -368,7 +389,7 @@ def reset_password(request):
 
 
 
-
+@never_cache
 def otp_login(request):
     if request.method == "POST":
         mobile = request.POST['mobile']
@@ -398,7 +419,7 @@ def otp_login(request):
 
 
 
-
+@never_cache
 def verify_login(request,id):
     
     if request.method == 'POST':
@@ -469,6 +490,7 @@ def search_bar(request):
 
 
 
+
 class Category_filter(TemplateView):
      template_name = 'shop.html'
 
@@ -504,11 +526,9 @@ class Category_filter(TemplateView):
           return context
         
 
-from orders.models import Order
-from django.db.models import Count
+
 def filter(request):
     min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
-    print('entered****************************************************')
     action = request.GET.get('action')
     if action == 'popularity':
         item = Order.objects.annotate(times=Count('Variant')).values('Variant', 'times').order_by('-times')
@@ -534,6 +554,8 @@ def filter(request):
           
 # ===================================================================================Wallet=========================================================================
 
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class Wallet_view(TemplateView):
      template_name = 'wallet.html'
 

@@ -14,11 +14,19 @@ from django.urls import reverse_lazy
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 import hmac
 import random
 import razorpay
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from django.conf import settings
+from django.contrib.auth.decorators import user_passes_test
+
+
+
+
+def user_check(user):
+    return not user.is_superadmin and not user.is_staff   
 # Create your views here.
 
 
@@ -40,6 +48,10 @@ def split_payment(amount,admin_percentage,id):
 
 
 
+
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class CheckoutAPIView(TemplateView):
     template_name = 'checkout.html'
     form_class = AddressForm
@@ -60,8 +72,13 @@ class CheckoutAPIView(TemplateView):
         print(payment)
         context['cart'] = cart
         return context
-    
+
+
+
+
+@method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class PaymentAPI(View):   
     def post(self,request,**kwargs):
         amt = self.kwargs.get('amount')
@@ -113,7 +130,12 @@ class PaymentAPI(View):
     
         
 
+
+
+
+@method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class OrderTracking(TemplateView):
      template_name = 'Dashboard.html'
 
@@ -127,6 +149,12 @@ class OrderTracking(TemplateView):
           return context
      
 
+
+
+
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class success(View):
 
     def get(self,request, **kwargs):
@@ -200,12 +228,9 @@ class success(View):
             amount = i.price * i.quantity,
             quantity = i.quantity
                     )
-            
-            print(id,'///////////////////////////////////////////////////')
-                    
+
             
             order_ids.append(int(id))
-            print(order_ids,'9999999999999999999999999999999999999999999999999999999999999999999999999')
             
             
 
@@ -221,11 +246,22 @@ class success(View):
 
 
 
+
+
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class product_return(View):
      def post(self,request,**kwargs):
        return redirect('orders')
      
 
+
+
+
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class cancel_order(View):
      
      def get(self,request,**kwargs):
@@ -252,6 +288,11 @@ class cancel_order(View):
 
 
 
+
+
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
 class return_order(View):
      
      def get(self,request,**kwargs):
@@ -277,6 +318,9 @@ class return_order(View):
           
          
 
+
+@login_required(login_url='/')
+@user_passes_test(user_check)
 def invoice(request, order_id):
     # print(type(order_ids))
  
@@ -344,6 +388,9 @@ def invoice(request, order_id):
 
 
 
+
+@login_required(login_url='/')
+@user_passes_test(user_check)
 def download_invoice(request,id):
      
 
@@ -352,7 +399,10 @@ def download_invoice(request,id):
      return redirect('order_tracking')
 
 
-   
+
+
+@login_required(login_url='/')
+@user_passes_test(user_check) 
 def thanku(request):
     user = request.user
     return render(request,'thanku.html')

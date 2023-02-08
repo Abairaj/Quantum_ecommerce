@@ -34,7 +34,8 @@ urlpatterns = [
 #vendor coupon management
     path('vendor_coupon/', views.vendor_coupon,name = 'vendor_coupon'),
     path('add_coupon/', views.add_coupon.as_view(),name = 'add_coupon'),
-    path('delete_coupon/<str:id>',views.delete_coupon,name = 'delete_coupon'),
+    path('activate_coupon/<str:id>',views.activate_coupon,name = 'activate_coupon'),
+    path('deactivate_coupon/<str:id>',views.deactivate_coupon,name = 'deactivate_coupon'),
     path('edit_coupon/<str:id>',views.edit_coupon,name = 'edit_coupon'),
 
 

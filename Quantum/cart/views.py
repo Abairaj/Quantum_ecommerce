@@ -15,6 +15,7 @@ from django.views.decorators.cache import never_cache
 from offers.models import Offer
 
 
+@method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
 class  AddtocartAPIView (TemplateView):
     template_name = 'cart.html'
@@ -69,6 +70,8 @@ class  AddtocartAPIView (TemplateView):
         return redirect("cart")
 
 
+
+@method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
 class CartView(TemplateView):
     template_name = "cart.html"
@@ -83,8 +86,8 @@ class CartView(TemplateView):
         return context
 
 
-
-
+@never_cache
+@login_required(login_url='signin')
 def update_cart_add(request):
     if request.method == 'POST':
 
@@ -112,8 +115,10 @@ def update_cart_add(request):
                 cart_item.cart.save()
                 return JsonResponse({'status': 'updated successfully'})
         return redirect('home')
-    
 
+
+@never_cache   
+@login_required(login_url='signin')
 def update_cart_subtract(request):
     if request.method == 'POST':
         cart_item_id  =int(request.POST['product_id'])
@@ -138,6 +143,8 @@ def update_cart_subtract(request):
         return redirect('home')
 
 
+@never_cache
+@login_required(login_url='signin')
 def delete_cart_item(request,id):
     cart_item = Cart_items.objects.get(id = id)
     cart = Cart.objects.get(user_id = request.user.id)
@@ -150,6 +157,7 @@ def delete_cart_item(request,id):
 
         
 
+@method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
 class Manage_address_View(TemplateView):
     template_name = "addresses.html"
@@ -177,7 +185,8 @@ def add_addressform(request):
             return redirect('checkout')
     return render(request,'addresses.html',{'form':AddressForm})
 
-    
+
+@never_cache  
 @login_required(login_url='signin')
 def addressform(request):
 
@@ -202,6 +211,8 @@ def addressform(request):
     return render('checkout',{'form':form})
 
 
+@never_cache
+@login_required(login_url='signin')
 def address_default(request,id,action):
 
     address = Address.objects.get(id = id)
@@ -227,6 +238,8 @@ def address_default(request,id,action):
 
 
 
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
 class Coupon_apply(View):
 
     def post(self,request,**kwargs):

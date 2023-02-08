@@ -39,9 +39,11 @@
                       <th>
                         User Id
                       </th>
+                      {%if i.profile%}
                       <th>
                         Image
                       </th>
+                      {%endif%}
                       <th>
                        First Name
                       </th>
@@ -69,9 +71,11 @@
                       <td class="py-1">
                         {{i.id}}
                       </td>
+                      {%if i.profile%}
                       <td>
-                        <img src="logo" alt="image">
+                        <img src="{{i.profile.url}}" alt="image">
                       </td>
+                      {%endif%}
                       <td>
                         {{i.first_name}}
                       </td>

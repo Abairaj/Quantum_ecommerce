@@ -165,28 +165,51 @@
                     <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
                     
                     
-                    <!-- ------------------------------------------------------------------------------Delete -------------------------------------------------------------- -->
+                    <!-- ------------------------------------------------------------------------------Deactivate -------------------------------------------------------------- -->
+
+                    {%if i.expired == True%}
                     
                                     <div class="modal fade" id="branddelete{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
                                       <div class="modal-dialog modal-dialog-centered">
                                         <div class="modal-content">
                                           <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Delete</h1>
+                                            <h1 class="modal-title fs-5" id="exampleModalToggleLabel{{i.id}}">Activate</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                           </div>
                                           <div class="modal-body">
                     
-                                            <p> Are you sure about deleting the Coupon. <br></p>
-                                            <a href="/vendor/delete_coupon/{{i.id}}"> <button class="btn btn-danger mt-4">Delete</button></a>
+                                            <p> Are you sure about Activating the Coupon. <br></p>
+                                            <a href="/vendor/activate_coupon/{{i.id}}"> <button class="btn btn-success mt-4">Activate</button></a>
                     
                                           </div>
                                         </div>
                                       </div>
                                     </div>
-                                    <button class="btn btn-danger ml-2" data-bs-target="#branddelete{{i.id}}" data-bs-toggle="modal"><i class="fa-solid fa-trash"></i></button>
+                                    <button class="btn btn-success ml-2" data-bs-target="#branddelete{{i.id}}" data-bs-toggle="modal">Activate</button>
+                        
 
+                        {%endif%}
 
-                                    <a href="" class="btn btn-primary ml-2">Deactivate</a>
+                          
+                        {%if i.expired == False%}
+                                    <div class="modal fade" id="coupondeactivate{{i.id}}" aria-hidden="true" aria-labelledby="exampleModalToggleLabelc" tabindex="-1">
+                                      <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalToggleLabelc{{i.id}}">Deactivate</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                    
+                                            <p> Are you sure about Activating the Coupon. <br></p>
+                                            <a href="/vendor/deactivate_coupon/{{i.id}}"> <button class="btn btn-danger mt-4">Deactivate</button></a>
+                    
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <button class="btn btn-danger ml-2" data-bs-target="#coupondeactivate{{i.id}}" data-bs-toggle="modal">Deactivate</button>
+                          {%endif%}
                                   </div>
                     
                       </td>

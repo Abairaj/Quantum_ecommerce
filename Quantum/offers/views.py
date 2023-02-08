@@ -6,11 +6,14 @@ from vendor.models import Product,Variant
 from user.models import users
 from admin_app.models import Brand
 from datetime import datetime
-
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
-
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='vendor-signin'), name='dispatch')
 class vendor_offers(TemplateView):
     template_name = 'vendor_offer.html'
 
@@ -33,7 +36,8 @@ class vendor_offers(TemplateView):
 
 
 
-
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='vendor-signin'), name='dispatch')
 class manage_offer(View):
 
     def post(self,request):
@@ -125,7 +129,8 @@ class manage_offer(View):
      
 
 
-     
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='vendor-signin'), name='dispatch')    
 class Changeoffer_status(View):
 
         def get(self,request):

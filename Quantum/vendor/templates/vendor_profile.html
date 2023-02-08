@@ -67,32 +67,6 @@
               </div>
 
 
-              <div class="card mb-4 mb-lg-0">
-                <div class="card-body p-0">
-                  <ul class="list-group list-group-flush rounded-3">
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fas fa-globe fa-lg text-warning"></i>
-                      <p class="mb-0">https://mdbootstrap.com</p>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fab fa-github fa-lg" style="color: #333333;"></i>
-                      <p class="mb-0">mdbootstrap</p>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fab fa-twitter fa-lg" style="color: #55acee;"></i>
-                      <p class="mb-0">@mdbootstrap</p>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
-                      <p class="mb-0">mdbootstrap</p>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                      <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
-                      <p class="mb-0">mdbootstrap</p>
-                    </li>
-                  </ul>
-                </div>
-              </div>
             </div>
 
             
@@ -144,16 +118,19 @@
                     </div>
                   </div>
                   <hr>
+                  {%if address%}
                   <div class="row">
                     <div class="col-sm-3">
                       <p class="mb-0">Address</p>
                     </div>
-                    {%if address%}
+                   
                     <div class="col-sm-9">
                       <p class="text-muted mb-0">{{address.city}} , {{address.state}} ,{{address.country}}</p>
                     </div>
-                    {%endif%}
+                   
                   </div>
+                  {%endif%}
+
                 </div>
               </div>
 
