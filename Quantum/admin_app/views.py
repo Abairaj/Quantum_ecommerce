@@ -378,8 +378,8 @@ def edit_brand(request,id):
                 id=id,
                 brand_logo = brand_logo,
                 brand_name = brand_name,
-                date_added = datetime.datetime.now(),
-                last_update = datetime.datetime.now()
+                date_added = datetime.now(),
+                last_update = datetime.now()
             )
 
             brand.save()
@@ -422,6 +422,7 @@ def add_banner(request):
             banner_image = request.FILES['bannerimage']
             banner_title = request.POST['bannertitle']
             banner_description = request.POST['bannerdescription']
+            url = request.POST['url']
         except:
             messages.warning(request,'please fill  the columns')
 
@@ -434,7 +435,8 @@ def add_banner(request):
                 banner = Banner(
                     banner_image = banner_image,
                     banner_title = banner_title,
-                    banner_description = banner_description
+                    banner_description = banner_description,
+                    url = url
                 )
 
                 banner.save()
@@ -461,6 +463,7 @@ def edit_banner(request,id):
             banner_image = request.FILES['bannerimage']
             banner_title = request.POST['bannertitle']
             banner_description = request.POST['bannerdescription']
+            url =request.POST['url']
         except:
             messages.warning(request,'please fill  the columns')
 
@@ -470,13 +473,15 @@ def edit_banner(request,id):
                     id = id,
                     banner_image = banner_image,
                     banner_title = banner_title,
-                    banner_description = banner_description
+                    banner_description = banner_description,
+                    url = url
                 )
 
                 banner.save()
                 return redirect('admin_banners')
             
-        except:
+        except Exception as e:
+                print(e)
                 messages.warning(request,'Something went Wrong')
                 return redirect('admin_banners')
 

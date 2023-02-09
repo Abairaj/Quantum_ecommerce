@@ -27,6 +27,7 @@ class Banner(models.Model):
     banner_id = models.IntegerField(default=1)
     banner_title = models.CharField(max_length = 300)
     banner_image = models.ImageField(upload_to='banners/',blank=True,null=True)
+    url = models.TextField(null=True,blank=True)
     banner_description = models.CharField(max_length=500)
     
 

@@ -1,0 +1,136 @@
+
+{%extends 'store_base.html'%}
+
+
+{%block title%}Order_Details{%endblock%}
+{%block content%}
+
+
+
+{%for i in order%}
+<div id="colorlib-contact">
+    <div class="container">
+        <div class="row">
+<div class="col-md-10 col-md-offset-1 mt-5 pt-5">
+    <div class="contact-wrap">
+        <h3>Order Details</h3>
+             </div>
+            
+
+
+             <!-- <div class="col-md-12">
+                <div class="form-group">
+                    <div class="d-flex">
+    
+                <label for="" class="form-group" ><img src="{{i.Variant.image.image_1.url}}" alt="" class="image-fluid" style="height: 200px !important;width: 100px;"></label>
+
+            </div>
+    
+       </div>
+       </div> -->
+
+
+
+
+
+         
+             <div class="col-md-12">
+                <div class="form-group">
+                    <div class="d-flex">
+                <h4>Product Name :&nbsp&nbsp</h4>
+    
+                <p style="font-size: 16px;color: black !important;">{{i.product_id.product_name}}</p>
+
+            </div>
+    
+       </div>
+       </div>
+            
+  
+
+
+       <div class="col-md-12">
+        <div class="form-group">
+            <div class="d-flex">
+        <h4>Variant :&nbsp&nbsp</h4>
+
+        <p style="font-size: 16px;color: black !important;">{{i.Variant.color.name}}</p>
+    </div>
+
+</div>
+</div>
+
+
+<div class="col-md-12">
+    <div class="form-group">
+        <div class="d-flex">
+    <h4>Quantity :&nbsp&nbsp</h4>
+
+    <p style="font-size: 16px;color: black !important;">{{i.quantity}}</p>
+</div>
+
+</div>
+</div>
+
+
+
+
+<div class="col-md-12">
+    <div class="form-group">
+        <div class="d-flex">
+    <h4>Total Amount :&nbsp&nbsp</h4>
+
+    <p style="font-size: 16px;color: black !important;">{{i.amount}}</p>
+</div>
+
+</div>
+</div>
+
+
+
+<div class="col-md-12">
+    <div class="form-group">
+        <div class="d-flex">
+    <h4>Payment Method :&nbsp&nbsp</h4>
+
+    <p style="font-size: 16px;color: black !important;">{{i.payment_id.payment_method}}</p>
+</div>
+
+</div>
+</div>
+
+<div class="col-md-12">
+    <div class="form-group">
+        <div class="d-flex">
+    <h4>Order Date :&nbsp&nbsp</h4>
+
+    <p style="font-size: 16px;color: black !important;">{{i.order_date.date}}</p>
+</div>
+
+</div>
+</div>
+
+<div class="col-md-12">
+    <div class="form-group">
+        <div class="d-flex">
+    <h4>Order Status :&nbsp&nbsp</h4>
+
+    <p style="font-size: 16px;color: black !important; {%if i.status == 'Cancelled'%}color:red !important{%elif i.status == 'Delivere'%} color:green !important{%endif%};">{{i.status}}</p>
+</div>
+
+</div>
+</div>
+
+
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+{%endfor%}
+
+
+
+
+{%endblock%}

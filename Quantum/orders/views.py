@@ -1,13 +1,7 @@
 from django.shortcuts import render,redirect
-from.serializers import *
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from django.http import HttpResponse
 from django.db.models import Q
-from rest_framework import status
-from rest_framework.renderers import TemplateHTMLRenderer
 from cart.forms import AddressForm
-from cart.serializers import CartItemSerializer
 from cart.models import Cart,Cart_items
 from django.views.generic import View,TemplateView,CreateView
 from django.urls import reverse_lazy
@@ -15,12 +9,15 @@ from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
-import hmac
 import random
 import razorpay
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from django.conf import settings
 from django.contrib.auth.decorators import user_passes_test
+from .models import Address,Payment,razorpay_details
+from datetime import datetime
+from user.models import users,Wallet
+from orders.models import Order
 
 
 
@@ -143,11 +140,31 @@ class OrderTracking(TemplateView):
           
           context =  super().get_context_data(**kwargs)
 
-          order_id = Order.objects.filter(user_id = self.request.user.id)
+          order_id = Order.objects.filter(user_id = self.request.user.id).order_by('-order_date')
           context['order'] = order_id
 
           return context
      
+
+
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_passes_test(user_check), name='dispatch')
+class user_order_view(TemplateView):
+     template_name = 'user_order_details.html'
+
+     def get_context_data(self, **kwargs):
+          context = super().get_context_data(**kwargs)
+
+          id = self.kwargs.get('id')
+          
+          order = Order.objects.filter(id = id)
+
+          context['order'] = order
+
+          return context
+
+
 
 
 
@@ -389,14 +406,6 @@ def invoice(request, order_id):
 
 
 
-@login_required(login_url='/')
-@user_passes_test(user_check)
-def download_invoice(request,id):
-     
-
-     
-     messages.success('invoice downloaded successfully.Track your order here')
-     return redirect('order_tracking')
 
 
 

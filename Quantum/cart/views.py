@@ -1,12 +1,9 @@
 from django.shortcuts import render,redirect
 from .forms import AddressForm
-from.serializers import *
 from.models import *
 from cart.models import Coupon
 from vendor.models import*
 from django.views.generic import View,TemplateView
-from rest_framework import status
-from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse

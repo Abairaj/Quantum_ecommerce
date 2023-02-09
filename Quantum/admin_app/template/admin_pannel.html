@@ -3,7 +3,8 @@
 {%block title%}Quantum Admin Pannel{%endblock%}
 
 {%block content%}
-
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 
       <!-- partial -->
       <div class="main-panel">
@@ -121,10 +122,86 @@
 
 
 
+          
+          <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                  <p class="card-title">Total Orders and Cancelled Orders</p>
+                  <!-- <p class="font-weight-500">The total number of Orders in the current year and orders in the selected date rage.</p> -->
+
+                            <!-- chartjs total orders and cancelled orders -->
+
+                            
+                            <canvas id="orderandcancelorder"></canvas>
+
+                            
+                            
+                            <script>
+                              const ctx3 = document.getElementById('orderandcancelorder');
+                            
+                              new Chart(ctx3, {
+                                type: 'doughnut',
+                                data: {
+                                  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                                  datasets: [{
+                                    label: '# of Votes',
+                                    data: [12, 19, 3, 5, 2, 3],
+                                    borderWidth: 1
+                                  }]
+                                },
+
+                                data2: {
+                                  labels: ['cancelled','orders'],
+                                  datasets: [{
+                                    label: '# of Votes',
+                                    data: [12, 19, 3, 5, 2, 3],
+                                    backgroundColor: [
+                                      'rgb(201, 242, 155)',
+                                      'rgb(54, 162, 235)',
+                                      'rgb(255, 205, 86)'
+                                    ],
+                                    borderWidth: 1
+                                  }]
+                                },
+                           
+
+                                options: {
+                                  scales: {
+                                    y: {
+                                      beginAtZero: true
+                                    }
+                                  }
+                                }
+                              });
+                            </script>
+                            
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                 <div class="d-flex justify-content-between">
+                  <p class="card-title">Cancelled Orders</p>
+                
+                 </div>
+                  <p class="font-weight-500">The total number of cancelled orders in the year and in the selected range.</p>
+                  <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
+                        <!-- chartjs -->
+                        <input type="date" id="cancelled" />
+                        <canvas id="cancelledorderChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
-    <!-- Include Chart.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+
+
+
+
 
           <script>
             // Get the data from the context
