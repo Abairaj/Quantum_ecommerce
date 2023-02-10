@@ -155,7 +155,7 @@ def vendor_management(request):
         'vendor': users.objects.filter( Q(is_staff = True) & Q(is_superadmin = False))
     }
 
-    return render(request,'vendor_management.html',vendor)
+    return render(request,'vendor_file.html',vendor)
 
 
 

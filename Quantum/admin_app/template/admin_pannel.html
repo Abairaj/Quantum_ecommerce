@@ -133,48 +133,10 @@
                             <!-- chartjs total orders and cancelled orders -->
 
                             
-                            <canvas id="orderandcancelorder"></canvas>
-
+                      
                             
                             
-                            <script>
-                              const ctx3 = document.getElementById('orderandcancelorder');
-                            
-                              new Chart(ctx3, {
-                                type: 'doughnut',
-                                data: {
-                                  labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                                  datasets: [{
-                                    label: '# of Votes',
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    borderWidth: 1
-                                  }]
-                                },
-
-                                data2: {
-                                  labels: ['cancelled','orders'],
-                                  datasets: [{
-                                    label: '# of Votes',
-                                    data: [12, 19, 3, 5, 2, 3],
-                                    backgroundColor: [
-                                      'rgb(201, 242, 155)',
-                                      'rgb(54, 162, 235)',
-                                      'rgb(255, 205, 86)'
-                                    ],
-                                    borderWidth: 1
-                                  }]
-                                },
                            
-
-                                options: {
-                                  scales: {
-                                    y: {
-                                      beginAtZero: true
-                                    }
-                                  }
-                                }
-                              });
-                            </script>
                             
                 </div>
               </div>

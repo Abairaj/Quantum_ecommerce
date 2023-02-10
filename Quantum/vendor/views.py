@@ -32,8 +32,6 @@ from django.contrib.auth.decorators import user_passes_test
 
 
 
-def vendorcheck(user):
-    return not user.is_superadmin and user.is_staff     
 
 
 
@@ -129,7 +127,6 @@ def vendor_dashboard(request):
            
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Vendor_profile(TemplateView):
     template_name = 'vendor_profile.html'
     def get_context_data(self, **kwargs):
@@ -149,7 +146,6 @@ class Vendor_profile(TemplateView):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class vendor_profile_edit(TemplateView):
      template_name = 'vendor_profile_edit.html'
 
@@ -166,8 +162,7 @@ class vendor_profile_edit(TemplateView):
     
 
 
-@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')  
+@method_decorator(login_required(login_url='/vendor-signin'), name='dispatch') 
 class Vendor_profile_management(View):
         
         def post(self,request):
@@ -241,7 +236,6 @@ class Vendor_profile_management(View):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Vendor_wallet(TemplateView):
     template_name = 'vendor_wallet.html'
 
@@ -256,7 +250,6 @@ class Vendor_wallet(TemplateView):
 
 
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def vendor_products(request):
     vendor = request.user
     id = vendor.id
@@ -269,7 +262,6 @@ def vendor_products(request):
 
 
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def add_product(request):
 
     context ={'brand':Brand.objects.all(),'categorys':Category.objects.all()}
@@ -329,7 +321,6 @@ def add_product(request):
 
 
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def edit_product(request,id):
 
     colors = []
@@ -408,7 +399,6 @@ def edit_product(request,id):
 
 # deleting the product
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def delete_product(request,id):
     Product.objects.filter(id = id).delete()
     messages.success(request,'Product deleted succcessfully')
@@ -420,7 +410,6 @@ def delete_product(request,id):
 
 #view product cards and go to variant of paricular product
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def variant_view(request):
     product = {
         'product':Product.objects.all().filter(vendor_name = request.user.id)
@@ -430,7 +419,6 @@ def variant_view(request):
 
 #variant view of a product 
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def variant(request,id):
     product=Product.objects.get(id = id)
     variant =Variant.objects.filter(Product = id)
@@ -445,7 +433,6 @@ def variant(request,id):
 
 #   Add a new variant
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def add_variants(request,id):
     product = Product.objects.get(id = id)
     context = {
@@ -506,7 +493,6 @@ def add_variants(request,id):
 #Edit a new variant
 
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def edit_variant(request,id):
     variants = Variant.objects.get(id = id)
     product = variants.Product
@@ -581,7 +567,6 @@ def edit_variant(request,id):
 
 #delete a variant
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def delete_variants(request,id):
     variant = Variant.objects.get(id = id)
     variant.delete()
@@ -740,7 +725,6 @@ def vendor_verify_login(request,id):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Order_management(TemplateView):
     template_name = 'vendor_orders.html'
 
@@ -761,7 +745,6 @@ class Order_management(TemplateView):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Update_order_status(View):
     
     def post(self,request,**kwargs):
@@ -780,7 +763,6 @@ class Update_order_status(View):
 
 #coupon main page
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def vendor_coupon(request):
     context = {
         'coupon':Coupon.objects.all()
@@ -792,7 +774,6 @@ def vendor_coupon(request):
 # add coupon
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class add_coupon(View):
     def post(self,request):
         code = request.POST['code']
@@ -818,7 +799,6 @@ class add_coupon(View):
 
 # delete coupon
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def activate_coupon(request,id):
     coupon = Coupon.objects.get(id = id)
     coupon.expired = False
@@ -828,7 +808,6 @@ def activate_coupon(request,id):
 
 
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def deactivate_coupon(request,id):
     coupon = Coupon.objects.get(id = id)
     coupon.expired = True
@@ -839,7 +818,6 @@ def deactivate_coupon(request,id):
 
 # edit coupon
 @login_required(login_url='/vendor-signin')
-@user_passes_test(vendorcheck)
 def edit_coupon(request,id):
     if request.method == 'POST':
 
@@ -867,7 +845,6 @@ def edit_coupon(request,id):
 # ===========================================================================================sales report===================================================================
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class Vendor_Salesreport_view(TemplateView):
     template_name = 'vendor_salesreport.html'
     
@@ -891,7 +868,6 @@ class Vendor_Salesreport_view(TemplateView):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class vendor_Salesreport_download(View):
 
 
@@ -1011,7 +987,6 @@ class vendor_Salesreport_download(View):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
-@method_decorator(user_passes_test(vendorcheck), name='dispatch')
 class salesreport_filter(View):
 
     def post(self,request):

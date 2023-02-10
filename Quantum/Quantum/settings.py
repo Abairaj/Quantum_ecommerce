@@ -26,9 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-stm8kmbm-8k#h61ou1j8au0u##(m%!86%4n49jq+5uf+p3e5ka'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['35.77.85.158','quantumtimes.shop','www.quantumtimes.shop']
 
 
 # Application definition
@@ -47,11 +47,10 @@ INSTALLED_APPS = [
     'cart',
     'orders',
     'offers'
-    
-    
-    
-]
 
+
+
+]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -92,14 +91,13 @@ AUTH_USER_MODEL = 'user.users'
 DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'ecommerce',
-       'USER': 'postgres',
+       'NAME': 'myproject',
+       'USER': 'ubuntu',
        'PASSWORD': '7156',
        'HOST': 'localhost',
        'PORT': '5432',
    }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
@@ -135,10 +133,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    '/var/www/static/',
+    os.path.join(BASE_DIR, 'web/static'),
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
@@ -155,3 +155,5 @@ TWILIO_AUTH_TOKEN = 'e91a0d78a1a580e4af36e3e7c96918f4'
 
 KEY = 'rzp_test_YSiLo2PdxfSWUw'
 SECRET = 'pEcPzuvlQBWbOgiOj5gXelYF'
+
+
