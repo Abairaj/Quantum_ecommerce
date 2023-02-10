@@ -32,8 +32,8 @@ from django.contrib.auth.decorators import user_passes_test
 
 
 
-def vendorcheck(request):
-    return not request.user.is_superadmin and request.user.is_staff     
+def vendorcheck(user):
+    return not user.is_superadmin and user.is_staff     
 
 
 
