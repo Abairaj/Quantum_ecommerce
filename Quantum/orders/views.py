@@ -67,7 +67,12 @@ class CheckoutAPIView(TemplateView):
         payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
         context['payment'] = payment
         print(payment)
+        carts = self.request.session.get('cart_id')
+        cart1 = Cart_items.objects.filter(cart = carts).count()
+        context['carts'] = cart1
         context['cart'] = cart
+        addressdef = Address.objects.filter(default = True)
+        context['addressdef'] = addressdef
         return context
 
 
@@ -81,7 +86,7 @@ class PaymentAPI(View):
         amt = self.kwargs.get('amount')
         data = request.POST['payment_method']
         user_id = users.objects.get(id = request.user.id)
-        if Address.objects.exists():
+        if Address.objects.filter(user = request.user.id).filter(default = True).exists():
             address =Address.objects.filter(default = True).get(user_id = user_id)
         else:
              messages.warning(request,'Set a default address and continue order')
@@ -142,6 +147,9 @@ class OrderTracking(TemplateView):
 
           order_id = Order.objects.filter(user_id = self.request.user.id).order_by('-order_date')
           context['order'] = order_id
+          carts = self.request.session.get('cart_id')
+          cart = Cart_items.objects.filter(cart = carts).count()
+          context['cart'] = cart
 
           return context
      
@@ -161,6 +169,9 @@ class user_order_view(TemplateView):
           order = Order.objects.filter(id = id)
 
           context['order'] = order
+          carts = self.request.session.get('cart_id')
+          cart = Cart_items.objects.filter(cart = carts).count()
+          context['cart'] = cart
 
           return context
 
@@ -191,7 +202,6 @@ class success(View):
             wallet.save()
 
                 
-         print(total_perc,'************************************************************')
            
          if Address.objects.filter(user_id = self.request.user.id).exists():
                 address =Address.objects.filter(default = True).get(user_id = user_id)

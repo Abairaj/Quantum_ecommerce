@@ -3,10 +3,9 @@
 {%extends 'store_base.html'%}
 
 {%block title%}Order Tracking{%endblock%}
+{%block cart%}{%if cart%}{{cart}}{%else%}0{%endif%}{%endblock%}
 {%block content%}
 
-
-		
 
 		<div class="text-center mt-5 pt-5 pb-5 mb-5">
 			<h1>Order Tracking</h1>

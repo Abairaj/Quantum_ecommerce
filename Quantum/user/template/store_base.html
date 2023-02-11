@@ -11,6 +11,8 @@
 	<meta name="keywords" content="" />
 	<meta name="author" content="" />
 
+	<link rel="shortcut icon" href="https://img.icons8.com/emoji/256/watch-emoji.png" type="image/x-icon">
+
 	<!-- jquery autosearch -->
 	
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
@@ -101,21 +103,46 @@
 									<a href="#"><i class="fa-solid fa-user"></i></a>
 									<ul class="dropdown">
 										<li><a href="{%url 'signin'%}">Login/Register</a></li>
+										
+										{%if request.user.is_active == True %}
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
 										<li><a href="{% url 'user_profile'%}">Profile</a></li>
+										{%endif%}
+										{%endif%}
+
+										{%if request.user.is_active == True %}
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
+										<li><a href="{% url 'wallet'%}">Wallet</a></li>
+										{%endif%}
+										{%endif%}
+										
+										{%if request.user.is_active == True %}
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}
 										<li class="has-dropdown">
 											<a href="{%url 'order_tracking'%}">Orders</a>
 										</li>
 										{%endif%}
+										{%endif%}
+										{%if request.user.is_active == True %}
+										{%if request.user.is_staff == False or request.user.is_superuser == False%}
+										<li class="has-dropdown">
+											<a href="{%url 'wishlist_view'%}">Wishlist</a>
+										</li>
+										{%endif%}
+										{%endif%}
+										{%if request.user.is_active == True %}
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}
 										<li><a href="{%url 'logout'%}">Logout</a></li>
+										{%endif%}
 										{%endif%}
 									
 									</ul>
 								</li>
-
+                                
+								{%if request.user.is_active == True %}
 								{%if request.user.is_staff == False or request.user.is_superuser == False%}
-							<li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
+							<li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [{%block cart%}{%endblock%}]</a></li>
+							{%endif%}
 							{%endif%}
 								
 							</ul>
@@ -180,7 +207,7 @@
 					<div class="col-md-2">
 						<h4>News</h4>
 						<ul class="colorlib-footer-links">
-							<li><a href="blog.html">Blog</a></li>
+							<li><a href="#">Blog</a></li>
 							<li><a href="#">Press</a></li>
 							<li><a href="#">Exhibitions</a></li>
 						</ul>
@@ -192,7 +219,7 @@
 							<li>291 South 21th Street, <br> Suite 721 New York NY 10016</li>
 							<li><a href="tel://1234567920">+ 1235 2355 98</a></li>
 							<li><a href="mailto:info@yoursite.com">info@yoursite.com</a></li>
-							<li><a href="#">yoursite.com</a></li>
+							<li><a href="#">www.quantumtimes.com</a></li>
 						</ul>
 					</div>
 				</div>
@@ -203,7 +230,7 @@
 						<p>
 							
 							<span class="block"><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | @Time<a href="https://colorlib.com" target="_blank"></a></span> 
+Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | @QuantumTimees<a href="quantumtimes.shop" target="_blank"></a></span> 
 						</p>
 					</div>
 				</div>
@@ -313,7 +340,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	<script src="https://unpkg.com/js-image-zoom@0.4.1/js-image-zoom.js" type="application/javascript"></script>
 
 
-	<!-- <script>
+	 <script>
 		function change_image(image){
 	
 	var container = document.getElementById("main-image");
@@ -337,7 +364,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     // new ImageZoom(document.getElementById("image-container"), options);
  
 
-	</script> -->
+	</script> 
 
 	
 	<!-- payment button change attribute -->

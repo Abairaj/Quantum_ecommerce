@@ -2,6 +2,7 @@
 
 {%block title%}Shop{%endblock%}
 {%block 2%}active{%endblock%}
+{%block cart%}{%if cart%}{{cart}}{%else%}0{%endif%}{%endblock%}
 {%block content%}
 
 
@@ -36,7 +37,7 @@
 					   <div class="col-md-5 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
 						   <div class="slider-text-inner text-center">
 							   <h1>Products</h1>
-							   <h2 class="bread"><span><a href="index.html">Home</a></span> <span>Shop</span></h2>
+							   <h2 class="bread"><span><a href="{%url 'home'%}">Home</a></span> <span>Shop</span></h2>
 						   </div>
 					   </div>
 				   </div>
@@ -67,14 +68,14 @@
 										<span class="addtocart"><a href="/cart/add_to_cart/{{i.id}}"><i class="icon-shopping-cart"></i></a></span> 
 										{%endif%}
 										<span><a href="/product_details/{{i.Product.id}}/{{i.id}}"><i class="icon-eye"></i></a></span> 
-										<span><a href="#"><i class="icon-heart3"></i></a></span>
-										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
+										<span><a href="{%url 'add_to_wishlist' i.id %}"><i class="icon-heart3"></i></a></span>
+										
 									</p>
 								</div>
 							</div>
 							<div class="desc">
 								<h3><a href="/product_details/{{i.Product.id}}/{{i.id}}">{{i.Product.product_name}}</a></h3>
-								<p class="price"><span>{{i.final_price}}</span></p>
+								<p class="price"><span>{{i.final_price|floatformat:0}}</span></p>
 								<del><span>{{i.price}}</span></del>
 							</div>
 						</div>				

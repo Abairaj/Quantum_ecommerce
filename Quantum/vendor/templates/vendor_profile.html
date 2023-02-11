@@ -13,6 +13,14 @@
         <div class="container py-5">
           <div class="row">
             <div class="col">
+              {%if messages%}
+              {%for message in messages%}
+              <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+                <strong></strong>{{message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              {%endfor%}
+              {%endif%}
               <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
                 <ol class="breadcrumb mb-0">
                   <li class="breadcrumb-item"><a href="{%url 'vendor_dashboard'%}">Dashboard</a></li>
@@ -26,8 +34,10 @@
             <div class="col-lg-4">
               <div class="card mb-4">
                 <div class="card-body text-center">
+                  {%if vendor.profile%}
                   <img src="{{vendor.profile.url}}" alt="avatar"
                     class="rounded-circle img-fluid" style="width: 150px;">
+                    {%endif%}
                   <h5 class="my-3">{{vendor.first_name}} {{vendor.last_name}}</h5>
                   {%if address%}
                   <p class="text-muted mb-4">{{address.city}},{{address.state}}, {{address.country}}, CA</p>

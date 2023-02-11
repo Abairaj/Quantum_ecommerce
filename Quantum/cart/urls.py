@@ -12,6 +12,11 @@ urlpatterns = [
     path('update_cart_add',update_cart_add,name = 'update_cart_add'),
     path('update_cart_subtract',update_cart_subtract,name = 'update_cart_subtract'),
     path('delete_cart_item/<str:id>',delete_cart_item,name = 'delete_cart_item'),
+    path('add_to_wishlist/<str:id>',add_to_wishlist,name = 'add_to_wishlist'),
+    path('wishlist_view/',wishlist_view.as_view(),name = 'wishlist_view'),
+    path('delete_wishlist_item/<str:id>',delete_wishlist_item,name = 'delete_wishlist_item')
+
+   
    
    
 

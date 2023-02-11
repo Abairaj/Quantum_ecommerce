@@ -3,10 +3,7 @@
 {%block title%}Home{%endblock%}
 {%block 1%}active{%endblock%}
 
-{%if request.user.is_authenticated and request.user.is_staff == False and request.user.is_superuser == False%}
-<li><a href="{%url 'cart'%}"><i class="icon-shopping-cart"></i> Cart [0]</a></li>
-{%endif%}
-
+{%block cart%}{%if cart%}{{cart}}{%else%}0{%endif%}{%endblock%}
 {%block content%}
 <!-- ----------------------------------------------------------------------------------------------------------------Navbar ends_----------------------------------------------------------------------- -->
 
@@ -45,17 +42,27 @@
 		<div id="colorlib-featured-product">
 			<div class="container">
 				<div class="row">
+					{%if top_sellers%}
+					{%for i in top_sellers%}
+					{%if forloop.first%}
 					<div class="col-md-6">
-						<a href="shop.html" class="f-product-1"  style="background-image: url(https://images.unsplash.com/photo-1533139502658-0198f920d8e8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8d2F0Y2hlc3xlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60);">
+						<a href="{%url 'brand_filter' i.id%}" class="f-product-1"  style="background-image: url({{i.brand.brand_logo.url}});">
 							<div class="desc">
 								<h2>Fashion <br>for <br>men</h2>
 							</div>
 						</a>
 					</div>
+					{%endif%}
+					{%endfor%}
+					{%endif%}
 					<div class="col-md-6">
 						<div class="row">
+							{%if top_sellers%}
+							{%for i in top_sellers%}
+							{%if forloop.counter > 1 and forloop.counter < 4 %}
+							
 							<div class="col-md-6">
-								<a href="" class="f-product-2" style="background-image: url(https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fHdhdGNoZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60);">
+								<a href="{%url 'brand_filter' i.id%}" class="f-product-2" style="background-image: url({{i.brand.brand_logo.url}});">
 									
 									
 									
@@ -67,22 +74,26 @@
 									</div>
 								</a>
 							</div>
-					
+							{%endif%}
 
-							<div class="col-md-6">
-								<a href="" class="f-product-2" style="background-image: url(https://images.unsplash.com/photo-1629581688635-5d88654e5bdd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MzF8fHdhdGNoZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60);">
-									<div class="desc">
-										<h2>Sale <br>20% <br>off</h2>
-									</div>
-								</a>
-							</div>
+							{%endfor%}
+							{%endif%}
+			
+
+
+							{%if top_sellers%}
+							{%for i in topsellers%}
+							{%if forloop.counter == 4%}
 							<div class="col-md-12">
-								<a href="" class="f-product-2" style="background-image: url(https://images.unsplash.com/photo-1526045431048-f857369baa09?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mzh8fHdhdGNoZXN8ZW58MHx8MHx8&auto=format&fit=crop&w=500&q=60);">
+								<a href="{%url 'brand_filter' i.id%}" class="f-product-2" style="background-image: url({{i.brand.brand_logo.url}});">
 									<div class="desc">
 										<h2>Luxury Watches <br>for <br>men</h2>
 									</div>
 								</a>
 							</div>
+							{%endif%}
+							{%endfor%}
+							{%endif%}
 
 							
 
@@ -100,7 +111,7 @@
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3 text-center colorlib-heading">
 						<h2><span>New Arrival</span></h2>
-						<p>We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+						<p style="color:black !important">We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
 					</div>
 				</div>
 				<div class="row">
@@ -116,14 +127,14 @@
 										<span class="addtocart"><a href="/cart/add_to_cart/{{i.id}}"><i class="icon-shopping-cart"></i></a></span> 
 										{%endif%}
 										<span><a href="/product_details/{{i.Product.id}}/{{i.id}}"><i class="icon-eye"></i></a></span> 
-										<span><a href="#"><i class="icon-heart3"></i></a></span>
-										<span><a href="add-to-wishlist.html"><i class="icon-bar-chart"></i></a></span>
+										<span><a href="{%url 'add_to_wishlist' i.id %}"><i class="icon-heart3"></i></a></span>
+										
 									</p>
 								</div>
 							</div>
 							<div class="desc">
 								<h3><a href="shop.html">{{i.Product.product_name}}</a></h3>
-								<p class="price"><span>{{i.final_price}}</span></p>
+								<p class="price"><span style="color: green !important;">MRP {{i.final_price|floatformat:0}}</span></p>
 							</div>
 						</div>
 					</div>
@@ -133,6 +144,9 @@
 				</div>
 			</div>
 		</div>
+		{%if offer%}
+		{%for i in offer%}
+		{%if forloop.first%}
 		<div id="colorlib-intro" class="colorlib-intro" style="background-image: url(https://content.rolex.com/dam/new-watches-2021/family-pages/explorer/family-page-explorer-beauty-explorer-ii_m226570-0001_2103jva_002.jpg?imwidth=1920);" data-stellar-background-ratio="0.5">
 			<div class="overlay"></div>
 			<div class="container">
@@ -142,18 +156,21 @@
 							<div class="text-salebox">
 								<div class="text-lefts">
 									<div class="sale-box">
+									
 										<div class="sale-box-top">
-											<h2 class="number">45</h2>
+											<h2 class="number">{{i.percent|floatformat:0}}</h2>
 											<span class="sup-1">%</span>
 											<span class="sup-2">Off</span>
+										
 										</div>
+										
 										<h2 class="text-sale">Sale</h2>
 									</div>
 								</div>
 								<div class="text-rights">
 									<h3 class="title">Just hurry up limited offer!</h3>
-									<p>Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
-									<p><a href="shop.html" class="btn btn-primary">Shop Now</a> <a href="#" class="btn btn-primary btn-outline">Read more</a></p>
+									<p style="color:black !important">Separated they live in Bookmarksgrove right at the coast of the Semantics, a large language ocean.</p>
+									<p><a href="{%url 'brand_filter' i.brand.id%}" class="btn btn-primary">Shop Now</a> <a href="#" class="btn btn-primary btn-outline">Read more</a></p>
 								</div>
 							</div>
 						</div>
@@ -161,9 +178,12 @@
 				</div>
 			</div>
 		</div>
+		{%endif%}
+		{%endfor%}
+										{%endif%}
 
 
-<!--------------------------------------------------------------------------------------------------------Our Products--------------------------------------------------------------------------------------------  -->
+<!--------------------------------------------------------------------------------------------------------Our Offers--------------------------------------------------------------------------------------------  -->
 
 		<div class="colorlib-shop">
 			<div class="container">
@@ -177,7 +197,7 @@
 					{%for i in offer%}
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
-							<div class="product-img" style="background-image: url({{i.brand.brand_logo.url}});">
+							<a href="{%url 'brand_filter' i.brand.id%}"><div class="product-img" style="background-image: url({{i.brand.brand_logo.url}});">
 								<p class="tag""><span class="sale"  style="background-color: green;">Offer</span></p>
 								<!-- <div class="cart">
 									<p> -->
@@ -192,8 +212,9 @@
 									<!-- </p>
 								</div> -->
 							</div>
+						</a>
 							<div class="desc">
-								<h3><a href="shop.html">{{i.brand.brand_name}}</a></h3>
+								<h3><a href="{%url 'brand_filter' i.brand.id%}">{{i.brand.brand_name}}</a></h3>
 								<h4 style="color:green !important">{{i.percent}}% Off</h4>
 							</div>
 						</div>

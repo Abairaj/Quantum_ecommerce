@@ -21,6 +21,7 @@ urlpatterns = [
     path('autolist/',views.product_list_ajax,name='autolist'),
     path('wallet/',views.Wallet_view.as_view(),name = 'wallet'),
     path('filter/',views.filter,name = 'filter'),
+    path('brand_filter/<str:id>',views.brand_filter,name ='brand_filter')
     
     
 

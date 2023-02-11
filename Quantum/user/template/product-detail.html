@@ -1,6 +1,7 @@
 {%extends 'store_base.html'%}
 
 {%block title%}Product details{%endblock%}
+{%block cart%}{%if cart%}{{cart}}{%else%}0{%endif%}{%endblock%}
 {%block content%}
 		<aside id="colorlib-hero" class="breadcrumbs">
 			<div class="flexslider">
@@ -12,7 +13,7 @@
 				   			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
 				   				<div class="slider-text-inner text-center">
 				   					<h1>Product Detail</h1>
-				   					<h2 class="bread"><span><a href="index.html">Home</a></span> <span><a href="shop.html">Product</a></span> <span>Product Detail</span></h2>
+				   					<h2 class="bread"><span><a href="{%url 'home'%}">Home</a></span> <span><a href="{%url 'shop'%}">Product</a></span> <span>Product Detail</span></h2>
 				   				</div>
 				   			</div>
 				   		</div>
@@ -75,19 +76,7 @@
 
 										<div class="row row-pb-sm">
 											<div class="col-md-4">
-                                    <div class="input-group">
-                                    	<span class="input-group-btn">
-                                       	<button type="button" class="quantity-left-minus btn"  data-type="minus" data-field="">
-                                          <i class="icon-minus2"></i>
-                                       	</button>
-                                   		</span>
-                                    	<input type="text" id="quantity" name="quantity" class="form-control input-number" value="1" min="1" max="100">
-                                    	<span class="input-group-btn">
-                                       	<button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
-                                            <i class="icon-plus2"></i>
-                                        </button>
-                                    	</span>
-                                 	</div>
+                           
                         			</div>
 										</div>
 										<div class="d-flex">
@@ -118,19 +107,19 @@
 								</ul>
 								<div class="tab-content">
 									<div id="description" class="tab-pane fade in active text-dark">
-										<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.</p>
-										<p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p>
+										<p style="color: black !important;">Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.</p>
+										<p style="color: black !important;">When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p>
 										<ul>
-											<li>The Big Oxmox advised her not to do so</li>
-											<li>Because there were thousands of bad Commas</li>
-											<li>Wild Question Marks and devious Semikoli</li>
-											<li>She packed her seven versalia</li>
-											<li>tial into the belt and made herself on the way.</li>
+											<li  style="color: black !important;">The Big Oxmox advised her not to do so</li>
+											<li style="color: black !important;">Because there were thousands of bad Commas</li>
+											<li style="color: black !important;">Wild Question Marks and devious Semikoli</li>
+											<li style="color: black !important;">She packed her seven versalia</li>
+											<li style="color: black !important;">tial into the belt and made herself on the way.</li>
 										</ul>
 						         </div>
 						         <div id="manufacturer" class="tab-pane fade">
-						         	<p>Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.</p>
-										<p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p>
+						         	<p style="color: black !important;">Even the all-powerful Pointing has no control about the blind texts it is an almost unorthographic life One day however a small line of blind text by the name of Lorem Ipsum decided to leave for the far World of Grammar.</p>
+										<p style="color: black !important;">When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrove, the headline of Alphabet Village and the subline of her own road, the Line Lane. Pityful a rethoric question ran over her cheek, then she continued her way.</p>
 								      
 								   </div>
 								   <div id="review" class="tab-pane fade">
@@ -154,7 +143,7 @@
 									   					</span>
 									   					<span class="text-right"><a href="#" class="reply"><i class="icon-reply"></i></a></span>
 										   			</p>
-										   			<p>When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrov</p>
+										   			<p style="color: black !important;">When she reached the first hills of the Italic Mountains, she had a last view back on the skyline of her hometown Bookmarksgrov</p>
 										   		</div>
 										   	</div>
 
@@ -177,7 +166,7 @@
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3 text-center colorlib-heading">
 						<h2><span>Variants</span></h2>
-						<p>We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+						<p style="color: black !important;">We love to tell our successful far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
 					</div>
 				</div>
 				<div class="row">
@@ -200,7 +189,7 @@
 								</div>
 							</div>
 							<div class="desc">
-								<h3><a href="shop.html">{{i.Product.product_name}}</a></h3>
+								<h3>{{i.Product.product_name}}</h3>
 							
 								<p class="price"><span>{{i.final_price}}</span></p>
 								<del class="price"><span>{{i.price}}</span></del>

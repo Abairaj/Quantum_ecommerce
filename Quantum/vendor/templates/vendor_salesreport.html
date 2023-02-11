@@ -34,14 +34,22 @@
             <div class=" ml-5 col-md-9 col-12">
               <form action="{%url 'salesreport_filter'%}" class="form-inline d-flex" method="POST">
                 {% csrf_token %}
+                {%for i in order%}
+                {%if forloop.first%}
                 <div class="d-flex col-12 col-md-3">
               <p class="mr-2 ml-2 pt-3">from</p>
-              <input type="date" name="from" class="form-control mr-3 pb-1" required>
+              <input type="date" value= "{{i.order_date.date|date:'Y-m-d'}}" name="from" class="form-control mr-3 pb-1" required>
             </div>
+            {%endif%}
+            {%endfor%}
+            {%for i in order%}
+            {%if forloop.first%}
               <div class="d-flex col-12 col-md-3">
               <p class="mr-2 ml-2 pt-3">to</p>
-              <input type="date" name="to" class="form-control ml-3 pb-1" required>
+              <input type="date" value= "{{i.order_date.date|date:'Y-m-d'}}"  name="to" class="form-control ml-3 pb-1" required>
             </div>
+            {%endif%}
+            {%endfor%}
               <button type="submit" class=" ml-5-3 btn btn-primary col-5 col-md-2 " style="padding: 10px;">search</button>
             </form>
             </div>

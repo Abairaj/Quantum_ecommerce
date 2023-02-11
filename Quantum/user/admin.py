@@ -16,7 +16,4 @@ class usersAdmin(admin.ModelAdmin):
 
 admin.site.register(users,usersAdmin)
 admin.site.register(Address)
-
-
-
 admin.site.register(Wallet)

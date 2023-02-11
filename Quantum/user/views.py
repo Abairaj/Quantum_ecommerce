@@ -37,9 +37,22 @@ def user_check(user):
 
 # Create your views here.
 def home(request):
-    context = {'banner':Banner.objects.all,'product':Product.objects.all(),'variant':Variant.objects.all().order_by('-created_on')[:4],'offer':Offer.objects.all().order_by('-percent')}
+    order_count= Order.objects.values('product_id').annotate(count = Count('id')).values('product_id','count')
+    cart = request.session.get('cart_id')
+
+    product_ids = [i['product_id'] for i in order_count]
+    context = {'banner':Banner.objects.all(),
+               'product':Product.objects.all(),
+               'variant':Variant.objects.all().order_by('-created_on')[:4],
+               'offer':Offer.objects.all().order_by('-percent'),
+                'top_sellers':Product.objects.filter(id__in = product_ids)[:4],
+                'cart':Cart_items.objects.filter(cart = cart).count()
+    }
+    
 
     return render(request,'index.html',context)
+
+
 
 
 
@@ -83,9 +96,13 @@ class user_profile_edit(TemplateView):
 @method_decorator(user_passes_test(user_check), name='dispatch')
 class user_profile_management(View):
         
-        def post(self,request):
-          
-          if self.request.GET['action'] != 'fullchange':
+    def post(self,request):
+        try:
+          self.request.GET['action']
+        except Exception as e:
+            print(e)
+            action = None
+        if action == None:
 
             image = request.FILES['image']
             # users.objects.filter(id = self.request.user.id).update(profile = image) 
@@ -95,7 +112,7 @@ class user_profile_management(View):
             
             messages.success(request,'Successfully updated the profile image')
             return redirect('user_profile')
-          else:
+        else:
                
                first_name = request.POST['first_name']
                last_name = request.POST['last_name']
@@ -161,6 +178,9 @@ class User_add_address_view(TemplateView):
      def get_context_data(self, **kwargs):
           
           context = super().get_context_data(**kwargs)and {'form':self.form_class}
+          carts = self.request.session.get('cart_id')
+          cart = Cart_items.objects.filter(cart = carts).count()
+          context['cart'] = cart
           return context
                
         
@@ -170,7 +190,10 @@ class User_add_address_view(TemplateView):
 
 def shop(request):
     min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
-    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all(),'min_max_price':min_max_price}
+    cart = request.session.get('cart_id')
+  
+  
+    context = {'category':Category.objects.all(),'product':Product.objects.all()[:10],'variant':Variant.objects.all(),'min_max_price':min_max_price,  'cart':Cart_items.objects.filter(cart = cart).count()}
 
     return render(request,'shop.html',context)
 
@@ -179,8 +202,10 @@ def shop(request):
 def product_detail(request,id,v_id):
     product = Product.objects.get(id = id)
     variant = Variant.objects.get(id = v_id)
+    cart = request.session.get('cart_id')
+
       
-    context ={'product':Product.objects.get(id=id),'variant':Variant.objects.filter(Product = product.pk),'image':Image.objects.filter(product = id),'main_variant':variant}
+    context ={'product':Product.objects.get(id=id),'variant':Variant.objects.filter(Product = product.pk),'image':Image.objects.filter(product = id),'main_variant':variant,'cart':Cart_items.objects.filter(cart = cart).count()}
 
     varian = Variant.objects.filter(Product = product.pk)
 
@@ -526,6 +551,27 @@ class Category_filter(TemplateView):
           return context
         
 
+def brand_filter(request,id):
+    try:
+        Brand.objects.get(id = id)
+        product = Product.objects.filter(brand  = id)
+        productids = [i for i in product]
+        variant = Variant.objects.filter(Product__in = productids)
+    except:   
+       variant = Variant.objects.filter(Product = id)
+     
+    min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
+
+    context = {'variant':variant,'min_max_price':min_max_price,'category':Category.objects.all()}
+
+    return render (request,'shop.html',context)
+
+        
+
+
+
+
+
 
 def filter(request):
     min_max_price = Variant.objects.aggregate(Min('final_price'),Max('final_price'))
@@ -562,17 +608,14 @@ class Wallet_view(TemplateView):
      def get_context_data(self, **kwargs):
           context = super().get_context_data(**kwargs)
 
-          wallet = Wallet.objects.get(user_id = self.request.user.id)
+          wallet = Wallet.objects.filter(user_id = self.request.user.id)
           context['wallet'] = wallet
+          cart = self.request.session.get('cart_id')
+          context['cart'] = Cart_items.objects.filter(cart = cart).count()
 
           return context
 
 
-
-
-
-          
-               
 
 
 

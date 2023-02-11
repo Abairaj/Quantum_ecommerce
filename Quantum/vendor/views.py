@@ -28,6 +28,7 @@ from django.db.models.functions import Trunc
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import user_passes_test
+from cart.models import Cart_items
 
 
 
@@ -601,8 +602,9 @@ def vendor_signin(request):
             messages.warning(request, 'Invalid password or Username')
             return redirect('vendor-signin')
     
-        
-    return render(request,'vendor_login.html')
+    cart = request.session.get('cart_id')
+    context = {'cart':Cart_items.objects.filter(cart = cart).count()}
+    return render(request,'vendor_login.html',context)
 
 
 @never_cache
@@ -666,12 +668,19 @@ def vendor_signup(request):
             )
 
         vendor.save()
+
+        wallet = Wallet(
+            user_id = request.user.id,
+            balance = 0
+        )
+        wallet.save()
         messages.success(request,'Registered successfully Login with Email Id and Password')
 
         return redirect('vendor-signin')
             
-    
-    return render(request,'vendor_signup.html')
+    cart = request.session.get('cart_id')
+    context = {'cart':Cart_items.objects.filter(cart = cart).count()}
+    return render(request,'vendor_signup.html',context)
 
 
 
@@ -857,7 +866,7 @@ class Vendor_Salesreport_view(TemplateView):
 
         product_ids = [product for product in product]
 
-        order = Order.objects.all().filter(product_id__in = product_ids)
+        order = Order.objects.all().filter(product_id__in = product_ids).order_by('order_date')
 
         context['order'] = order
 
@@ -888,10 +897,10 @@ class vendor_Salesreport_download(View):
           
        if start:
 
-           order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end)).filter(product_id__in = product_ids)        
+           order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end)).filter(product_id__in = product_ids).order_by('order_date')    
            
        else:
-           order = Order.objects.all().filter(product_id__in = product_ids)
+           order = Order.objects.all().filter(product_id__in = product_ids).order_by('order_date')
 
 
        
@@ -986,6 +995,9 @@ class vendor_Salesreport_download(View):
 
 
 
+
+
+
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
 class salesreport_filter(View):
 
@@ -997,7 +1009,7 @@ class salesreport_filter(View):
         start =  datetime.strptime(start_str, '%Y-%m-%d').date()
         end =  datetime.strptime(end_str, '%Y-%m-%d').date()
         try:
-          order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end))
+          order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end)).order_by('order_date')
           return render(request,'vendor_salesreport.html',{'order':order,'start':start_str,'end':end_str})
         except Exception as e:
             print(e)
@@ -1005,6 +1017,8 @@ class salesreport_filter(View):
             return redirect('vendor_sales_report')
        
     
+
+
 
 
 

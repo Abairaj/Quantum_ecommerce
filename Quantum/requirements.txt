@@ -1,2 +1,1 @@
 django-widget-tweaks reportlab razorpay openpyxl twilio
-

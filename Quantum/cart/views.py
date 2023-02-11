@@ -80,6 +80,7 @@ class CartView(TemplateView):
         else:
             cart = None
         context['cart'] = cart
+        context['carts']=Cart_items.objects.count()
         return context
 
 
@@ -164,6 +165,9 @@ class Manage_address_View(TemplateView):
         address = Address.objects.filter(user_id = self.request.user.id)
 
         context['address'] = address
+        carts = self.request.session.get('cart_id')
+        cart = Cart_items.objects.filter(cart = carts).count()
+        context['cart'] = cart
         return context
 
 
@@ -180,7 +184,9 @@ def add_addressform(request):
             form.instance.user = users.objects.get(id = request.user.id)
             form.save()
             return redirect('checkout')
-    return render(request,'addresses.html',{'form':AddressForm})
+        carts = request.seesion.get('cart_id')
+        cart = Cart_items.objects.filter(cart = carts).count()
+    return render(request,'addresses.html',{'form':AddressForm,'cart':cart})
 
 
 @never_cache  
@@ -246,7 +252,13 @@ class Coupon_apply(View):
         cart = Cart.objects.get(id = cart_id)
 
         if coupon:
-            coupon = Coupon.objects.get(coupon_code = coupon_code)
+            try:
+                coupon = Coupon.objects.get(coupon_code = coupon_code)
+            except Exception as e:
+                print(e)
+                messages.warning(request,'Coupon cant be Empty')
+                return redirect('checkout')
+
             if coupon == cart.coupon:
                 messages.warning(request,'coupon already used')
                 return redirect('checkout')
@@ -262,6 +274,7 @@ class Coupon_apply(View):
             cart.save()
             coupon.expired = True
             coupon.save()
+            messages.success(request,f'Coupon Applied Successfully.You saved Rs {coupon.discount_price}')
             return redirect('checkout')
         else:
             messages.warning(request,'Coupon Invalid')
@@ -269,4 +282,58 @@ class Coupon_apply(View):
 
 
         
+@never_cache
+@login_required(login_url='signin')
+def add_to_wishlist(request,id):
+    try:
+      user = users.objects.get(id = request.user.id)
+      variant = Variant.objects.get(id = id)
+    except Exception as e:
+        print(e)
+    wishlist, created = Wishlist.objects.get_or_create(user_id=user, variant=variant)
+      
 
+    if created :
+        messages.success(request,'Item added to  wishlist')
+        return redirect('shop')
+    else:
+        messages.warning(request,'Item already in cart')
+        return redirect('shop')
+    
+
+
+
+@method_decorator(never_cache, name='dispatch')
+@method_decorator(login_required(login_url='signin'), name='dispatch')
+class wishlist_view(TemplateView):
+    template_name = 'wishlist.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        items = Wishlist.objects.filter(user_id = self.request.user.id)
+
+        context['items'] = items
+        cart = self.request.session.get('cart_id')
+        cart= Cart_items.objects.filter(cart = cart).count()
+        context['cart'] = cart
+
+        return context
+    
+
+
+@never_cache
+@login_required(login_url='signin')
+def delete_wishlist_item(request,id):
+    try:
+     wishlist = Wishlist.objects.filter(variant = id)
+     wishlist.delete()
+    except Exception as e:
+        print(e)
+        messages.warning(request,'Something went wrong')
+
+        return redirect('wishlist_view')
+   
+
+    messages.success(request,'Item successfully removed from wishlist')
+    return redirect('wishlist_view')

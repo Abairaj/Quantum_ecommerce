@@ -29,10 +29,6 @@ class Cart(models.Model):
 
 
 
-
-
-
-
 class Cart_items(models.Model):
     cart =models.ForeignKey(Cart,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
@@ -41,6 +37,13 @@ class Cart_items(models.Model):
     price = models.PositiveIntegerField()
     sub_total = models.PositiveIntegerField()
 
+
+
+
+
+class Wishlist(models.Model):
+    user_id = models.ForeignKey(users,on_delete=models.CASCADE)
+    variant = models.ForeignKey(Variant,on_delete=models.CASCADE)
 
 
 

@@ -2,53 +2,22 @@
 
 {%extends 'store_base.html'%}
 
-{%block title%}Cart{%endblock%}
-{%block cart%}{%if carts%}{{carts}}{%else%}0{%endif%}{%endblock%}
+{%block title%}Wishlist{%endblock%}
+{%block cart%}{%if cart%}{{cart}}{%else%}0{%endif%}{%endblock%}
 {%block content%}
 
-		<!-- <aside id="colorlib-hero" class="breadcrumbs">
-			<div class="flexslider">
-				<ul class="slides">
-			   	<li style="background-image: url(images/cover-img-1.jpg);">
-			   		<div class="overlay"></div>
-			   		<div class="container-fluid">
-			   			<div class="row">
-				   			<div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 slider-text">
-				   				<div class="slider-text-inner text-center">
-				   					<h1>Shopping Cart</h1>
-				   					<h2 class="bread"><span><a href="{%url 'home'%}">Home</a></span> <span><a href="{%url 'shop'%}">Shop</a></span> <span><a href="">Cart</a></span></h2>
-				   				</div>
-				   			</div>
-				   		</div>
-			   		</div>
-			   	</li>
-			  	</ul>
-		  	</div>
-		</aside> -->
+	
 		
 
 		<div class="text-center mt-5 pt-5 pb-5 mb-5">
-			<h1>SHOPPING CART</h1>
+			<h1>WISH LIST</h1>
 		</div>
 
 		<div class="colorlib-shop mt-5 pt-5">
 			<div class="container">
 				<div class="row row-pb-md">
 					<div class="col-md-10 col-md-offset-1">
-						<div class="process-wrap">
-							<div class="process text-center active">
-								<p><span>01</span></p>
-								<h3>Shopping Cart</h3>
-							</div>
-							<div class="process text-center">
-								<p><span>02</span></p>
-								<h3>Checkout</h3>
-							</div>
-							<div class="process text-center">
-								<p><span>03</span></p>
-								<h3>Order Complete</h3>
-							</div>
-						</div>
+					
 					</div>
 				</div>
 				<div class="row row-pb-md">
@@ -62,18 +31,18 @@
 								<span>Price</span>
 							</div>
 							<div class="one-eight text-center">
-								<span>Quantity</span>
+								<span>view</span>
 							</div>
 							<div class="one-eight text-center">
-								<span>Sub Total</span>
+								<span>Cart</span>
 							</div>
 							<div class="one-eight text-center">
-								<span>Actions</span>
+								<span>Delete</span>
 							</div>
 						</div>
 
-						{%if cart%}
-						{%for i in cart.cart_items_set.all%}
+						{%if items%}
+						{%for i in items%}
 						<div class="product-cart product_data">
 							<div class="one-forth">
 								<div class="product-img" style="background-image: url(images/item-6.jpg);">
@@ -84,29 +53,29 @@
 							</div>
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<span class="product_price">{{i.price|floatformat:0}}</span>
+									<span class="product_price">{{i.variant.final_price|floatformat:0}}</span>
 								</div>
 							</div>
 							<div class="one-eight text-center">
-								<div class="d-flex pt-5">
-									<input type="hidden" class="prod_id" value = {{i.id}}>
-									{% csrf_token %}
+								<div class="display-tc">
 									
-									<button  class="btn btn-primary change_quantity- decrement-btn">-</button>
-									<input type="text" id="quantity" name="quantity" class="form-control input-number text-center ml-1 mr-1 qty-input" value="{{i.quantity}}" min="1" max="100">
-									<button class="btn btn-primary add_quantity increment-btn">+</button>
-									<!-- /cart/manage_cart/{{i.id}}/increase -->
-									<!-- /cart/manage_cart/{{i.id}}/decrease -->
+									
+									<a href="/product_details/{{i.variant.Product.id}}/{{i.variant.id}}"><button  class="btn btn-primary">view</button></a>
+								
+							
 								</div>
 							</div>
+                            
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<span class="sub_total" >{{i.sub_total|floatformat:0}}</span>
+									
+									<a href="/cart/add_to_cart/{{i.variant.id}}"><button class="btn btn-primary">Add to Cart</button></a>
 								</div>
 							</div>
+					
 							<div class="one-eight text-center">
 								<div class="display-tc">
-									<a href="/cart/delete_cart_item/{{i.id}}" class="btn btn-danger">x</a>
+									<a href="/cart/delete_wishlist_item/{{i.variant.id}}" class="btn btn-danger">x</a>
 								</div>
 							</div>
 						</div>

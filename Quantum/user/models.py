@@ -146,6 +146,8 @@ class Address(models.Model):
     class Meta:
         verbose_name    =    "Address"
         verbose_name_plural =   "Addresses"
+
+
     
 
     

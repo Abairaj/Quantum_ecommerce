@@ -28,3 +28,4 @@ admin.site.register(Cart_items,Cart_itemsAdmin)
 
 
 admin.site.register(Coupon)
+admin.site.register(Wishlist)

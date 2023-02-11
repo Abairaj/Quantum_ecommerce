@@ -509,7 +509,7 @@ class admin_Salesreport_view(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        order = Order.objects.all()
+        order = Order.objects.all().order_by('order_date')
 
         context['order'] = order
 
@@ -648,10 +648,11 @@ class admin_salesreport_filter(View):
         start =  datetime.strptime(start_str, '%Y-%m-%d').date()
         end =  datetime.strptime(end_str, '%Y-%m-%d').date()
         try:
-          order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end))
+          order = Order.objects.filter(Q(order_date__gte = start) & Q (order_date__lte = end)).order_by('order_date')
+          
           return render(request,'salesreport.html',{'order':order,'start':start_str,'end':end_str})
         except Exception as e:
-            print(e)
+            print(e,'jmjjj')
             messages.warning(request,'Try with proper values')
             return redirect('admin_salesreport')
        
