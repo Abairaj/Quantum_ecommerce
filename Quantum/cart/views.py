@@ -186,7 +186,7 @@ def add_addressform(request):
             return redirect('checkout')
         carts = request.seesion.get('cart_id')
         cart = Cart_items.objects.filter(cart = carts).count()
-    return render(request,'addresses.html',{'form':AddressForm,'cart':cart})
+    return render(request,'v_manage_addres.html',{'form':AddressForm,'cart':cart})
 
 
 @never_cache  
