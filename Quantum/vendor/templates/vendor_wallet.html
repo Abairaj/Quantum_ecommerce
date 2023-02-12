@@ -34,9 +34,9 @@
 
 									<div class="form-group col-md-6 text-center" style="height: 50px;">
                                         <label for="">Balance</label>
-                                       
-                                        <h1 class="text-primary">{{wallet.balance}}</h1>
-                                        
+                                       {%for i in wallet%}
+                                        <h1 class="text-primary">{{i.balance}}</h1>
+                                      {%endfor%}
 								
 										
 			                  </div>	

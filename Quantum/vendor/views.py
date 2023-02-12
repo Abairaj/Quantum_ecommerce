@@ -243,7 +243,7 @@ class Vendor_wallet(TemplateView):
     def get_context_data(self, **kwargs):
        context =  super().get_context_data(**kwargs)
 
-       wallet = Wallet.objects.get(user_id = self.request.user.id)
+       wallet = Wallet.objects.filter(user_id = self.request.user.id)
        context['wallet'] = wallet
        return context
 
@@ -776,7 +776,8 @@ def vendor_coupon(request):
     context = {
         'coupon':Coupon.objects.all()
     }
-    return render(request,'vendor_coupon.html',context)
+    return render(request,'vcoupon.html',context)
+
 
 
 
