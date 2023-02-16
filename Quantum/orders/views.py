@@ -186,87 +186,92 @@ class user_order_view(TemplateView):
 class success(View):
 
     def get(self,request, **kwargs):
+         rz_signature =self.request.GET.get('razorpay_signature')
          cart = self.request.session['cart_id']
          cart = Cart.objects.get(id = cart)
          user_id = users.objects.get(id = self.request.user.id)
          cart_items = Cart_items.objects.filter(cart = cart)
          total_perc = 0
-         for i in cart_items:
-            admin_per = i.product.category.commission * i.quantity
-            total_perc += admin_per
+         if rz_signature:
+            for i in cart_items:
+                admin_per = i.product.category.commission * i.quantity
+                total_perc += admin_per
 
-         for i in cart_items:
-            vendor_earnings = i.product.final_price - (i.product.final_price * total_perc / 100)
-            wallet, created = Wallet.objects.get_or_create(user_id=i.product.vendor_name)
-            wallet.balance += vendor_earnings
-            wallet.save()
+            for i in cart_items:
+                vendor_earnings = i.product.final_price - (i.product.final_price * total_perc / 100)
+                wallet, created = Wallet.objects.get_or_create(user_id=i.product.vendor_name)
+                wallet.balance += vendor_earnings
+                wallet.save()
 
-                
-           
-         if Address.objects.filter(user_id = self.request.user.id).exists():
-                address =Address.objects.filter(default = True).get(user_id = user_id)
-         else:
-             messages.warning(self.request,'Set a default address and continue order')
-             return redirect('checkout')
+                    
+            
+            if Address.objects.filter(user_id = self.request.user.id).exists():
+                    address =Address.objects.filter(default = True).get(user_id = user_id)
+            else:
+                messages.warning(self.request,'Set a default address and continue order')
+                return redirect('checkout')
 
-         if address:
-                
-                raz_details = razorpay_details.objects.create(
-                     
-                razorpay_order_id = self.request.GET.get('razorpay_order_id'),
-                razorpay_payment_id =self.request.GET.get('razorpay_payment_id'),
-                razorpay_payment_signature =self.request.GET.get('razorpay_signature'),
-                )
-                
-
-
-  
-
-                payment =Payment.objects.create(
-                    user_id = user_id,
-                    amount = cart.total,
-                    payment_method = 'Razorpay',
-                    raz_id = raz_details
-
-                )
-         else:
-             messages.warning(self.request,'Add a default address and try again')
-             return redirect('checkout')
-
-        # creating order
-         cart_id = self.request.session.get('cart_id')
-         cart = Cart.objects.get(id = cart_id)
-         cart_items = Cart_items.objects.filter(cart = cart)
-         address =Address.objects.filter(default = True).get(user_id = user_id)
-         print(address)
-         order_ids = []
-
-
-         for i in cart_items:
-            id = random.randint(100000,999999)
-            order =Order.objects.create(
-            id = id,
-            cart = cart,
-            payment_id = Payment.objects.get(id = payment.id),
-            product_id = i.product,
-            Variant = i.variant,
-            user_id = user_id,
-            user_address = address,
-            amount = i.price * i.quantity,
-            quantity = i.quantity
+            if address:
+                    
+                    raz_details = razorpay_details.objects.create(
+                        
+                    razorpay_order_id = self.request.GET.get('razorpay_order_id'),
+                    razorpay_payment_id =self.request.GET.get('razorpay_payment_id'),
+                    razorpay_payment_signature =self.request.GET.get('razorpay_signature'),
                     )
+                    
 
-            
-            order_ids.append(int(id))
-            
-            
 
-            i.delete()
-            cart_items.delete()
-            cart.total = 0
-            cart.save()
+    
 
-         return redirect('invoice',order_ids)
+                    payment =Payment.objects.create(
+                        user_id = user_id,
+                        amount = cart.total,
+                        payment_method = 'Razorpay',
+                        raz_id = raz_details
+
+                    )
+            else:
+                messages.warning(self.request,'Add a default address and try again')
+                return redirect('checkout')
+
+            # creating order
+            cart_id = self.request.session.get('cart_id')
+            cart = Cart.objects.get(id = cart_id)
+            cart_items = Cart_items.objects.filter(cart = cart)
+            address =Address.objects.filter(default = True).get(user_id = user_id)
+            print(address)
+            order_ids = []
+
+
+            for i in cart_items:
+                id = random.randint(100000,999999)
+                order =Order.objects.create(
+                id = id,
+                cart = cart,
+                payment_id = Payment.objects.get(id = payment.id),
+                product_id = i.product,
+                Variant = i.variant,
+                user_id = user_id,
+                user_address = address,
+                amount = i.price * i.quantity,
+                quantity = i.quantity
+                        )
+
+                
+                order_ids.append(int(id))
+                
+                
+
+                i.delete()
+                cart_items.delete()
+                cart.total = 0
+                cart.save()
+
+            return redirect('invoice',order_ids)
+         else:
+              messages.warning(request,'Payment unsuccessfull.Try again.')
+              return redirect('checkout')
 
 
 

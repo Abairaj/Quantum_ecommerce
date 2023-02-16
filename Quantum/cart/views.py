@@ -158,7 +158,7 @@ def delete_cart_item(request,id):
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
 class Manage_address_View(TemplateView):
-    template_name = "addresses.html"
+    template_name = "v_manage_addres.html"
     def get_context_data(self, **kwargs):
 
         context = super().get_context_data(**kwargs)

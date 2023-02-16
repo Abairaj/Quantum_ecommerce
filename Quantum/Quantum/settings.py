@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-stm8kmbm-8k#h61ou1j8au0u##(m%!86%4n49jq+5uf+p3e5ka'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['43.206.241.25','www.quantumtimes.shop','quantumtimes.shop','127.0.0.1']
 
