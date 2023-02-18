@@ -65,14 +65,15 @@ class CheckoutAPIView(TemplateView):
             cart = None
         
         payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
-        context['payment'] = payment
-        print(payment)
         carts = self.request.session.get('cart_id')
         cart1 = Cart_items.objects.filter(cart = carts).count()
-        context['carts'] = cart1
-        context['cart'] = cart
         addressdef = Address.objects.filter(default = True)
-        context['addressdef'] = addressdef
+        try:
+         coupon = self.request.session.get('coupon')
+         del self.request.sessio['coupon']
+        except Exception as e:
+             print(e)
+        context = {'carts':cart1,'cart':cart,'coupon':coupon,'addressdef':addressdef,'payment':payment,'form':self.form_class}
         return context
 
 

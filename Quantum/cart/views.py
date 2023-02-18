@@ -274,6 +274,8 @@ class Coupon_apply(View):
             cart.save()
             coupon.expired = True
             coupon.save()
+
+            request.session['coupon'] = coupon.discount_price
             messages.success(request,f'Coupon Applied Successfully.You saved Rs {coupon.discount_price}')
             return redirect('checkout')
         else:

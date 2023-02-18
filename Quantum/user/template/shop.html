@@ -60,19 +60,25 @@
 
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
-							<div class="product-img" style="background-image: url({{i.image.image_1.url}});">
+
+							{%for image in i.images.all%}
+							{%if forloop.first%}
+							<div class="product-img" style="background-image: url({{image.image.url}});">
 								<p class="tag"><span class="new" style="background-color:{{i.color.name}};">{{i.color.name}}</span></p>
 								<div class="cart">
 									<p>
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}
 										<span class="addtocart"><a href="/cart/add_to_cart/{{i.id}}"><i class="icon-shopping-cart"></i></a></span> 
 										{%endif%}
+										
 										<span><a href="/product_details/{{i.Product.id}}/{{i.id}}"><i class="icon-eye"></i></a></span> 
 										<span><a href="{%url 'add_to_wishlist' i.id %}"><i class="icon-heart3"></i></a></span>
 										
 									</p>
 								</div>
 							</div>
+							{%endif%}
+							{%endfor%}
 							<div class="desc">
 								<h3><a href="/product_details/{{i.Product.id}}/{{i.id}}">{{i.Product.product_name}}</a></h3>
 								<p class="price"><span>{{i.final_price|floatformat:0}}</span></p>

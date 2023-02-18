@@ -46,9 +46,8 @@ class Color(models.Model):
 class Image(models.Model):
       id = models.BigAutoField(primary_key=True,blank=True)
       product = models.ForeignKey(Product,on_delete=models.CASCADE,null=True,blank=True)
-      image_1 = models.ImageField(upload_to='variants/',blank=True,null=True)
-      image_2 = models.ImageField(upload_to='variants/',blank=True,null=True)
-      image_3 = models.ImageField(upload_to='variants/',blank=True,null=True)
+      variant = models.ForeignKey('Variant',related_name='images',on_delete=models.CASCADE,null=True,blank=True)
+      image = models.ImageField(upload_to='variants/',blank=True,null=True)
 
 
       def __str__(self):
@@ -63,7 +62,6 @@ class Variant(models.Model):
         Product = models.ForeignKey(Product,on_delete=models.CASCADE)
         color = models.ForeignKey(Color,on_delete=models.CASCADE)
         price = models.FloatField()
-        image = models.ForeignKey(Image,on_delete=models.CASCADE,null=True,blank=True)
         discount_percentage = models.FloatField()
         final_price = models.FloatField()
         quantity = models.IntegerField()

@@ -34,24 +34,33 @@
 								
 
 								<div class="col-md-5" data-mdb-zoom-effect="true" data-mdb-auto-height="true">
+									{%for i in main_variant%}
 									<div class="product-entry">
+										{% for image in i.images.all %}
+										{%if forloop.first%}
 										<div  class="product-image-container" id="image-container" style="height: 500px;">
-											<img src="{{main_variant.image.image_1.url}}" alt="product_img" class="image-fluid" id="main-image"style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+											<img src="{{image.image.url}}" alt="product_img" class="image-fluid" id="main-image"style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
 										</div>
-
-										<div class="thumb-nail thumbnail-container mt-2">
-											 <div class="thumb-img">
-												<img src="{{main_variant.image.image_1.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
-											</div>
-											<div class="thumb-img">
-												<img src="{{main_variant.image.image_2.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
-											</div>
-											<div class="thumb-img">
-												<img src="{{main_variant.image.image_3.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
-											</div> 
+										{%endif%}
+										{%endfor%}
 										
+									
+                                       
+										<div class="thumb-nail thumbnail-container mt-2">
+											{% for image in i.images.all %}
+											 <div class="thumb-img">
+												<img src="{{image.image.url}}" alt="product_img" class="zoom-image" onmouseover="change_image(this)" style="width: 100%;height: 100%;object-fit: cover;overflow: hidden;">
+											</div>
+											
+										{%endfor%}
+
 										</div>
+										
+										
+										
+										{%endfor%}
 									</div>
+									
 								</div>
 
 								
@@ -175,7 +184,9 @@
 				
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
-							<div class="product-img" style="background-image: url({{i.image.image_1.url}});width: 250px;" >
+							{% for image in i.images.all %}
+										{%if forloop.first%}
+							<div class="product-img" style="background-image: url({{image.image.url}});width: 250px;" >
 								<p class="tag"><span class="new" style="background-color:{{i.color.name}};">{{i.color.name}}</span></p>
 								<div class="cart">
 									<p>
@@ -188,6 +199,8 @@
 									</p>
 								</div>
 							</div>
+							{%endif%}
+							{%endfor%}
 							<div class="desc">
 								<h3>{{i.Product.product_name}}</h3>
 							

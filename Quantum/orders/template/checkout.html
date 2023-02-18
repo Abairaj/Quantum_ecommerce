@@ -287,7 +287,10 @@
 									</ul>
 
 								</li>
-								
+                              
+								{%if coupon%}
+								<li><span>Coupon</span><span style="color: green;">- {{coupon}}</span></li>
+								{%endif%}
 								<!-- <li><span>Shipping</span> <span>$0.00</span></li> -->
 								<li><span>Order Total</span> <span>Rs. {{cart.total}}</span></li>
 							</ul>

@@ -274,7 +274,7 @@ def add_product(request):
         product_description = request.POST['product_description']
         category_id= request.POST['category']
         brand_id= request.POST['brand']
-        images = request.FILES['image']
+        images = request.FILES.get('image')
         color = str(request.POST['color'])
         max_price = request.POST['price']
         max_discount = request.POST['discount']
@@ -338,7 +338,7 @@ def edit_product(request,id):
         max_price = request.POST['price']
         max_discount = request.POST['discount']
         final_price = float(max_price) - (float(max_discount)/100)*float(max_price)
-        image = request.FILES['image']
+        image = request.FILES.get('image')
         colors = []
 
         for i in Color.objects.filter(product = id):
@@ -362,30 +362,47 @@ def edit_product(request,id):
 
 
 # updating the products created earlier
+        if image:
+            product = Product(
+                id = id,
+            product_name = product_name,
+            product_description = product_description,
+            category= category,
+            max_price = max_price,
+            max_discount  = max_discount,
+            final_price = final_price,
+            brand = brand,
+            vendor_name = vendor_id,
+            product_image = image,
+            time_added = datetime.now()
+        
+            )
 
-        product = Product(
-            id = id,
-         product_name = product_name,
-        product_description = product_description,
-        category= category,
-        max_price = max_price,
-        max_discount  = max_discount,
-        final_price = final_price,
-        brand = brand,
-        vendor_name = vendor_id,
-        product_image = image,
-        time_added = datetime.now()
-      
-          )
+            product.save()
+        else:
+            product = Product.objects.filter(id = id)
+            product.update(
+                id = id,
+            product_name = product_name,
+            product_description = product_description,
+            category= category,
+            max_price = max_price,
+            max_discount  = max_discount,
+            final_price = final_price,
+            brand = brand,
+            vendor_name = vendor_id,
+            time_added = datetime.now()
+        
+            )
+        
+        p = Product.objects.get(id = id)
 
-        product.save()
-
-        colour_id = Color.objects.filter(product = product.pk)
+        colour_id = Color.objects.filter(product = p.pk)
         
         for i in colour_id:
                 colour = Color(
                     id = i.id,
-                    product = Product.objects.get(id = product.pk),
+                    product = Product.objects.get(id = p.pk),
                     name = next(colors)
                     
                 )
@@ -445,10 +462,8 @@ def add_variants(request,id):
         price = request.POST['price']
         discount = request.POST['discount']
         quantity = request.POST['stock']
-        image_1 = request.FILES['image-1']
-        image_2 = request.FILES['image-2']
-        image_3 = request.FILES['image-3']
-    
+        images = request.FILES.getlist('images')
+   
 
         colour = Color.objects.filter(product = id).get(name = color)
         print(colour)
@@ -463,26 +478,30 @@ def add_variants(request,id):
 
 
 
-        images = Image.objects.create(
-            product = Product.objects.get(id = id),
-            image_1 = image_1,
-            image_2 = image_2,
-            image_3 = image_3,
-    
-        )
+
 
 
 
         variant = Variant.objects.create(
-            Product = Product.objects.get(id = id),
-            color = colour,
-            price = price,
-            discount_percentage = discount,
-            quantity = quantity,
-            image = Image.objects.get( id=images.pk),
-            final_price = float(price) - (float(discount) / 100) * float(price) 
-                                          
-        )
+                Product = Product.objects.get(id = id),
+                color = colour,
+                price = price,
+                discount_percentage = discount,
+                quantity = quantity,
+                final_price = float(price) - (float(discount) / 100) * float(price) 
+                                            
+            )
+
+
+
+        for i in images:
+            image = Image.objects.create(
+                product = Product.objects.get(id = id),
+                variant = Variant.objects.get(id = variant.pk),
+                image = i,
+            )
+    
+         
 
 
         messages.success(request,'Product added successfully')
@@ -507,11 +526,9 @@ def edit_variant(request,id):
         price = request.POST['price']
         discount = request.POST['discount']
         quantity = request.POST['stock']
-        image_1 = request.FILES['image-1']
-        image_2 = request.FILES['image-2']
-        image_3 = request.FILES['image-3']
+        image1 = request.FILES.getlist('images')
         colour = Color.objects.filter(product = variants.Product.pk).get(name = color)
-        img = Image.objects.get(id = variants.image.pk)
+  
     
 
         
@@ -529,28 +546,18 @@ def edit_variant(request,id):
 
                 
         # imageid = Image.objects.get(product =  variants.Product.pk)
-        print(Image.objects.get(pk = id).id)
-        img_id = Image.objects.get(id = variants.image.id)
+     
+        
 
 
-        images = Image.objects.filter(pk =variants.image.id)        
-        images.update( 
-            id = img_id.id,
-            product = Product.objects.get(id =variants.Product.pk),
-            image_1 = image_1,
-            image_2 = image_2,
-            image_3 = image_3,
-        )
 
 
-       
         variant = Variant(
             id = id,
             Product = Product.objects.get(id = variants.Product.pk),
             color = colour,
             price = price,
             discount_percentage = discount,
-            image = images.get(id = variants.image.pk),
             quantity = quantity,
             final_price = float(price) - (float(discount) / 100) * float(price) 
                                           
@@ -558,9 +565,22 @@ def edit_variant(request,id):
 
         variant.save()
 
+        print(variant.pk,'llllll')
+    
+        img = Image.objects.filter(variant = variant.pk)
+
+        print(img,'llllllllllllllgggg')
+        image_ids = [i.pk for i in img]
+        print(image_ids,'kkkkkkkkkkk')
+        for i in image1:
+            for j in image_ids:
+                image = Image.objects.get(id = j)
+                image.image = i
+                image.save()
+       
         messages.success(request,'Variant updated successfully')
 
-        return redirect('edit_variant',variants.pk)
+        return redirect('vendor_variant',product.pk)
 
     return render(request,'edit_variant.html',context)
 
@@ -573,7 +593,7 @@ def delete_variants(request,id):
     variant.delete()
 
     messages.success(request,'Variant deleted successfully')
-    return redirect('vendor_variant',variant.Product.pk)
+    return redirect('vendor_variant',variant.Product.product_name)
 
 
 

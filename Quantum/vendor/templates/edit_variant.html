@@ -9,6 +9,16 @@
 {%for i in variant%}
 
 <div class="container">
+  {%if messages%}
+  {%for message in messages%}
+  <div class="alert alert-{{message.tags}} alert-dismissible fade show" role="alert">
+      <strong></strong> {{message}}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {%endfor%}
+  {%endif%}
   
     <section class="panel panel-default mt-5">
   <div class="panel-heading"> 
@@ -27,7 +37,7 @@
         <div class="">
        <select class="form-control" name="color" required>
         {%if color%}
-        <option value="{{i.name}}">Colour</option>
+        <option value="{{i.color.name}}">Colour</option>
       
         {%for i in color%}
         <option value="{{i.name}}">{{i.name}}</option>
@@ -84,15 +94,10 @@
     <div class="form-group col-sm-6">
       
       <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image_1</label> <input type="file" value="{{i.image_url}}" name="image-1" required>
+        <label class="control-label small" for="file_img">Images</label> <input type="file" multiple value="{{i.image_url}}" accept="image/*" name="images">
       </div>
-      <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image-2</label>  <input type="file" name="image-2" required>
-      </div>
-      <div class="col-sm-3">
-        <label class="control-label small" for="file_img">Image-3</label>  <input type="file" name="image-3" required>
-      </div>
-      
+
+
     </div> <!-- form-group // -->
 
     <div class="form-group col-sm-6">

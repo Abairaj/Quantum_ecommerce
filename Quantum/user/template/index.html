@@ -119,7 +119,9 @@
 					{%for i in variant%}
 					<div class="col-md-3 text-center">
 						<div class="product-entry">
-							<div class="product-img" style="background-image: url({{i.image.image_1.url}});">
+							{%for image in i.images.all%}
+							{%if forloop.first%}
+							<div class="product-img" style="background-image: url({{image.image.url}});">
 								<p class="tag"><span class="new"  style="background-color:{{i.color.name}};">{{i.color.name}}</span></p>
 								<div class="cart">
 									<p>
@@ -132,6 +134,10 @@
 									</p>
 								</div>
 							</div>
+							{%endif%}
+							{%endfor%}
+
+
 							<div class="desc">
 								<h3><a href="shop.html">{{i.Product.product_name}}</a></h3>
 								<p class="price"><span style="color: green !important;">MRP {{i.final_price|floatformat:0}}</span></p>

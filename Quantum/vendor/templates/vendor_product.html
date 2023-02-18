@@ -51,9 +51,11 @@
                           <th>
                             No
                           </th>
+                          {%if i.product_image%}
                           <th>
                             Image
                           </th>
+                          {%endif%}
                           <th>
                             Name
                           </th>
@@ -77,9 +79,11 @@
                           <td class="py-1">
                             {{forloop.counter}}
                           </td>
+                          {% if i.product_image%}
                           <td>
                             <img src="{{i.product_image.url}}" alt="image">
                           </td>
+                          {%endif%}
                           <td>
                             {{i.product_name}}
                           </td>

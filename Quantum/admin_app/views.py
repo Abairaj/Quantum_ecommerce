@@ -256,7 +256,7 @@ def edit_category(request,id):
     if request.method == 'POST':
 
         try:
-          category_logo = request.FILES['logo']
+          category_logo = request.FILES.get('logo')
           category_name = request.POST['category_name']
           commission = request.POST['commission']
 
@@ -271,16 +271,28 @@ def edit_category(request,id):
 
         
         try:
-         category = Category(
-                id=id,
-                category_image = category_logo,
-                category_name = category_name,
-                commission = commission,
-                date_added = datetime.now(),
-                last_update = datetime.now()
-            )
+         if category_logo:
+            category = Category(
+                    id=id,
+                    category_image = category_logo,
+                    category_name = category_name,
+                    commission = commission,
+                    date_added = datetime.now(),
+                    last_update = datetime.now()
+                )
 
-         category.save()
+            category.save()
+         else:
+             category =Category.objects.filter(id = id)
+             category.update(
+                 
+                    id=id,
+                    category_name = category_name,
+                    commission = commission,
+                    date_added = datetime.now(),
+                    last_update = datetime.now()
+                 
+             )
 
 
          messages.success(request,'Category Updated successfully')
@@ -360,7 +372,7 @@ def edit_brand(request,id):
     if request.method == 'POST':
 
         try:
-          brand_logo = request.FILES['logo']
+          brand_logo = request.FILES.get('logo')
           brand_name = request.POST['brand_name']
 
         except:
@@ -374,15 +386,24 @@ def edit_brand(request,id):
 
         else:
 
-            brand = Brand(
-                id=id,
-                brand_logo = brand_logo,
-                brand_name = brand_name,
-                date_added = datetime.now(),
-                last_update = datetime.now()
-            )
+            if brand_logo:
 
-            brand.save()
+                brand = Brand(
+                    id=id,
+                    brand_logo = brand_logo,
+                    brand_name = brand_name,
+                    date_added = datetime.now(),
+                    last_update = datetime.now()
+                )
+
+                brand.save()
+            else:
+                brand = Brand.objects.filter(id = id)
+
+                brand.update(
+                    id=id,
+                    brand_name = brand_name,
+                )
 
 
             messages.success(request,'Brand Updated successfully')

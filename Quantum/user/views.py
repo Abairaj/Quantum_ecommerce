@@ -205,7 +205,7 @@ def product_detail(request,id,v_id):
     cart = request.session.get('cart_id')
 
       
-    context ={'product':Product.objects.get(id=id),'variant':Variant.objects.filter(Product = product.pk),'image':Image.objects.filter(product = id),'main_variant':variant,'cart':Cart_items.objects.filter(cart = cart).count()}
+    context ={'product':Product.objects.get(id=id),'variant':Variant.objects.filter(Product = product.pk),'image':Image.objects.filter(product = id),'main_variant':Variant.objects.filter(id = v_id),'cart':Cart_items.objects.filter(cart = cart).count()}
 
     varian = Variant.objects.filter(Product = product.pk)
 

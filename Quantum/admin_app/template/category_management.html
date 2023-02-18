@@ -42,7 +42,7 @@
                               <form action='/admin/add_category/' name="category" method="POST"  enctype="multipart/form-data" >
                                   {%csrf_token%}
                                   <div class="form-outline mb-5">
-                                    <input type="file" name="logo" >
+                                    <input type="file" accept="image/*" name="logo" >
                                       <label for="floatingInput">Logo</label>
                                     </div>
                                   <div class="form-outline mb-4">
@@ -138,7 +138,7 @@
               <form action='/admin/edit_category/{{i.id}}' name="category" method="POST"  enctype="multipart/form-data" >
                   {%csrf_token%}
                   <div class="form-outline mb-5">
-                    <input value="{{i.category_image.url}}" type="file" name="logo" >
+                    <input value="{{i.category_image.url}}" type="file" accept="image/*"  name="logo" >
                       <label for="floatingInput"><img src="{{i.category_image.url}}" alt="image" class="image-fluid"></label>
                     </div>
                   <div class="form-outline mb-4">
