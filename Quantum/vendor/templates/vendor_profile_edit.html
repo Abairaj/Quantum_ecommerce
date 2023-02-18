@@ -94,7 +94,9 @@ color:#69707a;
                     <div class="card-header">Profile Picture</div>
                     <div class="card-body text-center">
                         <!-- Profile picture image-->
+                        {%if user.profile%}
                         <img class="img-account-profile rounded-circle mb-2" src="{{user.profile.url}}" alt="">
+                        {%endif%}
                         <!-- Profile picture help block-->
                         <h4 class=" font-italic text-muted mb-4">{{user.first_name}} {{user.last_name}}</h4>
                         <!-- Profile picture upload button-->

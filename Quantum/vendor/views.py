@@ -494,7 +494,7 @@ def add_variants(request,id):
 
 
 
-        for i in images:
+        for i in reversed(images):
             image = Image.objects.create(
                 product = Product.objects.get(id = id),
                 variant = Variant.objects.get(id = variant.pk),
@@ -505,7 +505,7 @@ def add_variants(request,id):
 
 
         messages.success(request,'Product added successfully')
-        return redirect('add_variant',id)
+        return redirect('vendor_variant',product.pk)
 
     return render(request,'add_variant.html',context)
 
@@ -565,19 +565,53 @@ def edit_variant(request,id):
 
         variant.save()
 
-        print(variant.pk,'llllll')
-    
-        img = Image.objects.filter(variant = variant.pk)
+        print(id,';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
+        print(Image.objects.values_list('variant'))
+        img = Image.objects.filter(variant = id)
 
-        print(img,'llllllllllllllgggg')
+        print(img,'imgggggggggggggggggggggggggggggimgggggggggggggggggggg')
+
+     
         image_ids = [i.pk for i in img]
-        print(image_ids,'kkkkkkkkkkk')
-        for i in image1:
-            for j in image_ids:
-                image = Image.objects.get(id = j)
-                image.image = i
-                image.save()
-       
+
+
+        # for image, id in zip(image1, image_ids):
+        #        print('check 11111111111111111111111111111111111111111111')
+        #        img = Image.objects.filter(id = id)
+        #        print(id,image,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+
+        #        images = Image(
+        #         id = id,
+        #         image = image,
+        #         variant = variant
+        #        )
+
+        #        images.save()
+
+
+
+        # for i in image1:
+        #     print('kjgfkhgfjhfjghdjfhvdfskjgndfskjghdfkjgndfjkgndfg')
+        #     print(image_ids)
+        #     for j in image_ids:
+
+        #         print(i,'llllllllllll')
+        #         print(j,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+
+        for image, id in zip(reversed(image1), image_ids):
+              
+                img = Image(
+                    id = Image.objects.get(id = id).pk,
+                    image = image,
+                    variant = Variant.objects.get(id = variant.pk),
+                    product = Product.objects.get(id = product.pk)
+                )
+
+                img.save()
+            
+            
+            
+
         messages.success(request,'Variant updated successfully')
 
         return redirect('vendor_variant',product.pk)
@@ -593,7 +627,7 @@ def delete_variants(request,id):
     variant.delete()
 
     messages.success(request,'Variant deleted successfully')
-    return redirect('vendor_variant',variant.Product.product_name)
+    return redirect('vendor_variant',variant.Product.pk)
 
 
 
@@ -690,7 +724,7 @@ def vendor_signup(request):
         vendor.save()
 
         wallet = Wallet(
-            user_id = request.user.id,
+            user_id = users.objects.get(id = vendor.id),
             balance = 0
         )
         wallet.save()
