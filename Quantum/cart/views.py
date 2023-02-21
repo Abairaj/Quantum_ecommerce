@@ -10,10 +10,12 @@ from django.http import JsonResponse
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from offers.models import Offer
+from user.views import user_check
 
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class  AddtocartAPIView (TemplateView):
     template_name = 'cart.html'
     
@@ -70,6 +72,7 @@ class  AddtocartAPIView (TemplateView):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class CartView(TemplateView):
     template_name = "cart.html"
     def get_context_data(self, **kwargs):
@@ -86,6 +89,7 @@ class CartView(TemplateView):
 
 @never_cache
 @login_required(login_url='signin')
+@user_check
 def update_cart_add(request):
     if request.method == 'POST':
 
@@ -117,6 +121,7 @@ def update_cart_add(request):
 
 @never_cache   
 @login_required(login_url='signin')
+@user_check
 def update_cart_subtract(request):
     if request.method == 'POST':
         cart_item_id  =int(request.POST['product_id'])
@@ -143,6 +148,7 @@ def update_cart_subtract(request):
 
 @never_cache
 @login_required(login_url='signin')
+@user_check
 def delete_cart_item(request,id):
     cart_item = Cart_items.objects.get(id = id)
     cart = Cart.objects.get(user_id = request.user.id)
@@ -157,6 +163,7 @@ def delete_cart_item(request,id):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class Manage_address_View(TemplateView):
     template_name = "v_manage_addres.html"
     def get_context_data(self, **kwargs):
@@ -174,6 +181,7 @@ class Manage_address_View(TemplateView):
 
 @never_cache
 @login_required(login_url='signin')
+@user_check
 def add_addressform(request):
     
     if request.POST:
@@ -191,6 +199,7 @@ def add_addressform(request):
 
 @never_cache  
 @login_required(login_url='signin')
+@user_check
 def addressform(request):
 
     if request.POST:
@@ -216,6 +225,7 @@ def addressform(request):
 
 @never_cache
 @login_required(login_url='signin')
+@user_check
 def address_default(request,id,action):
 
     address = Address.objects.get(id = id)
@@ -243,6 +253,7 @@ def address_default(request,id,action):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class Coupon_apply(View):
 
     def post(self,request,**kwargs):
@@ -286,6 +297,7 @@ class Coupon_apply(View):
         
 @never_cache
 @login_required(login_url='signin')
+@user_check
 def add_to_wishlist(request,id):
     try:
       user = users.objects.get(id = request.user.id)
@@ -307,6 +319,7 @@ def add_to_wishlist(request,id):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class wishlist_view(TemplateView):
     template_name = 'wishlist.html'
 
@@ -326,6 +339,7 @@ class wishlist_view(TemplateView):
 
 @never_cache
 @login_required(login_url='signin')
+@user_check
 def delete_wishlist_item(request,id):
     try:
      wishlist = Wishlist.objects.filter(variant = id)

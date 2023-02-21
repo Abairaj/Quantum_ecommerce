@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
 from django.db.models import Q
@@ -18,12 +19,11 @@ from .models import Address,Payment,razorpay_details
 from datetime import datetime
 from user.models import users,Wallet
 from orders.models import Order
+from django.views.decorators.csrf import csrf_exempt
+from user.views import user_check
 
 
 
-
-def user_check(user):
-    return not user.is_superadmin and not user.is_staff   
 # Create your views here.
 
 
@@ -45,10 +45,9 @@ def split_payment(amount,admin_percentage,id):
 
 
 
-
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class CheckoutAPIView(TemplateView):
     template_name = 'checkout.html'
     form_class = AddressForm
@@ -64,13 +63,14 @@ class CheckoutAPIView(TemplateView):
         else:
             cart = None
         
+        # creating razorpay order
         payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
         carts = self.request.session.get('cart_id')
         cart1 = Cart_items.objects.filter(cart = carts).count()
         addressdef = Address.objects.filter(default = True)
         try:
          coupon = self.request.session.get('coupon')
-         del self.request.sessio['coupon']
+         del self.request.session['coupon']
         except Exception as e:
              print(e)
         context = {'carts':cart1,'cart':cart,'coupon':coupon,'addressdef':addressdef,'payment':payment,'form':self.form_class}
@@ -81,55 +81,58 @@ class CheckoutAPIView(TemplateView):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class PaymentAPI(View):   
-    def post(self,request,**kwargs):
-        amt = self.kwargs.get('amount')
-        data = request.POST['payment_method']
-        user_id = users.objects.get(id = request.user.id)
-        if Address.objects.filter(user = request.user.id).filter(default = True).exists():
-            address =Address.objects.filter(default = True).get(user_id = user_id)
-        else:
-             messages.warning(request,'Set a default address and continue order')
-             return redirect('checkout')
+   def post(self,request,**kwargs):
+      if self.request.GET.get('method') == 'cod':
+            amt = self.kwargs.get('amount')
+            data = request.POST['payment_method']
+            user_id = users.objects.get(id = request.user.id)
+            if Address.objects.filter(user = request.user.id).filter(default = True).exists():
+                address =Address.objects.filter(default = True).get(user_id = user_id)
+            else:
+                messages.warning(request,'Set a default address and continue order')
+                return redirect('checkout')
 
-        if address:
-                payment =Payment.objects.create(
-                    user_id = user_id,
-                    amount = amt,
-                    payment_method = data,
-                )
-        else:
-             messages.warning(request,'Add a default address and try again')
-             return redirect('checkout')
-
-        # creating order
-        cart_id = request.session.get('cart_id')
-        cart = Cart.objects.get(id = cart_id)
-        cart_items = Cart_items.objects.filter(cart = cart)
-        address =Address.objects.filter(default = True).get(user_id = user_id)
-        print(address)
-
-
-        for i in cart_items:
-            Order.objects.create(
-            id = random.randint(100000,999999),
-            cart = cart,
-            payment_id = Payment.objects.get(id = payment.id),
-            product_id = i.product,
-            Variant = i.variant,
-            user_id = user_id,
-            user_address = address,
-            amount = i.price * i.quantity,
-            quantity = i.quantity
+            if address:
+                    payment =Payment.objects.create(
+                        user_id = user_id,
+                        amount = amt,
+                        payment_method = data,
                     )
+            else:
+                messages.warning(request,'Add a default address and try again')
+                return redirect('checkout')
 
-            i.delete()
-            cart_items.delete()
-            cart.total = 0
-            cart.save()
+            # creating order
+            cart_id = request.session.get('cart_id')
+            cart = Cart.objects.get(id = cart_id)
+            cart_items = Cart_items.objects.filter(cart = cart)
+            address =Address.objects.filter(default = True).get(user_id = user_id)
+            print(address)
 
-        return redirect('thanku')
+
+            for i in cart_items:
+                Order.objects.create(
+                id = random.randint(100000,999999),
+                cart = cart,
+                payment_id = Payment.objects.get(id = payment.id),
+                product_id = i.product,
+                Variant = i.variant,
+                user_id = user_id,
+                user_address = address,
+                amount = i.price * i.quantity,
+                quantity = i.quantity
+                        )
+
+                i.delete()
+                cart_items.delete()
+                cart.total = 0
+                cart.save()
+      else:
+             return redirect(success.as_view())
+
+      return redirect('thanku')
     
         
 
@@ -138,7 +141,7 @@ class PaymentAPI(View):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class OrderTracking(TemplateView):
      template_name = 'Dashboard.html'
 
@@ -158,7 +161,7 @@ class OrderTracking(TemplateView):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class user_order_view(TemplateView):
      template_name = 'user_order_details.html'
 
@@ -180,20 +183,43 @@ class user_order_view(TemplateView):
 
 
 
-
+# razorpay_payment
+@method_decorator(csrf_exempt, name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class success(View):
 
     def get(self,request, **kwargs):
-         rz_signature =self.request.GET.get('razorpay_signature')
+         rz_signature =self.request.GET.get('signature')
+         rz_order_id = self.request.GET.get('order_id')
+         rz_payment_id = self.request.GET.get('payment_id')
+
+
+
+
+
+         params_dict = {
+              'razorpay_order_id':rz_order_id,
+              'razorpay_payment_id':rz_payment_id,
+              'razorpay_signature':rz_signature
+         }
          cart = self.request.session['cart_id']
          cart = Cart.objects.get(id = cart)
          user_id = users.objects.get(id = self.request.user.id)
          cart_items = Cart_items.objects.filter(cart = cart)
          total_perc = 0
-         if rz_signature:
+
+
+        #  verifying payment_signature
+         result = client.utility.verify_payment_signature(params_dict)
+         if result is not None:
+            if Address.objects.filter(user_id = self.request.user.id).exists():
+                address =Address.objects.filter(default = True).get(user_id = user_id)
+            else:
+                messages.warning(self.request,'Set a default address and continue order')
+                return redirect('checkout')
+            
             for i in cart_items:
                 admin_per = i.product.category.commission * i.quantity
                 total_perc += admin_per
@@ -206,73 +232,68 @@ class success(View):
 
                     
             
-            if Address.objects.filter(user_id = self.request.user.id).exists():
-                    address =Address.objects.filter(default = True).get(user_id = user_id)
-            else:
-                messages.warning(self.request,'Set a default address and continue order')
-                return redirect('checkout')
-
-            if address:
                     
-                    raz_details = razorpay_details.objects.create(
-                        
-                    razorpay_order_id = self.request.GET.get('razorpay_order_id'),
-                    razorpay_payment_id =self.request.GET.get('razorpay_payment_id'),
-                    razorpay_payment_signature =self.request.GET.get('razorpay_signature'),
-                    )
+                raz_details = razorpay_details.objects.create(
+                    
+                razorpay_order_id = self.request.GET.get('razorpay_order_id'),
+                razorpay_payment_id =self.request.GET.get('razorpay_payment_id'),
+                razorpay_payment_signature =self.request.GET.get('razorpay_signature'),
+                )
                     
 
 
     
 
-                    payment =Payment.objects.create(
-                        user_id = user_id,
-                        amount = cart.total,
-                        payment_method = 'Razorpay',
-                        raz_id = raz_details
+                payment =Payment.objects.create(
+                    user_id = user_id,
+                    amount = cart.total,
+                    payment_method = 'Razorpay',
+                    raz_id = raz_details
 
-                    )
-            else:
-                messages.warning(self.request,'Add a default address and try again')
-                return redirect('checkout')
-
-            # creating order
-            cart_id = self.request.session.get('cart_id')
-            cart = Cart.objects.get(id = cart_id)
-            cart_items = Cart_items.objects.filter(cart = cart)
-            address =Address.objects.filter(default = True).get(user_id = user_id)
-            print(address)
-            order_ids = []
+                )
 
 
-            for i in cart_items:
-                id = random.randint(100000,999999)
-                order =Order.objects.create(
-                id = id,
-                cart = cart,
-                payment_id = Payment.objects.get(id = payment.id),
-                product_id = i.product,
-                Variant = i.variant,
-                user_id = user_id,
-                user_address = address,
-                amount = i.price * i.quantity,
-                quantity = i.quantity
-                        )
+                    # creating order
+                cart_id = self.request.session.get('cart_id')
+                cart = Cart.objects.get(id = cart_id)
+                cart_items = Cart_items.objects.filter(cart = cart)
+                address =Address.objects.filter(default = True).get(user_id = user_id)
+                print(address)
+                order_ids = []
 
-                
-                order_ids.append(int(id))
-                
-                
 
-                i.delete()
-                cart_items.delete()
-                cart.total = 0
-                cart.save()
+                for i in cart_items:
+                    id = random.randint(100000,999999)
+                    order =Order.objects.create(
+                    id = id,
+                    cart = cart,
+                    payment_id = Payment.objects.get(id = payment.id),
+                    product_id = i.product,
+                    Variant = i.variant,
+                    user_id = user_id,
+                    user_address = address,
+                    amount = i.price * i.quantity,
+                    quantity = i.quantity
+                            )
 
-            return redirect('invoice',order_ids)
+                    
+                    order_ids.append(int(id))
+                    
+                    
+
+                    i.delete()
+                    cart_items.delete()
+                    cart.total = 0
+                    cart.save()
+
+             
+
+                return redirect('invoice',order_ids)
          else:
-              messages.warning(request,'Payment unsuccessfull.Try again.')
-              return redirect('checkout')
+                    messages.warning(self.request,'Payment Failed.Try again')
+                    return redirect('checkout')
+
+        
 
 
 
@@ -283,7 +304,7 @@ class success(View):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class product_return(View):
      def post(self,request,**kwargs):
        return redirect('orders')
@@ -294,7 +315,7 @@ class product_return(View):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class cancel_order(View):
      
      def get(self,request,**kwargs):
@@ -325,7 +346,7 @@ class cancel_order(View):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class return_order(View):
      
      def get(self,request,**kwargs):
@@ -353,7 +374,7 @@ class return_order(View):
 
 
 @login_required(login_url='/')
-@user_passes_test(user_check)
+@user_check
 def invoice(request, order_id):
     # print(type(order_ids))
  
@@ -426,8 +447,8 @@ def invoice(request, order_id):
 
 
 
-@login_required(login_url='/')
-@user_passes_test(user_check) 
+@login_required(login_url='/') 
+@user_check
 def thanku(request):
     user = request.user
     return render(request,'thanku.html')

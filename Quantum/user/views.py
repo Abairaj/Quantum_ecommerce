@@ -26,11 +26,17 @@ from django.utils.decorators import method_decorator
 # from verifyotp import verify_otp
 
 
+def user_check(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        if request.user.is_staff == False and request.user.is_superadmin == False and request.user.is_active == True:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('signin')
+    return wrapper_func
 
 
 
-def user_check(user):
-    return not user.is_superadmin and not user.is_staff         
+  
 
 
 
@@ -58,7 +64,7 @@ def home(request):
 
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class user_profile(TemplateView):
     template_name = 'user_profile.html'
     def get_context_data(self, **kwargs):
@@ -76,7 +82,7 @@ class user_profile(TemplateView):
     
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class user_profile_edit(TemplateView):
      template_name = 'user_edit.html'
 
@@ -93,7 +99,7 @@ class user_profile_edit(TemplateView):
 
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class user_profile_management(View):
         
     def post(self,request):
@@ -170,7 +176,7 @@ class user_profile_management(View):
 
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class User_add_address_view(TemplateView):
      template_name = 'user_add_address.html'
      form_class = AddressForm
@@ -222,7 +228,7 @@ def product_detail(request,id,v_id):
 @never_cache
 def signin(request):
 
-    if request.user.is_authenticated and request.user.is_staff == False:
+    if request.user.is_authenticated and request.user.is_staff == False and request.user.superadmin == False:
         messages.success(request,'You have already signed in. ')
         return redirect('home')
 
@@ -601,7 +607,7 @@ def filter(request):
 # ===================================================================================Wallet=========================================================================
 
 @method_decorator(login_required(login_url='signin'), name='dispatch')
-@method_decorator(user_passes_test(user_check), name='dispatch')
+@method_decorator(user_check, name='dispatch')
 class Wallet_view(TemplateView):
      template_name = 'wallet.html'
 
@@ -621,6 +627,7 @@ class Wallet_view(TemplateView):
 
 
 @login_required(login_url='/')
+@user_check
 def logout(request):
     auth.logout(request)
     return redirect('home')

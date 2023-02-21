@@ -9,6 +9,7 @@
 
 
 
+
 		</aside> -->
 		<div class="text-center pb-5 pt-5 mb-5">
 			<h1>CHECKOUT</h1>
@@ -302,7 +303,7 @@
 
 
 								<h2>Payment Type</h2>
-								<form action="/order/payment/{{cart.total}}" method='POST' id="pay-option">
+								<form action="'/order/payment/{{cart.total}}?method=cod'" method='POST' id="pay-option">
 								  {% csrf_token %}
 								  <input type="radio" id="COD" name="payment_method" value="Cash on Delivery">
 								  <label for="Cash on Delivery">Cash on Delivery</label><br>
@@ -311,27 +312,13 @@
 								  {% if cart %}				
 								  <div class="col-md-6 pt-3 pr-5 mr-5 pt-5">
 									<p id="codBtn" style="display: none;"><a href=''><button class="btn btn-primary" type="submit">Continue order</button></a></p>
-									<p id="rzp-button1" style="display: none;"><a href=''><button class="btn btn-primary">Continue order</button></a></p>
+									<p id="rzp-button1" style="display: none;"><a href=''><button type="button" class="btn btn-primary" >Continue order</button></a></p>
 								  </div>
 								  {% endif %}
 								</form>
+
 								
-								<script>
-									const codRadio = document.getElementById("COD");
-									const razorpayRadio = document.getElementById("Razorpay");
-									const codBtn = document.getElementById("codBtn");
-									const razorpayBtn = document.getElementById("rzp-button1");
-								  
-									codRadio.addEventListener("click", function() {
-									  codBtn.style.display = "block";
-									  razorpayBtn.style.display = "none";
-									});
-								  
-									razorpayRadio.addEventListener("click", function() {
-									  codBtn.style.display = "none";
-									  razorpayBtn.style.display = "block";
-									});
-								  </script>
+
 
 					</form>
 
@@ -362,63 +349,79 @@
 		  
 
 
+
+
+
+		<script>
+			const codRadio = document.getElementById("COD");
+			const rzRadio = document.getElementById("Razorpay");
+			const codBtn = document.getElementById("codBtn");
+			const rzBtn = document.getElementById("rzp-button1");
+		  
+			codRadio.addEventListener("click", function() {
+			  codBtn.style.display = "block";
+			  rzBtn.style.display = "none";
+			});
+		  
+			rzRadio.addEventListener("click", function() {
+			  codBtn.style.display = "none";
+			  rzBtn.style.display = "block";
+			});
+		  </script>
+
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-
 <script>
-	var options = {
-		"key": "rzp_test_YSiLo2PdxfSWUw", // Enter the Key ID generated from the Dashboard
-		"amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-		"currency": "INR",
-		"name": "Quantum Times",
-		"description": "Thnk you for the purchase",
-		"image": "https://example.com/your_logo",
-		"order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-		"admin_amount": "{{split.admin_amount}}",
-        "vendor_amount": "{{split.vendor_amount}}",
-		"handler": function (response){
-			
-			
-	// 		axios.post('/split-payment', {
-    //         payment_id: response.razorpay_payment_id,
-    //         admin_amount: options.admin_amount,
-    //         vendor_amount: options.vendor_amount
-    //   })
-	
-	
+var options = {
+    "key": "rzp_test_YSiLo2PdxfSWUw", // Enter the Key ID generated from the Dashboard
+    "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Quantum Times",
+    "description": "Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "handler": function (response){
+        var payment_id = response.razorpay_payment_id;
+        var order_id = response.razorpay_order_id;
+        var signature = response.razorpay_signature;
+        
+        var success_url = "/order/success?";
+        success_url += "payment_id=" + encodeURIComponent(payment_id);
+        success_url += "&order_id=" + encodeURIComponent(order_id);
+        success_url += "&signature=" + encodeURIComponent(signature);
+        
 
-			window.location.href = `http://127.0.0.1:8000/order/success/?razorpay_payment_id=${response.razorpay_payment_id}&razorpay_order_id=${response.razorpay_order_id}&razorpay_signature=${response.razorpay_signature}`
-			// alert(response.razorpay_payment_id);
-			// alert(response.razorpay_order_id);
-			// alert(response.razorpay_signature)
-		},
-		"prefill": {
-			"name": "{{cart.user_id.first_name}}",
+		window.location.href = success_url; // redirect to success page
+    },
+    "prefill": {
+		"name": "{{cart.user_id.first_name}}",
 			"email": "{{cart.user_id.email}}",
-			"contact": "{{cart.user_id.email}}"
-		},
-		"notes": {
-			"address": "Razorpay Corporate Office"
-		},
-		"theme": {
-			"color": "#3399cc"
-		}
-	};
-	var rzp1 = new Razorpay(options);
-	rzp1.on('payment.failed', function (response){
-			alert(response.error.code);
-			alert(response.error.description);
-			alert(response.error.source);
-			alert(response.error.step);
-			alert(response.error.reason);
-			alert(response.error.metadata.order_id);
-			alert(response.error.metadata.payment_id);
-	});
-	document.getElementById('rzp-button1').onclick = function(e){
-		rzp1.open();
-		e.preventDefault();
-	}
-	</script>
+			"contact": "{{cart.user_id.mobile}}"
+    },
+    "notes": {
+        "address": "Quantum Times, Bangalore south, 34534"
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.source);
+        alert(response.error.step);
+        alert(response.error.reason);
+        alert(response.error.metadata.order_id);
+        alert(response.error.metadata.payment_id);
+});
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+
 
 
 

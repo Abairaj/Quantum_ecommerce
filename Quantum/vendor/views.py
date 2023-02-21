@@ -32,7 +32,13 @@ from cart.models import Cart_items
 
 
 
-
+def vendor_check(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        if request.user.is_staff == True and request.user.is_superadmin == False:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('vendor-signin')
+    return wrapper_func
 
 
 
@@ -40,9 +46,9 @@ from cart.models import Cart_items
 
 @never_cache
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def vendor_dashboard(request):
   
-  if not request.user.is_superadmin and request.user.is_staff:
     vendor_id = users.objects.get(id = request.user.id)
     product = Product.objects.filter(vendor_name = vendor_id)
     order = Order.objects.filter(is_active = 'True')
@@ -120,14 +126,13 @@ def vendor_dashboard(request):
         return render( request,'vendor_dashboard.html',context)
     else:
          return render(request, 'vendor_dashboard.html', {})
-  else:
-    return render(request,'vendor_login.html')
 
 
 
-           
+
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class Vendor_profile(TemplateView):
     template_name = 'vendor_profile.html'
     def get_context_data(self, **kwargs):
@@ -147,6 +152,7 @@ class Vendor_profile(TemplateView):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class vendor_profile_edit(TemplateView):
      template_name = 'vendor_profile_edit.html'
 
@@ -164,6 +170,7 @@ class vendor_profile_edit(TemplateView):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch') 
+@method_decorator(vendor_check, name='dispatch')
 class Vendor_profile_management(View):
         
         def post(self,request):
@@ -237,6 +244,7 @@ class Vendor_profile_management(View):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class Vendor_wallet(TemplateView):
     template_name = 'vendor_wallet.html'
 
@@ -251,6 +259,7 @@ class Vendor_wallet(TemplateView):
 
 
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def vendor_products(request):
     vendor = request.user
     id = vendor.id
@@ -263,6 +272,7 @@ def vendor_products(request):
 
 
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def add_product(request):
 
     context ={'brand':Brand.objects.all(),'categorys':Category.objects.all()}
@@ -322,6 +332,7 @@ def add_product(request):
 
 
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def edit_product(request,id):
 
     colors = []
@@ -417,6 +428,7 @@ def edit_product(request,id):
 
 # deleting the product
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def delete_product(request,id):
     Product.objects.filter(id = id).delete()
     messages.success(request,'Product deleted succcessfully')
@@ -428,6 +440,7 @@ def delete_product(request,id):
 
 #view product cards and go to variant of paricular product
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def variant_view(request):
     product = {
         'product':Product.objects.all().filter(vendor_name = request.user.id)
@@ -437,6 +450,7 @@ def variant_view(request):
 
 #variant view of a product 
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def variant(request,id):
     product=Product.objects.get(id = id)
     variant =Variant.objects.filter(Product = id)
@@ -451,6 +465,7 @@ def variant(request,id):
 
 #   Add a new variant
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def add_variants(request,id):
     product = Product.objects.get(id = id)
     context = {
@@ -513,6 +528,7 @@ def add_variants(request,id):
 #Edit a new variant
 
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def edit_variant(request,id):
     variants = Variant.objects.get(id = id)
     product = variants.Product
@@ -541,15 +557,6 @@ def edit_variant(request,id):
             return redirect('add_variant',id)
 
 
-        
-
-
-                
-        # imageid = Image.objects.get(product =  variants.Product.pk)
-     
-        
-
-
 
 
         variant = Variant(
@@ -565,38 +572,15 @@ def edit_variant(request,id):
 
         variant.save()
 
-        print(id,';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
         print(Image.objects.values_list('variant'))
         img = Image.objects.filter(variant = id)
 
-        print(img,'imgggggggggggggggggggggggggggggimgggggggggggggggggggg')
 
      
         image_ids = [i.pk for i in img]
 
 
-        # for image, id in zip(image1, image_ids):
-        #        print('check 11111111111111111111111111111111111111111111')
-        #        img = Image.objects.filter(id = id)
-        #        print(id,image,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
-
-        #        images = Image(
-        #         id = id,
-        #         image = image,
-        #         variant = variant
-        #        )
-
-        #        images.save()
-
-
-
-        # for i in image1:
-        #     print('kjgfkhgfjhfjghdjfhvdfskjgndfskjghdfkjgndfjkgndfg')
-        #     print(image_ids)
-        #     for j in image_ids:
-
-        #         print(i,'llllllllllll')
-        #         print(j,'kkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
+     
 
         for image, id in zip(reversed(image1), image_ids):
               
@@ -622,6 +606,7 @@ def edit_variant(request,id):
 
 #delete a variant
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def delete_variants(request,id):
     variant = Variant.objects.get(id = id)
     variant.delete()
@@ -638,7 +623,7 @@ def delete_variants(request,id):
 #=============================================================vendor authentication signin,signup==============================================
 @never_cache
 def vendor_signin(request):
-    if request.user.is_authenticated:
+    if request.user.is_staff == True and request.user.is_superadmin == False:
         return redirect('vendor_dashboard')
     if request.method == 'POST':
         email = request.POST['email']
@@ -788,6 +773,7 @@ def vendor_verify_login(request,id):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class Order_management(TemplateView):
     template_name = 'vendor_orders.html'
 
@@ -808,6 +794,7 @@ class Order_management(TemplateView):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class Update_order_status(View):
     
     def post(self,request,**kwargs):
@@ -826,6 +813,7 @@ class Update_order_status(View):
 
 #coupon main page
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def vendor_coupon(request):
     context = {
         'coupon':Coupon.objects.all()
@@ -838,6 +826,7 @@ def vendor_coupon(request):
 # add coupon
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class add_coupon(View):
     def post(self,request):
         code = request.POST['code']
@@ -863,6 +852,7 @@ class add_coupon(View):
 
 # delete coupon
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def activate_coupon(request,id):
     coupon = Coupon.objects.get(id = id)
     coupon.expired = False
@@ -872,6 +862,7 @@ def activate_coupon(request,id):
 
 
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def deactivate_coupon(request,id):
     coupon = Coupon.objects.get(id = id)
     coupon.expired = True
@@ -882,6 +873,7 @@ def deactivate_coupon(request,id):
 
 # edit coupon
 @login_required(login_url='/vendor-signin')
+@vendor_check
 def edit_coupon(request,id):
     if request.method == 'POST':
 
@@ -909,6 +901,7 @@ def edit_coupon(request,id):
 # ===========================================================================================sales report===================================================================
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class Vendor_Salesreport_view(TemplateView):
     template_name = 'vendor_salesreport.html'
     
@@ -932,6 +925,7 @@ class Vendor_Salesreport_view(TemplateView):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class vendor_Salesreport_download(View):
 
 
@@ -1054,6 +1048,7 @@ class vendor_Salesreport_download(View):
 
 
 @method_decorator(login_required(login_url='/vendor-signin'), name='dispatch')
+@method_decorator(vendor_check, name='dispatch')
 class salesreport_filter(View):
 
     def post(self,request):

@@ -26,15 +26,20 @@ from django.contrib.auth.decorators import user_passes_test
 
 
 
-def admin_check(user):
-    return user.is_superadmin
+def admin_check(view_func):
+    def wrapper_func(request, *args, **kwargs):
+        if request.user.is_superadmin:
+            return view_func(request, *args, **kwargs)
+        else:
+            return redirect('/admin')
+    return wrapper_func
 
 
 
 # Create your views here.
 @never_cache
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def admin_pannel(request):
    
   order = Order.objects.all()
@@ -127,7 +132,7 @@ def admin_pannel(request):
 #----------------------------------------------------------------- user management------------------------------------------------------------------------------------------------------
 @never_cache
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def user_management(request):
     user = {
         'user': users.objects.filter(is_staff = False)
@@ -149,7 +154,7 @@ def user_delete(request,id):
 # ------------------------------------------------------------- vendor management--------------------------------------------------------------------------------------------------------
 @never_cache
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def vendor_management(request):
     vendor ={
         'vendor': users.objects.filter( Q(is_staff = True) & Q(is_superadmin = False))
@@ -160,7 +165,7 @@ def vendor_management(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def vendor_delete(request,id):
     users.objects.filter(id = id).delete()
     return redirect('admin_vendors')
@@ -169,7 +174,7 @@ def vendor_delete(request,id):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def block(request,id):
     users.objects.filter(id = id).update(is_active = False) 
     messages.success(request,'blocked successfuly')
@@ -182,7 +187,7 @@ def block(request,id):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def unblock(request,id):
     users.objects.filter(id = id).update(is_active = True)
     messages.success(request,'unblocked successfuly')
@@ -200,7 +205,7 @@ def unblock(request,id):
 # ===================================Categories=======================================================
 @never_cache
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def category_management(request):
 
    context =  { 'category':Category.objects.all(),
@@ -212,7 +217,7 @@ def category_management(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def add_category(request):
 
     if request.method == 'POST':
@@ -251,7 +256,7 @@ def add_category(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def edit_category(request,id):
     if request.method == 'POST':
 
@@ -308,7 +313,7 @@ def edit_category(request,id):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def delete_category(request,id):
     
            Category.objects.filter(id=id).delete()
@@ -320,7 +325,7 @@ def delete_category(request,id):
 # =====================================Brands==================================================
 @never_cache
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def brand_management(request):
     context = {
         'brand':Brand.objects.all()
@@ -329,7 +334,7 @@ def brand_management(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def add_brand(request):
     if request.method == 'POST':
 
@@ -367,7 +372,7 @@ def add_brand(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def edit_brand(request,id):
     if request.method == 'POST':
 
@@ -414,7 +419,7 @@ def edit_brand(request,id):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def delete_brand(request,id):
         Brand.objects.filter(id=id).delete()
         messages.success(request,'Brand deleted successfully')
@@ -424,7 +429,7 @@ def delete_brand(request,id):
 # ========================================================================Banner================================================================================================================
 @never_cache
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def banner(request):
     banner = {
         'banner':Banner.objects.all()
@@ -435,7 +440,7 @@ def banner(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def add_banner(request):
     if request.method == 'POST':
 
@@ -476,7 +481,7 @@ def add_banner(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def edit_banner(request,id):
     if request.method == 'POST':
 
@@ -512,7 +517,7 @@ def edit_banner(request,id):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def delete_banner(request,id):
 
     Banner.objects.filter(id = id).delete()
@@ -523,7 +528,7 @@ def delete_banner(request,id):
 # ==================================================================================Sales Report======================================================================================================
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='/admin'), name='dispatch')
-@method_decorator(user_passes_test(admin_check), name='dispatch')
+@method_decorator(admin_check, name='dispatch')
 class admin_Salesreport_view(TemplateView):
     template_name = 'salesreport.html'
     
@@ -539,7 +544,7 @@ class admin_Salesreport_view(TemplateView):
 
 
 @method_decorator(login_required(login_url='/admin'), name='dispatch')
-@method_decorator(user_passes_test(admin_check), name='dispatch')
+@method_decorator(admin_check, name='dispatch')
 class Admin_Salesreport_download(View):
 
     def get(self,request):
@@ -658,7 +663,7 @@ class Admin_Salesreport_download(View):
 
 
 @method_decorator(login_required(login_url='/admin'), name='dispatch')
-@method_decorator(user_passes_test(admin_check), name='dispatch')
+@method_decorator(admin_check, name='dispatch')
 class admin_salesreport_filter(View):
 
     def post(self,request):
@@ -708,7 +713,7 @@ def admin_signin(request):
 
 
 @login_required(login_url='/admin')
-@user_passes_test(admin_check)
+@admin_check
 def logout(request):
     auth.logout(request)
     return redirect('admin')
@@ -718,7 +723,7 @@ def logout(request):
 
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='/admin'), name='dispatch')
-@method_decorator(user_passes_test(admin_check), name='dispatch')
+@method_decorator(admin_check, name='dispatch')
 class Admin_product(TemplateView):
     template_name = 'admin product.html'
 
@@ -735,6 +740,6 @@ class Admin_product(TemplateView):
 
 
 @method_decorator(login_required(login_url='/admin'), name='dispatch')
-@method_decorator(user_passes_test(admin_check), name='dispatch')
+@method_decorator(admin_check, name='dispatch')
 class Admin_product_details(TemplateView):
     template_name= 'admin_product_details'
