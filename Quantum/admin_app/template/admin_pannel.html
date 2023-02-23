@@ -131,6 +131,7 @@
                   <!-- <p class="font-weight-500">The total number of Orders in the current year and orders in the selected date rage.</p> -->
 
                             <!-- chartjs total orders and cancelled orders -->
+                            <canvas id="compare_chart"></canvas>
 
                             
                       
@@ -141,21 +142,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-6 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                 <div class="d-flex justify-content-between">
-                  <p class="card-title">Cancelled Orders</p>
-                
-                 </div>
-                  <p class="font-weight-500">The total number of cancelled orders in the year and in the selected range.</p>
-                  <div id="sales-legend" class="chartjs-legend mt-4 mb-2"></div>
-                        <!-- chartjs -->
-                        <input type="date" id="cancelled" />
-                        <canvas id="cancelledorderChart"></canvas>
-                </div>
-              </div>
-            </div>
+
           </div>
 
 
@@ -343,6 +330,38 @@
                 }
               }
             });
+
+
+
+
+
+
+  // cancelled and total orders
+  const ctx3 = document.getElementById('compare_chart');
+
+new Chart(ctx3, {
+  type: 'pie',
+  data: {
+    labels: ['Cancelled orders', 'Total orders'],
+    datasets: [{
+      label: '# of Votes',
+      data: [{{cancelled_order78}},{{order78}}],
+      borderWidth: 1,
+      backgroundColor: [
+        'rgb(207, 0, 15)', // Red color for 'Cancelled orders'
+        'rgb(75, 192, 192)' // Green color for 'Total orders'
+      ]
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+
         </script>
     
 {%endblock%}

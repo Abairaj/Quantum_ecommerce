@@ -109,6 +109,8 @@ def admin_pannel(request):
     print(date_of_cancelled_order)
     current_year =  datetime.now().year
 
+   
+
     context = {'date_to_total_orders':date_to_total_orders,
                'date_of_order':date_of_order,
                'current_year':current_year,
@@ -118,7 +120,9 @@ def admin_pannel(request):
                'total_order':count,
                'total_cancelled_orders':total_cancelled_orders,
                'user_count':user_count,
-               'vendor_count':vendor_count}
+               'vendor_count':vendor_count,
+               'order78':order.count(),
+               'cancelled_order78':cancelled_order.count()}
     return render( request,'admin_pannel.html',context)
   else:
     return render(request, 'admin_pannel.html', {})

@@ -295,44 +295,84 @@ def signup(request):
             elif password1 != password2:
                     messages(request,'Password doesnt match with each other')
                     return redirect('signup')
+            
+
+            
                 
             else:
+
+
+                otp = str(random.randint(1000,9999))
+                send_otp(phone_number,otp)
+                request.session['user_det'] = {'first_name':first_name,'last_name':last_name,'email':email,'mobile':phone_number,'password':password2,'otp':otp}
                 
-                user = users.objects.create_user(
-                    first_name = first_name,
-                    last_name = last_name,
-                    email = email,
-                    mobile = phone_number,
-                    password = password2,
 
-                )
-
-                id = users.objects.get(id = user.id)
-
-                cart = Cart.objects.create(
-                     user_id = id,
-                     total = 0
-                )
+                messages.success(request,f"Verify the otp send to your mobile number {phone_number}")
+                return redirect('mobile_verify')
                 
-                cart.save()
-                request.session['cart_id'] = str(cart)
-                print(request.session.get('cart_id'))
-
-                wallet = Wallet.objects.create(
-                     user_id = users.objects.get(id = user.id)
-                )
-
-                wallet.save()
-            
-
-                messages.success(request,'Registered successfully. Login with your credentials')
-                return redirect('signin')
-            
     return render(request,'signup.html')
 
 
 
+@never_cache
+def mobile_verify(request):
+     
+     user_details = request.session.get('user_det')
+     first_name = user_details['first_name']
+     last_name = user_details['last_name']
+     email = user_details['email']
+     mobile = user_details['mobile']
+     password = user_details['password']
+     otp1 = user_details['otp']
 
+     if request.method == 'POST':
+          
+          otp = request.POST.get('otp')
+          
+    
+          if otp1 == otp :
+          
+            user = users.objects.create_user(
+                first_name = first_name,
+                last_name = last_name,
+                email = email,
+                mobile = mobile,
+                password = password,
+
+            )
+        
+            id = users.objects.get(id = user.id)
+
+            cart = Cart.objects.create(
+                        user_id = id,
+                        total = 0
+                    )
+                    
+            cart.save()
+            
+            request.session['cart_id'] = str(cart)
+            print(request.session.get('cart_id'))
+
+            wallet = Wallet.objects.create(
+                        user_id = users.objects.get(id = user.id)
+                    )
+
+            wallet.save()
+
+            del request.session['user_det']
+            messages.success(request,'Registered successfully. Login with your credentials')
+            return redirect('signin')
+          else:
+               messages.warning(request,'OTP is invalid try again')
+               return redirect('mobile_verify')
+     
+     return render(request,'otp_signup.html')
+            
+          
+      
+
+
+     
 
 
 @never_cache

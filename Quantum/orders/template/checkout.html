@@ -309,10 +309,16 @@
 								  <label for="Cash on Delivery">Cash on Delivery</label><br>
 								  <input type="radio" id="Razorpay" name="payment_method" value="Razorpay">
 								  <label for="Razorpay">Razorpay</label><br>
+								  <!-- <input type="radio" id="Paypal" name="payment_method" value="Paypal">
+								  <label for="Paypal">Paypal</label><br> -->
 								  {% if cart %}				
 								  <div class="col-md-6 pt-3 pr-5 mr-5 pt-5">
 									<p id="codBtn" style="display: none;"><a href=''><button class="btn btn-primary" type="submit">Continue order</button></a></p>
 									<p id="rzp-button1" style="display: none;"><a href=''><button type="button" class="btn btn-primary" >Continue order</button></a></p>
+
+									<!-- Set up a container element for the button -->
+									<!-- <div id="paypal-button-container" style="display: none;"></div> -->
+    
 								  </div>
 								  {% endif %}
 								</form>
@@ -348,25 +354,33 @@
 	
 		  
 
-
-
-
-
+<!-- button check js -->
 		<script>
 			const codRadio = document.getElementById("COD");
 			const rzRadio = document.getElementById("Razorpay");
+			// const paypalRadio = document.getElementById("Paypal")
 			const codBtn = document.getElementById("codBtn");
 			const rzBtn = document.getElementById("rzp-button1");
+			// const paypalBtn = document.getElementById("paypal-button-container")
 		  
 			codRadio.addEventListener("click", function() {
 			  codBtn.style.display = "block";
+			//   paypalBtn.style.display = "none"
 			  rzBtn.style.display = "none";
 			});
 		  
 			rzRadio.addEventListener("click", function() {
 			  codBtn.style.display = "none";
+			//   paypalBtn.style.display = "none"
 			  rzBtn.style.display = "block";
 			});
+
+			// paypalRadio.addEventListener("click", function() {
+			//   codBtn.style.display = "none";
+			//   rzBtn.style.display = "none";
+			//   paypalBtn.style.display = "block"
+			// });
+
 		  </script>
 
 
@@ -374,13 +388,12 @@
 
 <script>
 var options = {
-    "key": "rzp_test_YSiLo2PdxfSWUw", // Enter the Key ID generated from the Dashboard
-    "amount": "{{payment.amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "key": "{{key}}", 
+    "amount": "{{payment.amount}}", 
     "currency": "INR",
     "name": "Quantum Times",
     "description": "Transaction",
-    "image": "https://example.com/your_logo",
-    "order_id": "{{payment.id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "order_id": "{{payment.id}}",
     "handler": function (response){
         var payment_id = response.razorpay_payment_id;
         var order_id = response.razorpay_order_id;
@@ -424,7 +437,52 @@ document.getElementById('rzp-button1').onclick = function(e){
 
 
 
-
+<!-- paypal -->
+<!-- <script src="https://www.paypal.com/sdk/js?client-id=AYh5KeDHNPDOCpIXIYslq1oM1WlDRqytcJFJofUUhvXmZBGiH9mIkIYsvZZrmfCbQ0nLG9KUm_lQC1-h&currency=USD"></script>
+<script>
+	paypal.Buttons({
+	  // Order is created on the server and the order id is returned
+	  createOrder() {
+		return fetch("/my-server/create-paypal-order", {
+		  method: "post",
+		  // use the "body" param to optionally pass additional order information
+		  // like product skus and quantities
+		  body: JSON.stringify({
+			cart: [
+			  {
+				sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
+				quantity: "YOUR_PRODUCT_QUANTITY",
+				value: "20"
+			  },
+			],
+		  }),
+		})
+		.then((response) => response.json())
+		.then((order) => order.id);
+	  },
+	  // Finalize the transaction on the server after payer approval
+	  onApprove(data) {
+		return fetch("/my-server/capture-paypal-order", {
+		  method: "post",
+		  body: JSON.stringify({
+			orderID: data.orderID
+		  })
+		})
+		.then((response) => response.json())
+		.then((orderData) => {
+		  // Successful capture! For dev/demo purposes:
+		  console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+		  const transaction = orderData.purchase_units[0].payments.captures[0];
+		  alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+		  // When ready to go live, remove the alert and show a success message within this page. For example:
+		  // const element = document.getElementById('paypal-button-container');
+		  // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+		  // Or go to another URL:  window.location.href = 'thank_you.html';
+		});
+	  }
+	}).render('#paypal-button-container');
+  </script>
+ -->
 
 		
 {%endblock%}

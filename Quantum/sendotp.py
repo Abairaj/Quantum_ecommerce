@@ -14,7 +14,7 @@ def send_otp(mobile,otp):
 
 
     message = client.messages.create(
-                    body = f'Your otp is {otp}',
+                    body = f'Your Quantum Times otp is {otp}',
             from_ = '+18608548553',
             to = '+91'+str(mobile)
     )

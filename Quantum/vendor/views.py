@@ -15,7 +15,6 @@ from django.utils.decorators import method_decorator
 import io
 from django.http import FileResponse
 import openpyxl
-from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Table
@@ -27,7 +26,6 @@ from django.db.models import Count, DateTimeField
 from django.db.models.functions import Trunc
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-from django.contrib.auth.decorators import user_passes_test
 from cart.models import Cart_items
 
 
@@ -51,8 +49,9 @@ def vendor_dashboard(request):
   
     vendor_id = users.objects.get(id = request.user.id)
     product = Product.objects.filter(vendor_name = vendor_id)
-    order = Order.objects.filter(is_active = 'True')
-    cancelled_order = Order.objects.filter(status = 'Cancelled')
+    product_ids = [i.pk for i in product]
+    order = Order.objects.filter(product_id__in = product_ids).filter(is_active = 'True')
+    cancelled_order = Order.objects.filter(product_id__in = product_ids).filter(status = 'Cancelled')
 
 
 
@@ -120,7 +119,10 @@ def vendor_dashboard(request):
                 'date_to_cancelled_orders':date_to_cancelled_orders,
                 'total_revenue':total_amount,
                 'total_order':count,
-                'total_cancelled_orders':total_cancelled_orders}
+                'total_cancelled_orders':total_cancelled_orders,
+                'cancelled_order78':cancelled_order.count(),
+                'order78':order.count()
+                }
         
 
         return render( request,'vendor_dashboard.html',context)

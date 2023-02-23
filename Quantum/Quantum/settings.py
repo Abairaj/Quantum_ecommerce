@@ -2,6 +2,8 @@
 
 from pathlib import Path
 import os
+import environ
+from decouple import config
 
 
 
@@ -13,10 +15,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-stm8kmbm-8k#h61ou1j8au0u##(m%!86%4n49jq+5uf+p3e5ka'
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['43.206.241.25','www.quantumtimes.shop','quantumtimes.shop','127.0.0.1']
 
@@ -87,7 +89,7 @@ DATABASES = {
        'ENGINE': 'django.db.backends.postgresql',
        'NAME': 'ecommerce',
        'USER': 'postgres',
-       'PASSWORD': '7156',
+       'PASSWORD': config('DB_PASS'),
        'HOST': 'localhost',
        'PORT': '5432',
    }
@@ -141,9 +143,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
 
 
-TWILIO_ACCOUNT_SID ='AC133a1c34281bdc064bd85af563df66cd'
-TWILIO_AUTH_TOKEN = 'e91a0d78a1a580e4af36e3e7c96918f4'
+TWILIO_ACCOUNT_SID = config('TWILIO_ACCOUNT_SID')
+TWILIO_AUTH_TOKEN = config('TWILIO_AUTH_TOKEN')
 
 
-KEY = 'rzp_test_YSiLo2PdxfSWUw'
-SECRET = 'pEcPzuvlQBWbOgiOj5gXelYF'
+KEY = config('KEY')
+SECRET = config('SECRET')

@@ -28,6 +28,8 @@ from user.views import user_check
 
 
 client = razorpay.Client(auth =(settings.KEY , settings.SECRET))
+client.set_app_details({"title" : "Django", "version" : "4.1.5"})
+
 
 def split_payment(amount,admin_percentage,id):
      
@@ -45,6 +47,7 @@ def split_payment(amount,admin_percentage,id):
 
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 @method_decorator(never_cache, name='dispatch')
 @method_decorator(login_required(login_url='signin'), name='dispatch')
 @method_decorator(user_check, name='dispatch')
@@ -64,7 +67,11 @@ class CheckoutAPIView(TemplateView):
             cart = None
         
         # creating razorpay order
-        payment = client.order.create({'amount': cart.total*100,'currency':'INR','payment_capture':1})
+        try:
+          payment = client.order.create(dict({'amount': cart.total*100,'currency':'INR','payment_capture':1}))
+        except:
+             messages.warning(self.request,'Please check your internet connection and try again')
+             return redirect('cart')
         carts = self.request.session.get('cart_id')
         cart1 = Cart_items.objects.filter(cart = carts).count()
         addressdef = Address.objects.filter(default = True)
@@ -73,7 +80,7 @@ class CheckoutAPIView(TemplateView):
          del self.request.session['coupon']
         except Exception as e:
              print(e)
-        context = {'carts':cart1,'cart':cart,'coupon':coupon,'addressdef':addressdef,'payment':payment,'form':self.form_class}
+        context = {'carts':cart1,'cart':cart,'coupon':coupon,'addressdef':addressdef,'payment':payment,'form':self.form_class,'key':settings.KEY}
         return context
 
 
@@ -214,7 +221,7 @@ class success(View):
         #  verifying payment_signature
          result = client.utility.verify_payment_signature(params_dict)
          if result is not None:
-            if Address.objects.filter(user_id = self.request.user.id).exists():
+            if Address.objects.filter(user_id = self.request.user.id).filter(default = True).exists():
                 address =Address.objects.filter(default = True).get(user_id = user_id)
             else:
                 messages.warning(self.request,'Set a default address and continue order')
@@ -372,7 +379,7 @@ class return_order(View):
           
          
 
-
+@csrf_exempt
 @login_required(login_url='/')
 @user_check
 def invoice(request, order_id):

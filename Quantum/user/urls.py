@@ -9,6 +9,7 @@ urlpatterns = [
     path('shop/',views.shop,name='shop'),
     path('signin/',views.signin, name = 'signin'),
     path('signup', views.signup, name = 'signup'),
+    path('mobile_verify',views.mobile_verify, name='mobile_verify'),
     path('forgetpassword/',views.forgot_password,name='forgetpass'),
     path('forgot_otp_verify/',views.forgot_password_verify,name='forgot_otp_verify'),
     path('reset_password/',views.reset_password,name='reset_password'),
