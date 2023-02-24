@@ -303,7 +303,7 @@
 
 
 								<h2>Payment Type</h2>
-								<form action="'/order/payment/{{cart.total}}?method=cod'" method='POST' id="pay-option">
+								<form action="/order/payment/{{cart.total}}?method=cod'" method='POST' id="pay-option">
 								  {% csrf_token %}
 								  <input type="radio" id="COD" name="payment_method" value="Cash on Delivery">
 								  <label for="Cash on Delivery">Cash on Delivery</label><br>

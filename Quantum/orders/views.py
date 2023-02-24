@@ -91,7 +91,6 @@ class CheckoutAPIView(TemplateView):
 @method_decorator(user_check, name='dispatch')
 class PaymentAPI(View):   
    def post(self,request,**kwargs):
-      if self.request.GET.get('method') == 'cod':
             amt = self.kwargs.get('amount')
             data = request.POST['payment_method']
             user_id = users.objects.get(id = request.user.id)
@@ -136,10 +135,8 @@ class PaymentAPI(View):
                 cart_items.delete()
                 cart.total = 0
                 cart.save()
-      else:
-             return redirect(success.as_view())
 
-      return redirect('thanku')
+            return redirect('thanku')
     
         
 

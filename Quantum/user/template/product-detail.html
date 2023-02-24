@@ -90,7 +90,9 @@
 										</div>
 										<div class="d-flex">
 										{%if request.user.is_staff == False or request.user.is_superuser == False%}
-										<p><a href="/cart/add_to_cart/{{main_variant.id}}" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
+										{%for i in main_variant%}
+										<p><a href="/cart/add_to_cart/{{i.id}}" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i> Add to Cart</a></p>
+										{%endfor%}
 										{%endif%}
 										<p><a href="#variants" class="btn btn-primary btn-addtocart"><i class="icon-shopping-cart"></i>Variants</a></p>
 									</div>
