@@ -104,7 +104,7 @@ class user_profile_management(View):
         
     def post(self,request):
         try:
-          self.request.GET['action']
+          action = self.request.GET['action']
         except Exception as e:
             print(e)
             action = None
