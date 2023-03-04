@@ -310,7 +310,6 @@ def signup(request):
                     messages.success(request,f"Verify the otp send to your mobile number {phone_number}")
                     return redirect('mobile_verify')
                 except:
-                      messages.info(request,)
                       user = users.objects.create_user(
                       first_name = first_name,
                       last_name = last_name,
