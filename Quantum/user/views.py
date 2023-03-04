@@ -301,15 +301,46 @@ def signup(request):
                 
             else:
 
+                try:
+                    otp = str(random.randint(1000,9999))
+                    send_otp(phone_number,otp)
+                    request.session['user_det'] = {'first_name':first_name,'last_name':last_name,'email':email,'mobile':phone_number,'password':password2,'otp':otp}
+                    
 
-                otp = str(random.randint(1000,9999))
-                send_otp(phone_number,otp)
-                request.session['user_det'] = {'first_name':first_name,'last_name':last_name,'email':email,'mobile':phone_number,'password':password2,'otp':otp}
-                
+                    messages.success(request,f"Verify the otp send to your mobile number {phone_number}")
+                    return redirect('mobile_verify')
+                except:
+                      messages.info(request,)
+                      user = users.objects.create_user(
+                      first_name = first_name,
+                      last_name = last_name,
+                      email = email,
+                      mobile = phone_number,
+                      password = password1,
 
-                messages.success(request,f"Verify the otp send to your mobile number {phone_number}")
-                return redirect('mobile_verify')
-                
+                      )
+        
+                      id = users.objects.get(id = user.id)
+
+                      cart = Cart.objects.create(
+                                user_id = id,
+                                total = 0
+                            )
+                            
+                      cart.save()
+                    
+                      request.session['cart_id'] = str(cart)
+                      print(request.session.get('cart_id'))
+
+                      wallet = Wallet.objects.create(
+                                user_id = users.objects.get(id = user.id)
+                            )
+
+                      wallet.save()
+
+                      messages.success(request,'Your mobile number is not reachable verify later.Registered successfully. Login with your credentials')
+                      return redirect('signin')
+                     
     return render(request,'signup.html')
 
 
